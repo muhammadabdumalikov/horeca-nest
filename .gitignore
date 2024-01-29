@@ -1,0 +1,46 @@
+# Ignore Mac system files
+.DS_Store
+.DS_store
+
+/.idea
+
+# Ignore dist folder
+/dist
+
+# Ignore node_modules folder
+/node_modules
+
+# Ignore config yml
+/deploy
+
+# Ignore all text files
+*.txt
+todo.md
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+
+# Ignore files related to API keys
+.env
+.env.dev
+.env.prod
+
+# Ignore SASS config files
+.sass-cache
+
+#Docker files
+docker-compose.yaml
+.env.test
+.env.faxriddin.prod
+
+#npm package-lock
+package-lock.json
+
+docker-compose
