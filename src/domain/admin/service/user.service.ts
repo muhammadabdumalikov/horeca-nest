@@ -45,7 +45,7 @@ export class AdminUserService {
 
   async createSuperAdmin(params: CreateUserDto) {
     const hasEmail: IUser = await this.adminUserRepo.selectByEmail(
-      params.email,
+      params.phone,
     );
 
     if (hasEmail) {
@@ -54,11 +54,9 @@ export class AdminUserService {
 
     const [user]: [IUser] = await this.adminUserRepo.insert({
       phone: params.phone,
-      first_name: params.first_name,
-      last_name: params.last_name,
       role: UserRoles.ADMIN,
       status: UserStatus.ACTIVE,
-      email: params.email,
+      email: params.phone,
     });
 
     return user;

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -14,8 +15,11 @@ import {
   UpdateUserDto,
   UserLoginDto,
 } from './dto/user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { AuthGuard } from 'src/guard/auth.guard';
+import { CurrentUser } from 'src/decorator/current-user.decorator';
+import { IUser } from './interface/user.interface';
 
 @ApiTags('User')
 @Controller('user')
@@ -38,6 +42,13 @@ export class UserController {
   @Post('login')
   login(@Body() params: UserLoginDto) {
     return this.authService.login(params);
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('authorization')
+  @Get('profile')
+  getOwnProfile(@CurrentUser() currentUser: IUser) {
+    return this.userService.getOwnProfile(currentUser);
   }
 
   @Get()

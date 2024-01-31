@@ -1,46 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserRepo } from './user.repo';
-import { UserRoles, UserStatus } from './enum/user.enum';
+import { UserRoles } from './enum/user.enum';
 import { IUser } from './interface/user.interface';
-import { EmailConfirmationService } from './email-confirmaton.service';
-import { EmailAlreadyRegistered } from 'src/errors/permission.error';
+import { PhoneAlreadyRegistered } from 'src/errors/permission.error';
+import { sendSmsTo } from 'src/providers/sms-sender.service';
+import { nanoid } from "nanoid";
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepo: UserRepo,
-    private readonly emailService: EmailConfirmationService,
   ) {}
 
   async signUp(params: CreateUserDto) {
     return this.userRepo.knex
       .transaction(async () => {
-        const hasEmail: IUser = await this.userRepo.selectByEmail(params.email);
+        const hasUser: IUser = await this.userRepo.selectByPhone(params.phone);
 
-        if (hasEmail) {
-          throw new EmailAlreadyRegistered();
+        if (hasUser) {
+          throw new PhoneAlreadyRegistered();
         }
 
+        const messageKey = nanoid(15);
         const otp = Math.floor(10000 + Math.random() * 90000);
 
         const [user]: [IUser] = await this.userRepo.insert({
           phone: params.phone,
-          first_name: params.first_name,
-          last_name: params.last_name,
           role: UserRoles.SELLER,
           otp: otp,
-          status: UserStatus.REGISTERED,
-          email: params.email,
         });
 
-        await this.emailService.sendVerificationLink(params.email, otp);
+        await sendSmsTo(params.phone, messageKey, otp);
 
         return { otp: user.otp, phone: user.phone };
       })
       .then((data) => {
         return data;
       });
+  }
+
+  getOwnProfile(currentUser: IUser) {
+    return this.userRepo.selectById(currentUser.id);
   }
 
   findAll() {

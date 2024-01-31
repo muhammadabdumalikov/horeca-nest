@@ -8,6 +8,8 @@ import {
 } from 'src/errors/permission.error';
 import { IUser } from './interface/user.interface';
 import { EmailConfirmationService } from './email-confirmaton.service';
+import { sendSmsTo } from 'src/providers/sms-sender.service';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +20,7 @@ export class AuthService {
   ) {}
 
   async confirmOtp(params: ConfirmOtpDto) {
-    const user: IUser = await this.userRepo.selectByEmail(params.email);
+    const user: IUser = await this.userRepo.selectByPhone(params.phone);
 
     if (!user) {
       throw new UserNotFoundException();
@@ -27,28 +29,30 @@ export class AuthService {
     if (user.otp !== params.otp) {
       throw new IncorrectOtpException();
     }
-
-    return this.jwtService.signAsync(
+    const token = this.jwtService.signAsync(
       { id: user.id },
       { privateKey: 'store-app' },
     );
+
+    return { auth_status: user.auth_status, token };
   }
 
   async login(params: UserLoginDto) {
-    const user: IUser = await this.userRepo.selectByEmail(params.email);
+    const user: IUser = await this.userRepo.selectByPhone(params.phone);
 
     if (!user) {
       throw new UserNotFoundException();
     }
 
     const otp = Math.floor(10000 + Math.random() * 90000);
+    const messageKey = nanoid(15);
 
     await this.userRepo.updateById(user.id, {
       otp: otp,
     });
 
-    await this.emailService.sendVerificationLink(params.email, otp);
+    await sendSmsTo(params.phone, messageKey, otp);
 
-    return { message: 'Check your email for OTP!' };
+    return { message: 'Check your phone sms box for OTP!' };
   }
 }
