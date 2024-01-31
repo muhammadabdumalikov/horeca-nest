@@ -23,18 +23,21 @@ export class ProductService {
   ) {}
 
   async create(params: CreateProductDto, currentUser: IUser) {
+    currentUser;
     return this.productRepo.insert({
       name_uz: params?.name_uz,
       name_ru: params?.name_ru,
-      name_lat: params?.name_lat,
       category_id: params?.category_id,
-      image: params?.image_url,
-      owner_id: currentUser?.id,
-      price: params?.price,
-      sale_price: params?.sale_price,
-      characteristic: params?.characteristic,
+      company_id: params?.company_id,
+      image: params?.image,
+      count_price: params?.count_price,
+      block_price: params?.block_price,
+      discount_price: params?.discount_price,
       description: params?.description,
-      count: params?.count,
+      barcode: params.barcode,
+      count_in_block: params?.count_in_block,
+      block_count: params?.block_count,
+      measure: params?.measure,
     });
   }
 
@@ -75,15 +78,19 @@ export class ProductService {
     }
 
     return await this.productRepo.updateById(id, {
-      name_uz: params.name_uz,
-      name_ru: params.name_ru,
-      name_lat: params.name_lat,
-      image: params.image_url,
-      price: params.price,
-      sale_price: params.sale_price,
-      characteristic: params.characteristic,
-      description: params.description,
-      count: params.count,
+      name_uz: params?.name_uz,
+      name_ru: params?.name_ru,
+      category_id: params?.category_id,
+      company_id: params?.company_id,
+      image: params?.image,
+      count_price: params?.count_price,
+      block_price: params?.block_price,
+      discount_price: params?.discount_price,
+      description: params?.description,
+      barcode: params.barcode,
+      count_in_block: params?.count_in_block,
+      block_count: params?.block_count,
+      measure: params?.measure,
     });
   }
 

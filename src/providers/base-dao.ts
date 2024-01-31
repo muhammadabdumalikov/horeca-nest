@@ -126,12 +126,14 @@ export class BaseRepo<T extends {}> extends KnexBaseRepo {
       .where(where);
   }
 
-  updateById(id: string, value: T, returning = ['*']): Knex.QueryBuilder<T> {
-    return this.knexService
+  async updateById(id: string, value: T, returning = ['*']): Promise<Knex.QueryBuilder<T>> {
+    const data = await this.knexService
       .instance(this._tableName)
       .update(value)
       .where('id', id)
       .returning(returning);
+    
+    return data[0];
   }
 
   softDelete(id) {

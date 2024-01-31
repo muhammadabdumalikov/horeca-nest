@@ -13,50 +13,63 @@ import { SortType } from '../enum/product.enum';
 export class CreateProductDto {
   @ApiProperty()
   @IsString()
-  @MaxLength(64)
-  name_uz: string;
-
-  @ApiProperty()
-  @IsString()
-  @MaxLength(64)
-  name_lat: string;
-
-  @ApiProperty()
-  @IsString()
-  @MaxLength(64)
-  name_ru: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  image_url?: string;
+  company_id: string;
 
   @ApiProperty()
   @IsString()
   category_id: string;
 
   @ApiProperty()
-  @IsNumber()
-  price: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  sale_price?: number;
-
-  @ApiProperty()
-  @IsNumber()
-  count: number;
-
-  @ApiProperty()
-  @IsObject()
-  @IsOptional()
-  characteristic?: object;
+  @IsString()
+  @MaxLength(128)
+  name_uz: string;
 
   @ApiProperty()
   @IsString()
+  @MaxLength(128)
+  name_ru: string;
+
+  @ApiPropertyOptional()
   @IsOptional()
+  @IsNumber()
+  measure?: number;
+
+  @ApiProperty()
+  @IsString()
+  @MaxLength(24)
+  barcode: string;
+
+  @ApiProperty()
+  @IsString()
+  image: string;
+
+  @ApiProperty()
+  @IsNumber()
+  count_in_block: number;
+
+  @ApiProperty()
+  @IsNumber()
+  block_count: number;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  @MaxLength(512)
   description?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  count_price: number;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @IsOptional()
+  discount_price?: number;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @IsOptional()
+  block_price?: number;
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}

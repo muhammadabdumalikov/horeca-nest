@@ -16,7 +16,6 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userRepo: UserRepo,
-    private readonly emailService: EmailConfirmationService,
   ) {}
 
   async confirmOtp(params: ConfirmOtpDto) {
@@ -29,12 +28,15 @@ export class AuthService {
     if (user.otp !== params.otp) {
       throw new IncorrectOtpException();
     }
-    const token = this.jwtService.signAsync(
-      { id: user.id },
+
+    const updatedUser: IUser = await this.userRepo.updateById(user.id, { auth_status: true })
+
+    const token = await this.jwtService.signAsync(
+      { id: updatedUser.id, auth_status: updatedUser.auth_status },
       { privateKey: 'store-app' },
     );
-
-    return { auth_status: user.auth_status, token };
+    
+    return { auth_status: updatedUser.auth_status, token };
   }
 
   async login(params: UserLoginDto) {

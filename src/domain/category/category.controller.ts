@@ -8,8 +8,13 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
   @Get('children/:parent_id')
-  getAll(@Param('parent_id') parent_id: string) {
+  getAllWithChildren(@Param('parent_id') parent_id: string) {
     return this.categoryService.getWithChildren(parent_id);
+  }
+
+  @Get('all')
+  getAll() {
+    return this.categoryService.findAll();
   }
 
   @Get('parents')

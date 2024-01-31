@@ -6,7 +6,7 @@ export class CategoryService {
   constructor(private readonly categoryRepo: CategoryRepo) {}
 
   findAll() {
-    return this.categoryRepo.select({ is_deleted: false }, { limit: 10 });
+    return this.categoryRepo.select({ is_deleted: false }, { limit: 50 });
   }
 
   findOne(id: string) {
