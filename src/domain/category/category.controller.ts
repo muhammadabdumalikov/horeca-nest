@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ApiTags } from '@nestjs/swagger';
+import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @ApiTags('Category')
 @Controller('category')
@@ -13,8 +14,8 @@ export class CategoryController {
   }
 
   @Get('all')
-  getAll() {
-    return this.categoryService.findAll();
+  getAll(@Query() params: ListPageDto) {
+    return this.categoryService.findAll(params);
   }
 
   @Get('parents')

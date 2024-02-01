@@ -1,16 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepo } from './category.repo';
+import { CompanyRepo } from './company.repo';
 import { IListPage } from 'src/shared/interface/list.interface';
+import { IUser } from '../user/interface/user.interface';
+import { ICreateCompany } from './interface/company.interface';
 
 @Injectable()
-export class CategoryService {
-  constructor(private readonly categoryRepo: CategoryRepo) {}
+export class CompanyService {
+  constructor(private readonly companyRepo: CompanyRepo) { }
+
+  async create(params: ICreateCompany) {
+    return this.companyRepo.insert({
+      name_uz: params.name_uz,
+      name_ru: params.name_ru,
+      country_uz: params.country_uz,
+      country_ru: params.country_ru,
+    });
+  }
 
   async findAll(params: IListPage) {
-    const knex = this.categoryRepo.knexService.instance;
+    const knex = this.companyRepo.knexService.instance;
     let query = knex
       .select(['*', knex.raw('count(id) over() as total')])
-      .from(this.categoryRepo._tableName)
+      .from('companies')
       .where('is_deleted', false)
       .orderBy('created_at', 'desc');
 
@@ -21,21 +32,13 @@ export class CategoryService {
     if (params.offset) {
       query = query.offset(Number(params.offset));
     }
-
+  
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
   findOne(id: string) {
-    return this.categoryRepo.selectById(id);
-  }
-
-  async getWithChildren(parent_id: string) {
-    return this.categoryRepo.getWithChildren(parent_id);
-  }
-
-  async getAllParentCategories() {
-    return this.categoryRepo.getAllParentCategories();
+    return this.companyRepo.selectById(id);
   }
 }

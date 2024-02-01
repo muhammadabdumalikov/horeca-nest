@@ -41,11 +41,25 @@ export class ProductService {
     });
   }
 
-  getUserProducts(params: ListPageDto, user: IUser) {
-    return this.productRepo.select(
-      { is_deleted: false, owner_id: user.id },
-      { limit: params.limit, offset: params.offset },
-    );
+  async getUserProducts(params: ListPageDto, user: IUser) {
+    const knex = this.productRepo.knexService.instance;
+    let query = knex
+      .select(['*', knex.raw('count(id) over() as total')])
+      .from(this.productRepo._tableName)
+      .where('is_deleted', false)
+      .orderBy('created_at', 'desc');
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? data[0].total : 0 };
   }
 
   listByCategory(params: ProductListByCategoryDto, user: IUser) {
