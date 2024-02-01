@@ -28,9 +28,9 @@ lerna-debug.log*
 
 
 # Ignore files related to API keys
-.env
-.env.dev
-.env.prod
+# .env
+# .env.dev
+# .env.prod
 
 # Ignore SASS config files
 .sass-cache
