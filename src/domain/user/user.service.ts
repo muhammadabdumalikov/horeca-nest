@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserRepo } from './user.repo';
-import { UserRoles } from './enum/user.enum';
-import { IUser } from './interface/user.interface';
-import { PhoneAlreadyRegistered } from 'src/errors/permission.error';
+import { PersonType, UserRoles } from './enum/user.enum';
+import { IUpdateUser, IUser } from './interface/user.interface';
+import { PhoneAlreadyRegistered, UserNotFoundException } from 'src/errors/permission.error';
 import { sendSmsTo } from 'src/providers/sms-sender.service';
 import { nanoid } from "nanoid";
 
@@ -52,8 +52,20 @@ export class UserService {
     return this.userRepo.selectById(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, params: IUpdateUser) {
+    const hasUser: IUser = await this.userRepo.selectById(id);
+
+    if (hasUser) {
+      throw new UserNotFoundException();
+    }
+
+    return this.userRepo.updateById(id, {
+      first_name: params?.first_name,
+      last_name: params?.last_name,
+      person_type: params?.person_type,
+      legal_name: params?.person_type === PersonType.JURIDIC ? params?.legal_name : null,
+      additional_name: params?.additional_name
+    })
   }
 
   remove(id: number) {

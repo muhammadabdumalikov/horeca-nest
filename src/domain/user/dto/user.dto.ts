@@ -1,5 +1,6 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
+import { PersonType } from '../enum/user.enum';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -7,7 +8,32 @@ export class CreateUserDto {
   phone: string;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserDto) { }
+export class UpdateUserDto {
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  first_name?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  last_name?: string;
+
+  @ApiPropertyOptional({enum: PersonType})
+  @IsEnum(PersonType)
+  @IsOptional()
+  person_type?: PersonType;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  legal_name?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  additional_name?: string;
+}
 
 export class ConfirmOtpDto {
   @ApiProperty()

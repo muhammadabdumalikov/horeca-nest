@@ -1,4 +1,4 @@
-import { UserRoles } from '../enum/user.enum';
+import { PersonType, UserRoles } from '../enum/user.enum';
 
 export interface IUser {
   id: string;
@@ -8,4 +8,12 @@ export interface IUser {
   role: UserRoles;
   auth_status: boolean;
   otp: string;
+}
+
+export interface IUpdateUser {
+  first_name?: string;
+  last_name?: string;
+  person_type?: PersonType;
+  legal_name?: string;
+  additional_name?: string;
 }

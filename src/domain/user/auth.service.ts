@@ -29,14 +29,14 @@ export class AuthService {
       throw new IncorrectOtpException();
     }
 
-    const updatedUser: IUser = await this.userRepo.updateById(user.id, { auth_status: true })
+    // const updatedUser: IUser = await this.userRepo.updateById(user.id, { auth_status: true })
 
     const token = await this.jwtService.signAsync(
-      { id: updatedUser.id, auth_status: updatedUser.auth_status },
+      { id: user.id, auth_status: user.auth_status },
       { privateKey: 'store-app' },
     );
     
-    return { auth_status: updatedUser.auth_status, token };
+    return { auth_status: user.auth_status, token };
   }
 
   async login(params: UserLoginDto) {
