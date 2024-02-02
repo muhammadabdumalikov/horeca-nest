@@ -8,7 +8,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { ListPageDto } from 'src/shared/dto/list.dto';
-import { SortType } from '../enum/product.enum';
+import { MeasureType, SortType } from '../enum/product.enum';
 
 export class CreateProductDto {
   @ApiProperty()
@@ -29,10 +29,10 @@ export class CreateProductDto {
   @MaxLength(128)
   name_ru: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: MeasureType })
   @IsOptional()
-  @IsNumber()
-  measure?: number;
+  @IsEnum(MeasureType)
+  measure?: MeasureType;
 
   @ApiProperty()
   @IsString()

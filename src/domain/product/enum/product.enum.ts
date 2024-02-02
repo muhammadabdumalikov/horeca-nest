@@ -5,3 +5,8 @@ export enum SortType {
   EXPENSIVE = '4',
   RATING = '5',
 }
+
+export enum MeasureType {
+  DONA = 1,
+  KG = 2,
+}

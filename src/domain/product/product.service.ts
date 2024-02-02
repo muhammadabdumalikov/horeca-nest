@@ -30,13 +30,13 @@ export class ProductService {
       category_id: params?.category_id,
       company_id: params?.company_id,
       image: params?.image,
-      count_price: params?.count_price,
-      block_price: params?.block_price,
-      discount_price: params?.discount_price,
+      count_price: +params?.count_price,
+      block_price: +params?.block_price,
+      discount_price: +params?.discount_price,
       description: params?.description,
       barcode: params.barcode,
-      count_in_block: params?.count_in_block,
-      block_count: params?.block_count,
+      count_in_block: +params?.count_in_block,
+      block_count: +params?.block_count,
       measure: params?.measure,
     });
   }
@@ -80,15 +80,11 @@ export class ProductService {
     return this.productRepo.selectById(id);
   }
 
-  async update(id: string, params: UpdateProductDto, currentUser: IUser) {
+  async update(id: string, params: UpdateProductDto) {
     const product = await this.productRepo.selectById(id);
 
     if (isEmpty(product)) {
       throw new ProductNotFoundException();
-    }
-
-    if (product.owner_id !== currentUser.id) {
-      throw new UserHasNotOwnerPermissionException();
     }
 
     return await this.productRepo.updateById(id, {
@@ -97,13 +93,13 @@ export class ProductService {
       category_id: params?.category_id,
       company_id: params?.company_id,
       image: params?.image,
-      count_price: params?.count_price,
-      block_price: params?.block_price,
-      discount_price: params?.discount_price,
+      count_price: +params?.count_price,
+      block_price: +params?.block_price,
+      discount_price: +params?.discount_price,
       description: params?.description,
       barcode: params.barcode,
-      count_in_block: params?.count_in_block,
-      block_count: params?.block_count,
+      count_in_block: +params?.count_in_block,
+      block_count: +params?.block_count,
       measure: params?.measure,
     });
   }

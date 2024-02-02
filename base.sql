@@ -40,12 +40,12 @@ create table products(
 	name_ru character varying(128) not null,
 	barcode character varying(24) not null,
 	image character varying(256) not null,
-	block_count numeric not null,
-	count_in_block numeric not null,
+	block_count smallint,
+	count_in_block smallint not null,
 	description character varying(512) not null,
-	count_price numeric not null,
-	block_price numeric,
-	discount_price numeric,
+	count_price double precision not null,
+	block_price double precision,
+	discount_price double precision,
 	is_deleted boolean default false,
 	created_at timestamptz default current_timestamp,
 	updated_at timestamptz
@@ -64,17 +64,32 @@ insert into products(
 Пищевая ценность в 100 гр.:	
 Белки 2,8г, углеводы 9,9г.', 20000, 120000, 18000);
 
-create table orders
-(
-    id         varchar(24) not null primary key,
-    product_id    varchar(64) not null,
-    count   smallint not null default 1,
-    is_deleted bool        not null     default false,
-    created_at timestamp with time zone default now(),
-    client_data jsonb not null,
-    price integer not null,
-    seller_id varchar(24) not null,
-    status smallint not null default 0
+create table orders(
+	id varchar(24) not null primary key,
+	user_id varchar(24) references users(id) not null,
+  status smallint DEFAULT 1,
+	quantity smallint not null,
+	total_sum double precision null,
+	payment_type smallint not null,
+	is_deleted boolean default false,
+	created_at timestamptz default current_timestamp,
+	updated_at timestamptz,
+	CONSTRAINT fk_customer FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+create table order_items (
+    id varchar(24) PRIMARY KEY,
+    order_id varchar(24) NOT NULL,
+    product_id varchar(24) NOT NULL,
+    quantity smallint NOT NULL,
+		unit_type SMALLINT NOT NULL,
+    price varchar(24) NOT NULL,
+    CONSTRAINT fk_order
+        FOREIGN KEY (order_id)
+        REFERENCES orders(id),
+    CONSTRAINT fk_product
+        FOREIGN KEY (product_id)
+        REFERENCES products(id)
 );
 
 create table advertisements

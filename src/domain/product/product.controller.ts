@@ -27,8 +27,6 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('authorization')
   @Post()
   create(@Body() params: CreateProductDto, @CurrentUser() currentUser: IUser) {
     return this.productService.create(params, currentUser);
@@ -75,9 +73,8 @@ export class ProductController {
   update(
     @Param('id') id: string,
     @Body() params: UpdateProductDto,
-    @CurrentUser() currentUser: IUser,
   ) {
-    return this.productService.update(id, params, currentUser);
+    return this.productService.update(id, params);
   }
 
   @Delete(':id')

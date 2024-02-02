@@ -6,36 +6,54 @@ import { ProductNotFoundException } from 'src/errors/permission.error';
 // import { KnexService } from 'src/providers/knex.service';
 import { IUser } from '../user/interface/user.interface';
 import { isEmpty } from 'lodash';
+import { IProduct } from '../product/interface/product.interface';
+import { OrderStatus, PaymentType } from './dto/order.enum';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly orderRepo: OrdersRepo,
     private readonly productRepo: ProductRepo, // private readonly knexService: KnexService,
-  ) {}
+  ) { }
 
-  async createOrder(params: CreateOrderDto) {
-    const orderedProductArray = [];
+  async createOrder(params: CreateOrderDto, currentUser: IUser) {
+    return this.orderRepo.knex.transaction(async () => {
+      const order = await this.orderRepo.insert({
+        user_id: currentUser.id,
+        status: OrderStatus.REGISTERED,
+        quantity: params.items.length,
+        payment_type: PaymentType[params.payment_type],
+      });
 
-    for await (const value of params.products) {
-      const product = await this.productRepo.selectById(value.product_id);
+      let totalSumOfOrder = 0;
 
-      if (!product) {
-        throw new ProductNotFoundException();
+      for await (const item of params.items) {
+        const product: IProduct = await this.productRepo.selectById(item.product_id);
+
+        if (isEmpty(product)) {
+          throw new ProductNotFoundException();
+        }
+
+        let priceForItem = product.discount_price ? product.discount_price : product.count_price;
+
+        if (item.quantity >= product.count_in_block && +product.block_price < priceForItem) {
+          priceForItem = +product.block_price;
+        }
+
+        const order_item = await this.orderRepo.knex.insert({
+          orderId: order[0]?.id,
+          productId: item.product_id,
+          quantity: item.quantity,
+          price: priceForItem
+        })
+
+        totalSumOfOrder += priceForItem * item.quantity;
       }
 
-      orderedProductArray.push({
-        seller_id: product.owner_id,
-        product_id: value.product_id,
-        client_data: {
-          first_name: params.client_first_name,
-          last_name: params.client_last_name,
-          phone: params.client_phone,
-        },
-        count: value.count,
-        price: product.sale_price * value.count,
-      });
-    }
+      const updatedOrder = await this.orderRepo.updateById(order[0]?.id, { total_sum: totalSumOfOrder })
+      
+      return updatedOrder;
+    })
 
     // const dataForBatchInsert = params.products.map(async (value) => {
     //   const product = await this.productRepo.selectById(value.product_id);
@@ -56,11 +74,6 @@ export class OrdersService {
     //     price: product.sale_price * value.count,
     //   };
     // });
-
-    await this.orderRepo.batchInsert(orderedProductArray, {
-      returning: ['*'],
-      chunkSize: 500,
-    });
 
     return { success: true };
   }

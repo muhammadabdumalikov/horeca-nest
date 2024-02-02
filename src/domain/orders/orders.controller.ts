@@ -20,9 +20,12 @@ import { AuthGuard } from 'src/guard/auth.guard';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('authorization')
   @Post()
-  async createOrder(@Body() params: CreateOrderDto) {
-    return this.ordersService.createOrder(params);
+  async createOrder(@Body() params: CreateOrderDto, @CurrentUser() currentUser: IUser,
+) {
+    return this.ordersService.createOrder(params, currentUser);
   }
 
   @UseGuards(AuthGuard)
