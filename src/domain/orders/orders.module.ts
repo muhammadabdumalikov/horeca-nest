@@ -5,10 +5,11 @@ import { OrdersRepo } from './orders.repo';
 import { ProductRepo } from '../product/product.repo';
 import { UserModule } from '../user/user.module';
 import { JwtService } from '@nestjs/jwt';
+import { OrderItemsRepo } from './oreder-items.repo';
 
 @Module({
   imports: [UserModule],
   controllers: [OrdersController],
-  providers: [OrdersService, OrdersRepo, ProductRepo, JwtService],
+  providers: [OrdersService, OrdersRepo, OrderItemsRepo, ProductRepo, JwtService],
 })
 export class OrdersModule {}

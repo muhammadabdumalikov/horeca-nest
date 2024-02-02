@@ -24,6 +24,7 @@ export class ProductService {
 
   async create(params: CreateProductDto, currentUser: IUser) {
     currentUser;
+
     return this.productRepo.insert({
       name_uz: params?.name_uz,
       name_ru: params?.name_ru,

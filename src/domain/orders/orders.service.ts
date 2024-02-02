@@ -8,21 +8,23 @@ import { IUser } from '../user/interface/user.interface';
 import { isEmpty } from 'lodash';
 import { IProduct } from '../product/interface/product.interface';
 import { OrderStatus, PaymentType } from './dto/order.enum';
+import { OrderItemsRepo } from './oreder-items.repo';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly orderRepo: OrdersRepo,
+    private readonly orderItemsRepo: OrderItemsRepo,
     private readonly productRepo: ProductRepo, // private readonly knexService: KnexService,
   ) { }
 
   async createOrder(params: CreateOrderDto, currentUser: IUser) {
-    return this.orderRepo.knex.transaction(async () => {
+    return this.orderRepo.knex.transaction(async (trx) => {
       const order = await this.orderRepo.insert({
         user_id: currentUser.id,
         status: OrderStatus.REGISTERED,
         quantity: params.items.length,
-        payment_type: PaymentType[params.payment_type],
+        payment_type: params.payment_type,
       });
 
       let totalSumOfOrder = 0;
@@ -39,11 +41,13 @@ export class OrdersService {
         if (item.quantity >= product.count_in_block && +product.block_price < priceForItem) {
           priceForItem = +product.block_price;
         }
-
-        const order_item = await this.orderRepo.knex.insert({
-          orderId: order[0]?.id,
-          productId: item.product_id,
+        
+        const order_item = await this.orderItemsRepo.insertWithTransaction(trx, {
+          id: this.orderItemsRepo.generateRecordId(),
+          order_id: order[0]?.id,
+          product_id: item.product_id,
           quantity: item.quantity,
+          unit_type: product.measure,
           price: priceForItem
         })
 

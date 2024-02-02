@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import { KnexService } from './knex.service';
 import ObjectID from 'bson-objectid';
+import { isEmpty } from 'lodash';
 
 // export interface IBaseQuery<T> {
 //   selectById(id: string, columns?: string[]): Knex.QueryBuilder<T>;
@@ -80,6 +81,18 @@ export class BaseRepo<T extends {}> extends KnexBaseRepo {
   batchInsert(values, { returning = ['*'], chunkSize = 500 }, trx = null) {
     return this._batchInsert(values, { returning, chunkSize }, trx);
   }
+
+  async insertWithTransaction(trx: Knex.Transaction, value: T, returning = ['*'], onConflict = [], merge = []) {
+    let queryBuilder = trx.insert(value).into(this._tableName).returning(returning);
+    if (!isEmpty(onConflict) && isEmpty(merge)) {
+      queryBuilder = queryBuilder.onConflict(onConflict).ignore();
+    }
+    if (!isEmpty(onConflict) && !isEmpty(merge)) {
+      queryBuilder = queryBuilder.onConflict(onConflict).merge(merge);
+    }
+    return queryBuilder.then((data) => (data?.length === 1 ? data[0] : data));
+  }
+
 
   select(
     where,
