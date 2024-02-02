@@ -14,6 +14,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IUser } from '../user/interface/user.interface';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
 import { AuthGuard } from 'src/guard/auth.guard';
+import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -36,6 +37,16 @@ export class OrdersController {
     @CurrentUser() currentUser: IUser,
   ) {
     return this.ordersService.orderList(params, currentUser);
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('authorization')
+  @Get('my')
+  async getMyOrdersList(
+    @Query() params: ListPageDto,
+    @CurrentUser() currentUser: IUser,
+  ) {
+    return this.ordersService.getMyOrdersList(params, currentUser);
   }
 
   @UseGuards(AuthGuard)

@@ -9,6 +9,7 @@ import { isEmpty } from 'lodash';
 import { IProduct } from '../product/interface/product.interface';
 import { OrderStatus, PaymentType } from './dto/order.enum';
 import { OrderItemsRepo } from './oreder-items.repo';
+import { IListPage } from 'src/shared/interface/list.interface';
 
 @Injectable()
 export class OrdersService {
@@ -20,7 +21,7 @@ export class OrdersService {
 
   async createOrder(params: CreateOrderDto, currentUser: IUser) {
     return this.orderRepo.knex.transaction(async (trx) => {
-      const order = await this.orderRepo.insert({
+      const order = await this.orderRepo.insertWithTransaction(trx, {
         user_id: currentUser.id,
         status: OrderStatus.REGISTERED,
         quantity: params.items.length,
@@ -82,19 +83,66 @@ export class OrdersService {
     return { success: true };
   }
 
-  async orderList(params: OrderListDto, currentUser: IUser) {
-    return await this.orderRepo.select(
-      {
-        seller_id: currentUser.id,
-        status: Number(params.status),
-        is_deleted: false,
-      },
-      {
-        limit: params.limit,
-        offset: params.offset,
-        order_by: { column: 'created_at', order: 'desc', use: true },
-      },
-    );
+  async getMyOrdersList(params: OrderListDto, currentUser: IUser) {
+    const knex = this.orderRepo.knex;
+    let query = knex
+      .select([
+        knex.raw(`json_agg(
+          jsonb_build_object(
+            'name_uz', product.name_uz,
+            'name_ru', product.name_ru,
+            'price', product.count_price,
+            'discount_price', product.discount_price,
+            'quantity', item.quantity
+          )
+        ) as order_item`),
+        'order.total_sum',
+        knex.raw('count("order".id) over() as total')
+      ])
+      .from(`${this.orderRepo._tableName} as order`)
+      .innerJoin('order_items as item', function () {
+        this.on('order.id', 'item.order_id')
+      })
+      .innerJoin('products as product', function () {
+        this.on('product.id', 'item.product_id').andOn(knex.raw('product.is_deleted = false'))
+      })
+      .where('order.user_id', currentUser.id)
+      .where('order.is_deleted', false)
+      .groupBy('order.id')
+      .orderBy('order.created_at', 'desc');
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+    
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
+  }
+
+  async orderList(params: IListPage, currentUser: IUser) {
+    const knex = this.orderRepo.knex;
+    let query = knex
+      .select(['*', knex.raw('count(id) over() as total')])
+      .from(this.orderRepo._tableName)
+      .where('is_deleted', false)
+      .orderBy('created_at', 'desc');
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+    
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
   async deleteFromList(id: string, currentUser: IUser) {
