@@ -16,6 +16,11 @@ import { AdminAdvertisementController } from './controller/ads.controller';
 import { AdminAdvertisementService } from './service/ads.service';
 import { AdminAdvertisementRepo } from './repo/ads.repo';
 import { SuperAdminController } from './controller/super-admin.controller';
+import { CompanyRepo } from '../company/company.repo';
+import { CompanyService } from '../company/company.service';
+import { AdminOrderController } from './controller/order.controller';
+import { AdminOrderService } from './service/order.service';
+import { AdminOrdersRepo } from './repo/order.repo';
 
 @Module({
   imports: [UserModule, ProductModule],
@@ -25,6 +30,7 @@ import { SuperAdminController } from './controller/super-admin.controller';
     AdminProductController,
     AdminUserController,
     AdminAdvertisementController,
+    AdminOrderController,
   ],
   providers: [
     AdminCategoryService,
@@ -37,6 +43,10 @@ import { SuperAdminController } from './controller/super-admin.controller';
     OrdersRepo,
     AdminAdvertisementService,
     AdminAdvertisementRepo,
+    CompanyService,
+    CompanyRepo,
+    AdminOrderService,
+    AdminOrdersRepo
   ],
 })
 export class AdminModule {}

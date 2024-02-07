@@ -6,4 +6,12 @@ export class AdminUserRepo extends BaseRepo<any> {
   constructor() {
     super('users');
   }
+
+  selectByPhone(phone: string, columns = ['*']) {
+    return this.knex
+      .select(columns)
+      .from(this._tableName)
+      .where('phone', phone)
+      .first();
+  }
 }

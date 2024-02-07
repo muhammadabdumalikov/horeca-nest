@@ -11,19 +11,19 @@ import {
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { AdminUserService } from '../service/user.service';
 import { RootGuard } from 'src/guard/root.guard';
-import { CreateUserDto } from 'src/domain/user/dto/user.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
+import { CreateWorkerDto } from '../dto/user-admin.dto';
 
 @ApiTags('Admin')
-@ApiBasicAuth('basic')
-@UseGuards(RootGuard)
+// @ApiBasicAuth('basic')
+// @UseGuards(RootGuard)
 @Controller('root')
 export class SuperAdminController {
   constructor(private readonly adminUserService: AdminUserService) {}
 
-  @Post('create-superadmin')
-  async createSuperAdmin(@Body() params: CreateUserDto) {
-    return this.adminUserService.createSuperAdmin(params);
+  @Post('create-worker')
+  async createWorker(@Body() params: CreateWorkerDto) {
+    return this.adminUserService.createworker(params);
   }
 
   @Get('list')

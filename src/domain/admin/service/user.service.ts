@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AdminUserRepo } from '../repo/user.repo';
-import { SetUserStatusDto } from '../dto/user-admin.dto';
+import { CreateWorkerDto, SetUserStatusDto } from '../dto/user-admin.dto';
 import { isEmpty } from 'lodash';
-import { EmailAlreadyRegistered, UserNotFoundException } from 'src/errors/permission.error';
+import { PhoneAlreadyRegistered, UserNotFoundException } from 'src/errors/permission.error';
 import { ListPageDto } from 'src/shared/dto/list.dto';
-import { CreateUserDto } from 'src/domain/user/dto/user.dto';
-import { UserRoles, UserStatus } from 'src/domain/user/enum/user.enum';
+import { UserRoles } from 'src/domain/user/enum/user.enum';
 import { IUser } from 'src/domain/user/interface/user.interface';
 
 @Injectable()
@@ -43,24 +42,29 @@ export class AdminUserService {
     return { success: true };
   }
 
-  async createSuperAdmin(params: CreateUserDto) {
-    const hasEmail: IUser = await this.adminUserRepo.selectByEmail(
-      params.phone,
-    );
+  async createworker(params: CreateWorkerDto) {
+      return this.adminUserRepo.knex
+        .transaction(async () => {
+          const hasUser: IUser = await this.adminUserRepo.selectByPhone(params.phone);
 
-    if (hasEmail) {
-      throw new EmailAlreadyRegistered();
+          if (hasUser) {
+            throw new PhoneAlreadyRegistered();
+          }
+
+          const [user]: [IUser] = await this.adminUserRepo.insert({
+            phone: params.phone,
+            role: params.role,
+            first_name: params.first_name,
+            last_name: params.last_name,
+            auth_status: true
+          });
+
+          return { success: true, user };
+        })
+        .then((data) => {
+          return data;
+        });
     }
-
-    const [user]: [IUser] = await this.adminUserRepo.insert({
-      phone: params.phone,
-      role: UserRoles.ADMIN,
-      status: UserStatus.ACTIVE,
-      email: params.phone,
-    });
-
-    return user;
-  }
 
   findAllAdmins(params: ListPageDto) {
     return this.adminUserRepo.select(
