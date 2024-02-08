@@ -40,6 +40,11 @@ export class ProductController {
     return this.productService.listByCategory(query, user);
   }
 
+  @Get('all')
+  getAll(@Query() params: ListPageDto) {
+    return this.productService.findAll(params);
+  }
+
   @Get('lasts')
   getLastProducts() {
     return this.productService.getLastProducts();

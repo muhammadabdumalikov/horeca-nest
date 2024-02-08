@@ -13,6 +13,7 @@ import {
 } from 'src/errors/permission.error';
 import { isEmpty } from 'lodash';
 import { ListPageDto } from 'src/shared/dto/list.dto';
+import { IListPage } from 'src/shared/interface/list.interface';
 
 @Injectable()
 export class ProductService {
@@ -42,6 +43,27 @@ export class ProductService {
 
   listByCategory(params: ProductListByCategoryDto, user: IUser) {
     return this.productRepo.listByCategory(params, user);
+  }
+
+  async findAll(params: IListPage) {
+    const knex = this.productRepo.knexService.instance;
+    let query = knex
+      .select(['*', knex.raw('count(id) over() as total')])
+      .from('products')  
+      .where('is_deleted', false)
+      .orderBy('created_at', 'desc');
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
   getLastProducts() {
