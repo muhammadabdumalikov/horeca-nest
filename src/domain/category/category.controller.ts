@@ -8,19 +8,9 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
-  @Get('children/:parent_id')
-  getAllWithChildren(@Param('parent_id') parent_id: string) {
-    return this.categoryService.getWithChildren(parent_id);
-  }
-
   @Get('all')
   getAll(@Query() params: ListPageDto) {
     return this.categoryService.findAll(params);
-  }
-
-  @Get('parents')
-  getAllParentCategories() {
-    return this.categoryService.getAllParentCategories();
   }
 
   @Get(':id')

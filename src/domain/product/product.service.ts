@@ -12,14 +12,12 @@ import {
   UserHasNotOwnerPermissionException,
 } from 'src/errors/permission.error';
 import { isEmpty } from 'lodash';
-import { AdsRepo } from './ads.repo';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly productRepo: ProductRepo,
-    private readonly adsRepo: AdsRepo,
   ) {}
 
   async create(params: CreateProductDto, currentUser: IUser) {
@@ -40,27 +38,6 @@ export class ProductService {
       block_count: +params?.block_count,
       measure: params?.measure,
     });
-  }
-
-  async getUserProducts(params: ListPageDto, user: IUser) {
-    const knex = this.productRepo.knexService.instance;
-    let query = knex
-      .select(['*', knex.raw('count(id) over() as total')])
-      .from(this.productRepo._tableName)
-      .where('is_deleted', false)
-      .orderBy('created_at', 'desc');
-
-    if (params.limit) {
-      query = query.limit(Number(params.limit));
-    }
-
-    if (params.offset) {
-      query = query.offset(Number(params.offset));
-    }
-
-    const data = await query;
-
-    return { data: data, total_count: data[0] ? data[0].total : 0 };
   }
 
   listByCategory(params: ProductListByCategoryDto, user: IUser) {
@@ -105,27 +82,7 @@ export class ProductService {
     });
   }
 
-  async delete(id: string, user: IUser) {
-    const product = await this.productRepo.selectById(id);
-
-    if (isEmpty(product)) {
-      throw new ProductNotFoundException();
-    }
-
-    if (product.owner_id !== user.id) {
-      throw new UserHasNotOwnerPermissionException();
-    }
-
-    await this.productRepo.softDelete(id);
-
-    return { success: true };
-  }
-
   async searchProductByName(params: SearchDto) {
     return this.productRepo.searchProductByName(params);
-  }
-
-  async getlastAds() {
-    return this.adsRepo.getLastAds();
   }
 }

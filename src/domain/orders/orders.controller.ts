@@ -48,14 +48,4 @@ export class OrdersController {
   ) {
     return this.ordersService.getMyOrdersList(params, currentUser);
   }
-
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('authorization')
-  @Delete(':id')
-  async deleteOrderFromList(
-    @Param('id') id: string,
-    @CurrentUser() currentUser: IUser,
-  ) {
-    return this.ordersService.deleteFromList(id, currentUser);
-  }
 }

@@ -30,12 +30,4 @@ export class CategoryService {
   findOne(id: string) {
     return this.categoryRepo.selectById(id);
   }
-
-  async getWithChildren(parent_id: string) {
-    return this.categoryRepo.getWithChildren(parent_id);
-  }
-
-  async getAllParentCategories() {
-    return this.categoryRepo.getAllParentCategories();
-  }
 }

@@ -144,28 +144,4 @@ export class OrdersService {
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
-
-  async deleteFromList(id: string, currentUser: IUser) {
-    const order = await this.orderRepo.select({
-      id: id,
-      seller_id: currentUser.id,
-      is_deleted: false,
-    });
-
-    if (isEmpty(order)) {
-      throw new NotFoundException('Order not found!');
-    }
-
-    await this.orderRepo.update(
-      {
-        id: id,
-        seller_id: currentUser.id,
-      },
-      {
-        is_deleted: true,
-      },
-    );
-
-    return { success: true };
-  }
 }
