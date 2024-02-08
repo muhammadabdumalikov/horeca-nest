@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEnum,
   IsNumber,
   IsObject,
@@ -79,20 +80,62 @@ export class ProductListByCategoryDto extends ListPageDto {
   @IsString()
   category_id: string;
 
-  @ApiPropertyOptional({ enum: SortType })
-  @IsEnum(SortType)
-  @IsOptional()
-  sort?: SortType;
+  // @ApiPropertyOptional({ enum: SortType })
+  // @IsEnum(SortType)
+  // @IsOptional()
+  // sort?: SortType;
 
   @ApiPropertyOptional()
-  // @IsNumber()
+  @IsString()
   @IsOptional()
-  from_price?: number;
+  company_id?: string;
 
   @ApiPropertyOptional()
-  // @IsNumber()
+  @IsString()
   @IsOptional()
-  to_price?: number;
+  is_deleted?: 'true' | 'false';
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  date_order?: 'desc' | 'asc';
+}
+
+export class ProductListDto extends ListPageDto {
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  category_id?: string;
+
+  // @ApiPropertyOptional({ enum: SortType })
+  // @IsEnum(SortType)
+  // @IsOptional()
+  // sort?: SortType;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  company_id?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  is_deleted?: 'true' | 'false';
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  search?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  date_order?: 'desc' | 'asc';
 }
 
 export class SearchDto {

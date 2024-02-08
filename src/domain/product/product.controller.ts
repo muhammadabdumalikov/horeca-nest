@@ -13,6 +13,7 @@ import { ProductService } from './product.service';
 import {
   CreateProductDto,
   ProductListByCategoryDto,
+  ProductListDto,
   SearchDto,
   UpdateProductDto,
 } from './dto/product.dto';
@@ -41,7 +42,7 @@ export class ProductController {
   }
 
   @Get('all')
-  getAll(@Query() params: ListPageDto) {
+  getAll(@Query() params: ProductListDto) {
     return this.productService.findAll(params);
   }
 

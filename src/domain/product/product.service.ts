@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateProductDto,
   ProductListByCategoryDto,
+  ProductListDto,
   SearchDto,
   UpdateProductDto,
 } from './dto/product.dto';
@@ -41,27 +42,12 @@ export class ProductService {
     });
   }
 
-  listByCategory(params: ProductListByCategoryDto, user: IUser) {
-    return this.productRepo.listByCategory(params, user);
+  listByCategory(params: ProductListDto, user: IUser) {
+    return this.productRepo.listByCategory(params);
   }
 
   async findAll(params: IListPage) {
-    const knex = this.productRepo.knexService.instance;
-    let query = knex
-      .select(['*', knex.raw('count(id) over() as total')])
-      .from('products')  
-      .where('is_deleted', false)
-      .orderBy('created_at', 'desc');
-
-    if (params.limit) {
-      query = query.limit(Number(params.limit));
-    }
-
-    if (params.offset) {
-      query = query.offset(Number(params.offset));
-    }
-
-    const data = await query;
+    const data = await this.productRepo.listByCategory(params);
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
