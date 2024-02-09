@@ -50,7 +50,7 @@ export class CreateProductDto {
 
   @ApiProperty()
   @IsNumber()
-  block_count: number;
+  product_count: number;
 
   @ApiPropertyOptional()
   @IsString()

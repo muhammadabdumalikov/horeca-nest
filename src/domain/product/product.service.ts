@@ -37,7 +37,7 @@ export class ProductService {
       description: params?.description,
       barcode: params.barcode,
       count_in_block: +params?.count_in_block,
-      block_count: +params?.block_count,
+      block_count: +params?.product_count,
       measure: params?.measure,
     });
   }
@@ -85,7 +85,7 @@ export class ProductService {
       description: params?.description,
       barcode: params.barcode,
       count_in_block: +params?.count_in_block,
-      block_count: +params?.block_count,
+      block_count: +params?.product_count,
       measure: params?.measure,
     });
   }

@@ -40,7 +40,7 @@ create table products(
 	name_ru character varying(128) not null,
 	barcode character varying(24) not null,
 	image character varying(256) not null,
-	block_count smallint,
+	product_count smallint,
 	count_in_block smallint not null,
 	description character varying(512) not null,
 	count_price double precision not null,
