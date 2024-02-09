@@ -52,3 +52,10 @@ export class CategoryNotFoundException extends NotFoundException {
     super({ code: `${ErrorCodes.CATEGORY_NOT_FOUND}` });
   }
 }
+
+export class CompanyNotFoundException extends NotFoundException {
+  constructor() {
+    super({ code: `${ErrorCodes.COMPANY_NOT_FOUND}` });
+  }
+}
+

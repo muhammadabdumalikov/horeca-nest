@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryRepo } from './category.repo';
 import { IListPage } from 'src/shared/interface/list.interface';
+import { isEmpty } from 'lodash';
+import { CategoryNotFoundException } from 'src/errors/permission.error';
 
 @Injectable()
 export class CategoryService {
@@ -27,7 +29,12 @@ export class CategoryService {
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
-  findOne(id: string) {
-    return this.categoryRepo.selectById(id);
+  async findOne(id: string) {
+    const category = await this.categoryRepo.selectById(id);
+
+    if (isEmpty(category)) {
+      throw new CategoryNotFoundException();
+    }
+    return category;
   }
 }

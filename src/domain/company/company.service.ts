@@ -3,6 +3,8 @@ import { CompanyRepo } from './company.repo';
 import { IListPage } from 'src/shared/interface/list.interface';
 import { IUser } from '../user/interface/user.interface';
 import { ICreateCompany } from './interface/company.interface';
+import { isEmpty } from 'lodash';
+import { CompanyNotFoundException } from 'src/errors/permission.error';
 
 @Injectable()
 export class CompanyService {
@@ -38,7 +40,11 @@ export class CompanyService {
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
-  findOne(id: string) {
-    return this.companyRepo.selectById(id);
+  async findOne(id: string) {
+    const company = await this.companyRepo.selectById(id);
+    if (isEmpty(company)) {
+      throw new CompanyNotFoundException();
+    }
+    return company;;
   }
 }

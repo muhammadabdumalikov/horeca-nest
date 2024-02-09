@@ -8,5 +8,7 @@ export enum ErrorCodes {
 
   CATEGORY_NOT_FOUND = 601,
 
+  COMPANY_NOT_FOUND = 501,
+
   PRODUCT_NOT_FOUND = 301,
 }

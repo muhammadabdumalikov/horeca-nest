@@ -62,8 +62,13 @@ export class ProductService {
     );
   }
 
-  findOne(id: string) {
-    return this.productRepo.selectById(id);
+  async findOne(id: string) {
+    const product = await this.productRepo.selectById(id);
+
+    if (isEmpty(product)) {
+      throw new ProductNotFoundException();
+    }
+    return product;
   }
 
   async update(id: string, params: UpdateProductDto) {
