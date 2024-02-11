@@ -4,6 +4,6 @@ import { BaseRepo } from 'src/providers/base-dao';
 @Injectable()
 export class AdminCategoryRepo extends BaseRepo<any> {
   constructor() {
-    super('category');
+    super('categories');
   }
 }
