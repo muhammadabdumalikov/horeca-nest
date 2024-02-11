@@ -32,7 +32,7 @@ export class AdminCategoryController {
 
   @Get('all')
   getAllCategories(@Query() params: ListPageDto) {
-    return this.adminCategoryService.getAllCategories(params);
+    return this.adminCategoryService.findAll(params);
   }
 
   @Patch(':id')

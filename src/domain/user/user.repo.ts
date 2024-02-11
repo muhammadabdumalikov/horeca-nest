@@ -26,7 +26,7 @@ export class UserRepo extends BaseRepo<any> {
   softDeleteUser(id) {
     return this.knexService
       .instance(this._tableName)
-      .update({ is_deleted: true, phone: null })
+      .update({ is_deleted: true, phone: '000000000000' })
       .where('id', id);
   }
 }

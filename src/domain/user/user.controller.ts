@@ -60,7 +60,7 @@ export class UserController {
 
   @ApiBearerAuth('authorization')
   @UseGuards(AuthGuard)
-  @Delete('delete-profile/:id')
+  @Delete('delete-profile')
   async delete(@CurrentUser() user: IUser) {
     return this.userService.delete(user.id);
   }
