@@ -28,11 +28,6 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post()
-  create(@Body() params: CreateProductDto, @CurrentUser() currentUser: IUser) {
-    return this.productService.create(params, currentUser);
-  }
-
   @Get('list-by-category')
   listByCategory(
     @Query() query: ProductListByCategoryDto,

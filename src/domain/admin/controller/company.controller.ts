@@ -4,6 +4,7 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { CreateCompanyDto } from 'src/domain/company/dto/company.dto';
 import { CompanyService } from 'src/domain/company/company.service';
+import { GetCompanyListDto } from '../dto/company.admin.dto';
 
 @ApiTags('Company')
 @Controller('admin/company')
@@ -16,7 +17,7 @@ export class CompanyController {
   }
 
   @Get('all')
-  getAll(@Query() params: ListPageDto) {
+  getAll(@Query() params: GetCompanyListDto) {
     return this.companyService.findAll(params);
   }
 

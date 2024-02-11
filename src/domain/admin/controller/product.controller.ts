@@ -15,16 +15,24 @@ import { AdminGuard } from 'src/guard/admin.guard';
 import { ProductService } from 'src/domain/product/product.service';
 import { OrderListDto } from 'src/domain/orders/dto/order.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
+import { CurrentUser } from 'src/decorator/current-user.decorator';
+import { CreateProductDto } from 'src/domain/product/dto/product.dto';
+import { IUser } from 'src/domain/user/interface/user.interface';
 
 @ApiTags('Admin')
-@ApiBearerAuth('authorization')
-@UseGuards(AdminGuard)
+// @ApiBearerAuth('authorization')
+// @UseGuards(AdminGuard)
 @Controller('admin/product')
 export class AdminProductController {
   constructor(
     private readonly adminProductService: AdminProductService,
     private readonly productService: ProductService,
-  ) {}
+  ) { }
+
+  @Post()
+  create(@Body() params: CreateProductDto, @CurrentUser() currentUser: IUser) {
+    return this.adminProductService.create(params, currentUser);
+  }
 
   @Post('set-status')
   async setStatus(@Body() params: SetProductStatusDto) {

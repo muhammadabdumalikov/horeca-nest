@@ -1,9 +1,8 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ListPageDto } from 'src/shared/dto/list.dto';
 import { AuthGuard } from 'src/guard/auth.guard';
-import { CreateCompanyDto } from './dto/company.dto';
+import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @ApiTags('Company')
 @Controller('company')

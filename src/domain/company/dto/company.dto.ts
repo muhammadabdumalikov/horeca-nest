@@ -1,5 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MaxLength } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsOptional, IsString, MaxLength } from "class-validator";
+import { ListPageDto } from "src/shared/dto/list.dto";
 
 export class CreateCompanyDto {
   @ApiProperty()

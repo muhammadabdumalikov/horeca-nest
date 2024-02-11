@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CompanyRepo } from './company.repo';
-import { IListPage } from 'src/shared/interface/list.interface';
 import { IUser } from '../user/interface/user.interface';
-import { ICreateCompany } from './interface/company.interface';
+import { ICompanyList, ICreateCompany } from './interface/company.interface';
 import { isEmpty } from 'lodash';
 import { CompanyNotFoundException } from 'src/errors/permission.error';
+import { IListPage } from 'src/shared/interface/list.interface';
 
 @Injectable()
 export class CompanyService {
@@ -19,13 +19,21 @@ export class CompanyService {
     });
   }
 
-  async findAll(params: IListPage) {
+  async findAll(params: ICompanyList) {
     const knex = this.companyRepo.knexService.instance;
     let query = knex
       .select(['*', knex.raw('count(id) over() as total')])
       .from('companies')
-      .where('is_deleted', false)
       .orderBy('created_at', 'desc');
+    
+
+    if (params.is_deleted === 'true') {
+      query.where('is_deleted', true);
+    }
+
+    if (params.is_deleted === 'false') {
+      query.where('is_deleted', false);
+    } 
 
     if (params.limit) {
       query = query.limit(Number(params.limit));

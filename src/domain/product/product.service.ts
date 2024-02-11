@@ -22,26 +22,6 @@ export class ProductService {
     private readonly productRepo: ProductRepo,
   ) {}
 
-  async create(params: CreateProductDto, currentUser: IUser) {
-    currentUser;
-
-    return this.productRepo.insert({
-      name_uz: params?.name_uz,
-      name_ru: params?.name_ru,
-      category_id: params?.category_id,
-      company_id: params?.company_id,
-      image: params?.image,
-      count_price: +params?.count_price,
-      block_price: +params?.block_price,
-      discount_price: +params?.discount_price,
-      description: params?.description,
-      barcode: params.barcode,
-      count_in_block: +params?.count_in_block,
-      block_count: +params?.product_count,
-      measure: params?.measure,
-    });
-  }
-
   listByCategory(params: ProductListDto, user: IUser) {
     return this.productRepo.listByCategory(params);
   }
