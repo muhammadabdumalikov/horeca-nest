@@ -5,6 +5,7 @@ import { ICompanyList, ICreateCompany } from './interface/company.interface';
 import { isEmpty } from 'lodash';
 import { CompanyNotFoundException } from 'src/errors/permission.error';
 import { IListPage } from 'src/shared/interface/list.interface';
+import { UpdateCompanyDto } from './dto/company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -54,5 +55,33 @@ export class CompanyService {
       throw new CompanyNotFoundException();
     }
     return company;;
+  }
+
+  async delete(id: string) {
+    const company = await this.companyRepo.selectById(id);
+
+    if (isEmpty(company)) {
+      throw new CompanyNotFoundException();
+    }
+
+    await this.companyRepo.softDelete(id);
+
+    return { success: true };
+  }
+
+  async update(id: string, params: UpdateCompanyDto) {
+    const product = await this.companyRepo.selectById(id);
+
+    if (isEmpty(product)) {
+      throw new CompanyNotFoundException();
+    }
+
+    return await this.companyRepo.updateById(id, {
+      name_uz: params?.name_uz,
+      name_ru: params?.name_ru,
+      country_ru: params?.country_ru,
+      country_uz: params?.country_uz,
+      is_deleted: params?.is_deleted
+    });
   }
 }

@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsOptional, IsString, MaxLength } from "class-validator";
+import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
+import { IsBoolean, IsOptional, IsString, MaxLength } from "class-validator";
 import { ListPageDto } from "src/shared/dto/list.dto";
 
 export class CreateCompanyDto {
@@ -22,4 +22,11 @@ export class CreateCompanyDto {
   @IsString()
   @MaxLength(128)
   country_ru: string;
+}
+
+export class UpdateCompanyDto extends PartialType(CreateCompanyDto) {
+  @ApiPropertyOptional()
+  @IsBoolean()
+  @IsOptional()
+  is_deleted?: string;
 }
