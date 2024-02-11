@@ -55,7 +55,7 @@ export class UserService {
   async update(id: string, params: IUpdateUser) {
     const hasUser: IUser = await this.userRepo.selectById(id);
 
-    if (hasUser) {
+    if (!hasUser) {
       throw new UserNotFoundException();
     }
 
