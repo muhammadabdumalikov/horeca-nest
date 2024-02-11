@@ -57,4 +57,11 @@ export class UserController {
   update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() user: IUser) {
     return this.userService.update(user, updateUserDto);
   }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
+  @Delete('delete-profile/:id')
+  async delete(@CurrentUser() user: IUser) {
+    return this.userService.delete(user.id);
+  }
 }

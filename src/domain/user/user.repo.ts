@@ -22,4 +22,11 @@ export class UserRepo extends BaseRepo<any> {
       .where('email', email)
       .first();
   }
+
+  softDeleteUser(id) {
+    return this.knexService
+      .instance(this._tableName)
+      .update({ is_deleted: true, phone: null })
+      .where('id', id);
+  }
 }

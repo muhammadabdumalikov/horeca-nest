@@ -70,7 +70,13 @@ export class UserService {
     })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async delete(id: string) {
+    const user = await this.userRepo.selectById(id);
+
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+
+    return this.userRepo.softDeleteUser(id);
   }
 }
