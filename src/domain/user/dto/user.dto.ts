@@ -33,6 +33,11 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   additional_name?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  address?: string;
 }
 
 export class ConfirmOtpDto {

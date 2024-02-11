@@ -52,19 +52,20 @@ export class UserService {
     return this.userRepo.selectById(id);
   }
 
-  async update(id: string, params: IUpdateUser) {
-    const hasUser: IUser = await this.userRepo.selectById(id);
+  async update(currentUser: IUser, params: IUpdateUser) {
+    const hasUser: IUser = await this.userRepo.selectById(currentUser.id);
 
     if (!hasUser) {
       throw new UserNotFoundException();
     }
 
-    return this.userRepo.updateById(id, {
+    return this.userRepo.updateById(currentUser.id, {
       first_name: params?.first_name,
       last_name: params?.last_name,
       person_type: params?.person_type,
       legal_name: params?.person_type === PersonType.JURIDIC ? params?.legal_name : null,
-      additional_name: params?.additional_name
+      additional_name: params?.additional_name,
+      address: params?.address
     })
   }
 

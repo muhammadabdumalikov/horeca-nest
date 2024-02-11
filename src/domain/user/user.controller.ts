@@ -51,8 +51,10 @@ export class UserController {
     return this.userService.getOwnProfile(currentUser);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
+  @Patch('update-profile')
+  update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() user: IUser) {
+    return this.userService.update(user, updateUserDto);
   }
 }

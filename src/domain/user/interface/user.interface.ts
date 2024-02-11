@@ -16,4 +16,5 @@ export interface IUpdateUser {
   person_type?: PersonType;
   legal_name?: string;
   additional_name?: string;
+  address?: string;
 }
