@@ -26,12 +26,12 @@ export class SuperAdminController {
     return this.adminUserService.createworker(params);
   }
 
-  @Get('list')
+  @Get('worker-list')
   async list(@Query() params: ListPageDto) {
     return this.adminUserService.findAllAdmins(params);
   }
 
-  @Delete(':id')
+  @Delete('delete-worker/:id')
   async delete(@Param('id') id: string) {
     return this.adminUserService.delete(id);
   }

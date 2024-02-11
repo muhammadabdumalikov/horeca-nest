@@ -20,6 +20,7 @@ import { CompanyService } from '../company/company.service';
 import { AdminOrderController } from './controller/order.controller';
 import { AdminOrderService } from './service/order.service';
 import { AdminOrdersRepo } from './repo/order.repo';
+import { AdminCompanyController } from './controller/company.controller';
 
 @Module({
   imports: [UserModule, ProductModule],
@@ -29,6 +30,7 @@ import { AdminOrdersRepo } from './repo/order.repo';
     AdminProductController,
     AdminUserController,
     AdminOrderController,
+    AdminCompanyController
   ],
   providers: [
     AdminCategoryService,

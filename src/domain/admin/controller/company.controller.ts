@@ -6,9 +6,9 @@ import { CreateCompanyDto, UpdateCompanyDto } from 'src/domain/company/dto/compa
 import { CompanyService } from 'src/domain/company/company.service';
 import { GetCompanyListDto } from '../dto/company.admin.dto';
 
-@ApiTags('Company')
+@ApiTags('Admin')
 @Controller('admin/company')
-export class CompanyController {
+export class AdminCompanyController {
   constructor(private readonly companyService: CompanyService) { }
 
   @Post()
@@ -22,7 +22,7 @@ export class CompanyController {
   }
 
   @Get(':id')
-  getCategoryById(@Param('id') id: string) {
+  getCompanyById(@Param('id') id: string) {
     return this.companyService.findOne(id);
   }
 

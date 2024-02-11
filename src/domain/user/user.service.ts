@@ -65,7 +65,8 @@ export class UserService {
       person_type: params?.person_type,
       legal_name: params?.person_type === PersonType.JURIDIC ? params?.legal_name : null,
       additional_name: params?.additional_name,
-      address: params?.address
+      address: params?.address,
+      auth_status: hasUser.first_name || params?.first_name ? true : false,
     })
   }
 
