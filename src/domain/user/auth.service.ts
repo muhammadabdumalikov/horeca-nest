@@ -32,7 +32,7 @@ export class AuthService {
     // const updatedUser: IUser = await this.userRepo.updateById(user.id, { auth_status: true })
 
     const token = await this.jwtService.signAsync(
-      { id: user.id, auth_status: user.auth_status },
+      { id: user.id, auth_status: user.auth_status, role: user.role },
       { privateKey: 'store-app' },
     );
     
