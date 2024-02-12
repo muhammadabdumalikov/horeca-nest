@@ -19,8 +19,8 @@ import {
 import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @ApiTags('Admin')
-@UseGuards(AdminGuard)
-@ApiBearerAuth('authorization')
+// @UseGuards(AdminGuard)
+// @ApiBearerAuth('authorization')
 @Controller('admin/category')
 export class AdminCategoryController {
   constructor(private readonly adminCategoryService: AdminCategoryService) {}
