@@ -1,8 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
   MaxLength,
   ValidateNested,
@@ -21,6 +22,16 @@ class SingleOrderDto {
   product_id: string;
 }
 
+class LocationDto {
+  @ApiProperty()
+  @IsNumber()
+  long: number;
+
+  @ApiProperty()
+  @IsString()
+  lat: string;
+}
+
 export class CreateOrderDto {
   @ApiProperty({ isArray: true, type: () => SingleOrderDto })
   @Type(() => SingleOrderDto)
@@ -30,6 +41,16 @@ export class CreateOrderDto {
   @ApiProperty({ enum: PaymentType })
   @IsEnum(PaymentType)
   payment_type: PaymentType;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  comment?: string;
+
+  @ApiProperty({ type: () => LocationDto })
+  @Type(() => LocationDto)
+  @ValidateNested({ each: true })
+  location: LocationDto;
 }
 
 export class OrderListDto extends ListPageDto {

@@ -25,6 +25,8 @@ export class OrdersService {
         user_id: currentUser.id,
         status: OrderStatus.REGISTERED,
         quantity: params.items.length,
+        comment: params?.comment,
+        location: params.location,
         payment_type: params.payment_type,
       });
 
