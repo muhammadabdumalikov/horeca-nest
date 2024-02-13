@@ -67,7 +67,6 @@ insert into products(
 create table orders(
 	id varchar(24) not null primary key,
 	user_id varchar(24) references users(id) not null,
-  status smallint DEFAULT 1,
 	quantity smallint not null,
 	total_sum double precision null,
 	payment_type smallint not null,
@@ -93,7 +92,7 @@ create table order_items (
         REFERENCES products(id)
 );
 
-create table advertisements
+create table notifications
 (
     id         varchar(24) not null primary key,
     title      varchar(255),
@@ -108,7 +107,7 @@ create table advertisements
 --------------------------
 
 create database horeca_client;
-ALTER USER postgres WITH PASSWORD 'ahhwqe11aliy';
+ALTER USER postgres WITH PASSWORD 'a1Gd6UnQdz6W';
 create extension pgcrypto;
 create extension intarray;
 -- create type experience_role as enum('1-3', '3-5', '5-10');
@@ -124,9 +123,9 @@ create table regions(
 create unique index region_uz_name_uniq on regions (uz_name);
 create unique index region_ru_name_uniq on regions (ru_name);
 create unique index region_en_name_uniq on regions (en_name);
-insert into regions(uz_name, ru_name, en_name) values
-('Toshkent shahri', 'Город Ташкент', 'Tashkent city'),
-('Toshkent viloyati',  'Ташкентская область', 'Tashkent region');
+insert into regions(name_uz, name_ru) values
+('Toshkent shahri', 'Город Ташкент'),
+('Toshkent viloyati',  'Ташкентская область');
 
 
 
