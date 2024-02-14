@@ -93,10 +93,11 @@ create table order_items (
         REFERENCES products(id)
 );
 
-create table advertisements
+create table notifications
 (
     id         varchar(24) not null primary key,
     title      varchar(255),
+		body			text null,
     image          text        null,
     link          text        null,
     is_deleted bool        not null     default false,
