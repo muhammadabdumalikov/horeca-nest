@@ -12,7 +12,7 @@ export class NotificationController {
     return this.notificationService.create(createNotificationDto);
   }
 
-  @Get()
+  @Get('list')
   findAll(@Param() params: ListPageDto) {
     return this.notificationService.findAll(params);
   }
