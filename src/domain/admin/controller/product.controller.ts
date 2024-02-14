@@ -35,11 +35,6 @@ export class AdminProductController {
     return this.adminProductService.create(params, currentUser);
   }
 
-  @Post('set-status')
-  async setStatus(@Body() params: SetProductStatusDto) {
-    return this.adminProductService.setStatus(params);
-  }
-
   @Get('list')
   async list(@Query() params: ListPageDto) {
     return this.adminProductService.findAll(params);

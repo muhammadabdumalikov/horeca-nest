@@ -32,7 +32,7 @@ export class AdminCategoryController {
     return this.adminCategoryService.create(params);
   }
 
-  @Get('all')
+  @Get('list')
   getAllCategories(@Query() params: AdminCategoryListPageDto) {
     return this.adminCategoryService.findAll(params);
   }

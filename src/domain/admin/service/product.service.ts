@@ -8,6 +8,8 @@ import { OrderListDto } from 'src/domain/orders/dto/order.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 import { CreateProductDto, UpdateProductDto } from 'src/domain/product/dto/product.dto';
 import { IUser } from 'src/domain/user/interface/user.interface';
+import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
+import { AdminCategoryListPageDto } from '../dto/category-admin.dto';
 
 @Injectable()
 export class AdminProductService {
@@ -36,23 +38,42 @@ export class AdminProductService {
     });
   }
 
-  setStatus(params: SetProductStatusDto) {
-    return this.adminProductRepo.updateById(params.product_id, {
-      status: params.status,
-    });
-  }
+  async findAll(params: AdminCategoryListPageDto) {
+    const knex = this.adminProductRepo.knexService.instance;
+    let query = knex
+      .select(['*', knex.raw('count(id) over() as total')])
+      .from('products')
+      .orderBy('created_at', 'desc');
 
-  findAll(params: ListPageDto) {
-    return this.adminProductRepo.select(
-      {
-        is_deleted: false,
-      },
-      {
-        limit: params.limit,
-        offset: params.offset,
-        order_by: { column: 'created_at', order: 'desc', use: true },
-      },
-    );
+    if (params?.search) {
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('name_uz', `ilike`, `%${name_latin}%`)
+          .orWhere('name_ru', `ilike`, `%${name_krill}%`),
+      );
+    }
+
+    if (params.is_deleted === 'true') {
+      query.where('is_deleted', true);
+    }
+
+    if (params.is_deleted === 'false') {
+      query.where('is_deleted', false);
+    }
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
   async delete(id: string) {

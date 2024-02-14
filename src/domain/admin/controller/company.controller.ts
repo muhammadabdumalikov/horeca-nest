@@ -17,7 +17,7 @@ export class AdminCompanyController {
     return this.companyService.create(params);
   }
 
-  @Get('all')
+  @Get('list')
   getAllCompanies(@Query() params: AdminCategoryListPageDto) {
     return this.companyService.findAll(params);
   }
