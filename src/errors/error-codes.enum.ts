@@ -11,4 +11,6 @@ export enum ErrorCodes {
   COMPANY_NOT_FOUND = 501,
 
   PRODUCT_NOT_FOUND = 301,
+
+  NOTIFICATION_NOT_FOUND = 701,
 }

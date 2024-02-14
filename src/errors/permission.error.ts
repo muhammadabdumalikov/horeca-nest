@@ -59,3 +59,9 @@ export class CompanyNotFoundException extends NotFoundException {
   }
 }
 
+export class NotificationNotFoundException extends NotFoundException {
+  constructor() {
+    super({ code: `${ErrorCodes.NOTIFICATION_NOT_FOUND}` });
+  }
+}
+

@@ -9,6 +9,7 @@ import { PoolService } from './providers/pool.service';
 import { FileRouterModule } from './domain/file-router/file-router.module';
 import { OrdersModule } from './domain/orders/orders.module';
 import { CompanyModule } from './domain/company/company.module';
+import { NotificationModule } from './domain/notification/notification.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CompanyModule } from './domain/company/company.module';
     AdminModule,
     FileRouterModule,
     OrdersModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, PoolService],
