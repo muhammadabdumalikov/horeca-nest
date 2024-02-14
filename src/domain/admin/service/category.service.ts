@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { AdminCategoryRepo } from '../repo/category.repo';
 import {
+  AdminCategoryListPageDto,
   CreateCategoryDto,
+  SetCategoryStatusDto,
   UpdateCategoryDto,
 } from 'src/domain/admin/dto/category-admin.dto';
 import { isEmpty } from 'lodash';
 import { CategoryNotFoundException } from 'src/errors/permission.error';
-import { ListPageDto } from 'src/shared/dto/list.dto';
-import { ICompanyList } from 'src/domain/company/interface/company.interface';
+import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
 
 @Injectable()
 export class AdminCategoryService {
@@ -43,11 +44,11 @@ export class AdminCategoryService {
     return this.adminCategoryRepo.softDelete(id);
   }
 
-  async findAll(params: ICompanyList) {
+  async findAll(params: AdminCategoryListPageDto) {
     const knex = this.adminCategoryRepo.knexService.instance;
     let query = knex
       .select(['*', knex.raw('count(id) over() as total')])
-      .from('companies')
+      .from('categories')
       .orderBy('created_at', 'desc');
 
 
@@ -57,6 +58,16 @@ export class AdminCategoryService {
 
     if (params.is_deleted === 'false') {
       query.where('is_deleted', false);
+    }
+
+    if (params?.search) {
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('name_uz', `ilike`, `%${name_latin}%`)
+          .orWhere('name_ru', `ilike`, `%${name_krill}%`),
+      );
     }
 
     if (params.limit) {
@@ -70,5 +81,11 @@ export class AdminCategoryService {
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
+  }
+
+  setStatus(params: SetCategoryStatusDto) {
+    return this.adminCategoryRepo.updateById(params.category_id, {
+      is_deleted: params.is_deleted === 'true',
+    });
   }
 }

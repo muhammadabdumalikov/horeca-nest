@@ -13,7 +13,9 @@ import { AdminCategoryService } from '../service/category.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
 import {
+  AdminCategoryListPageDto,
   CreateCategoryDto,
+  SetCategoryStatusDto,
   UpdateCategoryDto,
 } from 'src/domain/admin/dto/category-admin.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
@@ -31,8 +33,13 @@ export class AdminCategoryController {
   }
 
   @Get('all')
-  getAllCategories(@Query() params: ListPageDto) {
+  getAllCategories(@Query() params: AdminCategoryListPageDto) {
     return this.adminCategoryService.findAll(params);
+  }
+
+  @Post('set-status')
+  async setStatus(@Body() params: SetCategoryStatusDto) {
+    return this.adminCategoryService.setStatus(params);
   }
 
   @Patch(':id')

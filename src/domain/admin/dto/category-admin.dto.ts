@@ -1,5 +1,6 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { ListPageDto } from 'src/shared/dto/list.dto';
 
 export class CreateCategoryDto {
   @ApiProperty()
@@ -14,3 +15,25 @@ export class CreateCategoryDto {
 }
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) { }
+
+export class AdminCategoryListPageDto extends ListPageDto{
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  search?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  is_deleted?: string;
+}
+
+export class SetCategoryStatusDto {
+  @ApiProperty()
+  @IsString()
+  category_id: string;
+
+  @ApiProperty()
+  @IsString()
+  is_deleted: string;
+}
