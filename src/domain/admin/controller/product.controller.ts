@@ -19,6 +19,7 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
 import { CreateProductDto, UpdateProductDto } from 'src/domain/product/dto/product.dto';
 import { IUser } from 'src/domain/user/interface/user.interface';
+import { AdminCategoryListPageDto } from '../dto/category-admin.dto';
 
 @ApiTags('Admin')
 // @ApiBearerAuth('authorization')
@@ -36,7 +37,7 @@ export class AdminProductController {
   }
 
   @Get('list')
-  async list(@Query() params: ListPageDto) {
+  async list(@Query() params: AdminCategoryListPageDto) {
     return this.adminProductService.findAll(params);
   }
 
