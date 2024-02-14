@@ -10,6 +10,7 @@ import { IUser } from './interface/user.interface';
 import { EmailConfirmationService } from './email-confirmaton.service';
 import { sendSmsTo } from 'src/providers/sms-sender.service';
 import { nanoid } from 'nanoid';
+import { UserRoles } from './enum/user.enum';
 
 @Injectable()
 export class AuthService {
@@ -39,22 +40,45 @@ export class AuthService {
     return { auth_status: user.auth_status, token };
   }
 
+  // async login(params: UserLoginDto) {
+  //   const user: IUser = await this.userRepo.selectByPhone(params.phone);
+
+  //   if (!user) {
+  //     throw new UserNotFoundException();
+  //   }
+
+  //   const otp = Math.floor(10000 + Math.random() * 90000);
+  //   const messageKey = nanoid(15);
+
+  //   await this.userRepo.updateById(user.id, {
+  //     otp: otp,
+  //   });
+
+  //   await sendSmsTo(params.phone, messageKey, otp);
+
+  //   return { message: 'Check your phone sms box for OTP!' };
+  // }
+
   async login(params: UserLoginDto) {
-    const user: IUser = await this.userRepo.selectByPhone(params.phone);
-
-    if (!user) {
-      throw new UserNotFoundException();
-    }
-
-    const otp = Math.floor(10000 + Math.random() * 90000);
     const messageKey = nanoid(15);
+    const otp = Math.floor(10000 + Math.random() * 90000);
 
-    await this.userRepo.updateById(user.id, {
-      otp: otp,
-    });
+    var user: IUser = await this.userRepo.selectByPhone(params.phone);
+
+    if (user) {
+      await this.userRepo.updateById(user.id, {
+        otp: otp,
+      });
+    } else {
+      user = await this.userRepo.insert({
+        phone: params.phone,
+        role: UserRoles.SELLER,
+        otp: otp,
+      });
+    }
 
     await sendSmsTo(params.phone, messageKey, otp);
 
-    return { message: 'Check your phone sms box for OTP!' };
+    return { otp: user.otp, phone: user.phone };
   }
 }
