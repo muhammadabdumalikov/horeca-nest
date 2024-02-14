@@ -24,12 +24,12 @@ class SingleOrderDto {
 
 class LocationDto {
   @ApiProperty()
-  @IsNumber()
-  long: number;
+  @IsString()
+  lat: string;
 
   @ApiProperty()
   @IsString()
-  lat: string;
+  long: string;
 }
 
 export class CreateOrderDto {
