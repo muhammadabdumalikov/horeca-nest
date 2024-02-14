@@ -6,7 +6,7 @@ import { ProductNotFoundException } from 'src/errors/permission.error';
 import { OrdersRepo } from 'src/domain/orders/orders.repo';
 import { OrderListDto } from 'src/domain/orders/dto/order.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
-import { CreateProductDto } from 'src/domain/product/dto/product.dto';
+import { CreateProductDto, UpdateProductDto } from 'src/domain/product/dto/product.dto';
 import { IUser } from 'src/domain/user/interface/user.interface';
 
 @Injectable()
@@ -79,5 +79,29 @@ export class AdminProductService {
         order_by: { column: 'created_at', order: 'desc', use: true },
       },
     );
+  }
+  
+  async update(id: string, params: UpdateProductDto) {
+    const product = await this.adminProductRepo.selectById(id);
+
+    if (isEmpty(product)) {
+      throw new ProductNotFoundException();
+    }
+
+    return await this.adminProductRepo.updateById(id, {
+      name_uz: params?.name_uz,
+      name_ru: params?.name_ru,
+      category_id: params?.category_id,
+      company_id: params?.company_id,
+      image: params?.image,
+      count_price: +params?.count_price,
+      block_price: +params?.block_price,
+      discount_price: +params?.discount_price,
+      description: params?.description,
+      barcode: params.barcode,
+      count_in_block: +params?.count_in_block,
+      product_count: +params?.product_count,
+      measure: params?.measure,
+    });
   }
 }

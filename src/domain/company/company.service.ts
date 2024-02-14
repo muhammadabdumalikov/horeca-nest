@@ -6,6 +6,9 @@ import { isEmpty } from 'lodash';
 import { CompanyNotFoundException } from 'src/errors/permission.error';
 import { IListPage } from 'src/shared/interface/list.interface';
 import { UpdateCompanyDto } from './dto/company.dto';
+import { SetCompanyStatusDto } from '../admin/dto/company.admin.dto';
+import { AdminCategoryListPageDto } from '../admin/dto/category-admin.dto';
+import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
 
 @Injectable()
 export class CompanyService {
@@ -20,13 +23,22 @@ export class CompanyService {
     });
   }
 
-  async findAll(params: ICompanyList) {
+  async findAll(params: AdminCategoryListPageDto) {
     const knex = this.companyRepo.knexService.instance;
     let query = knex
       .select(['*', knex.raw('count(id) over() as total')])
       .from('companies')
       .orderBy('created_at', 'desc');
     
+    if (params?.search) {
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('name_uz', `ilike`, `%${name_latin}%`)
+          .orWhere('name_ru', `ilike`, `%${name_krill}%`),
+      );
+    }
 
     if (params.is_deleted === 'true') {
       query.where('is_deleted', true);
@@ -82,6 +94,12 @@ export class CompanyService {
       country_ru: params?.country_ru,
       country_uz: params?.country_uz,
       is_deleted: params?.is_deleted
+    });
+  }
+
+  setStatus(params: SetCompanyStatusDto) {
+    return this.companyRepo.updateById(params.company_id, {
+      is_deleted: params.is_deleted === 'true',
     });
   }
 }

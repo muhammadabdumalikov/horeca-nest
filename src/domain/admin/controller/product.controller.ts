@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { AdminProductService } from '../service/product.service';
 import { SetProductStatusDto } from '../dto/product-admin.dto';
@@ -16,7 +17,7 @@ import { ProductService } from 'src/domain/product/product.service';
 import { OrderListDto } from 'src/domain/orders/dto/order.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
-import { CreateProductDto } from 'src/domain/product/dto/product.dto';
+import { CreateProductDto, UpdateProductDto } from 'src/domain/product/dto/product.dto';
 import { IUser } from 'src/domain/user/interface/user.interface';
 
 @ApiTags('Admin')
@@ -47,6 +48,11 @@ export class AdminProductController {
   @Get('order-list')
   async orderList(@Query() params: OrderListDto) {
     return this.adminProductService.orderList(params);
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() params: UpdateProductDto) {
+    return this.adminProductService.update(id, params);
   }
 
   @Get(':id')

@@ -4,7 +4,8 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { CreateCompanyDto, UpdateCompanyDto } from 'src/domain/company/dto/company.dto';
 import { CompanyService } from 'src/domain/company/company.service';
-import { GetCompanyListDto } from '../dto/company.admin.dto';
+import { GetCompanyListDto, SetCompanyStatusDto } from '../dto/company.admin.dto';
+import { AdminCategoryListPageDto } from '../dto/category-admin.dto';
 
 @ApiTags('Admin')
 @Controller('admin/company')
@@ -17,8 +18,13 @@ export class AdminCompanyController {
   }
 
   @Get('all')
-  getAll(@Query() params: GetCompanyListDto) {
+  getAllCompanies(@Query() params: AdminCategoryListPageDto) {
     return this.companyService.findAll(params);
+  }
+
+  @Post('set-status')
+  async setStatus(@Body() params: SetCompanyStatusDto) {
+    return this.companyService.setStatus(params);
   }
 
   @Get(':id')
