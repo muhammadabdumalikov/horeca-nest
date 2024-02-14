@@ -16,6 +16,10 @@ create table users
     is_deleted bool        not null     default false,
     created_at timestamp with time zone default now()
 );
+ALTER TABLE users 
+ADD COLUMN login VARCHAR(32);
+ALTER TABLE users 
+ADD COLUMN password VARCHAR(64);
 
 create table categories(
 	id varchar(24) not null primary key,

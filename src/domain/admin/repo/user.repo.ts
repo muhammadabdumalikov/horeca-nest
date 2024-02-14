@@ -14,4 +14,12 @@ export class AdminUserRepo extends BaseRepo<any> {
       .where('phone', phone)
       .first();
   }
+
+  selectByLogin(login: string, columns = ['*']) {
+    return this.knex
+      .select(columns)
+      .from(this._tableName)
+      .where('login', login)
+      .first();
+  }
 }

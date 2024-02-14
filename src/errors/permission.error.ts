@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -62,6 +63,18 @@ export class CompanyNotFoundException extends NotFoundException {
 export class NotificationNotFoundException extends NotFoundException {
   constructor() {
     super({ code: `${ErrorCodes.NOTIFICATION_NOT_FOUND}` });
+  }
+}
+
+export class IncorrectPasswordException extends ForbiddenException {
+  constructor() {
+    super({ code: `${ErrorCodes.INCORRECT_PASSWORD}` });
+  }
+}
+
+export class IncorrectLoginException extends ForbiddenException {
+  constructor() {
+    super({ code: `${ErrorCodes.INCORRECT_LOGIN}` });
   }
 }
 

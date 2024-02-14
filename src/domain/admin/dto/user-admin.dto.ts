@@ -26,9 +26,27 @@ export class CreateWorkerDto {
   @IsString()
   last_name: string;
 
+  @ApiProperty()
+  @IsString()
+  login: string;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+
   @ApiProperty({ enum: UserRolesShort })
   @IsEnum(UserRolesShort)
   role: UserRolesShort
 }
 
-export class UpdateWorkerDto extends PartialType(CreateWorkerDto){}
+export class UpdateWorkerDto extends PartialType(CreateWorkerDto) { }
+
+export class AdminLoginDto {
+  @ApiProperty()
+  @IsString()
+  login: string;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+}

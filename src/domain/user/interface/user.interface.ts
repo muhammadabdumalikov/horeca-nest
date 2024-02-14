@@ -8,6 +8,7 @@ export interface IUser {
   role: UserRoles;
   auth_status: boolean;
   otp: string;
+  password: string;
 }
 
 export interface IUpdateUser {
