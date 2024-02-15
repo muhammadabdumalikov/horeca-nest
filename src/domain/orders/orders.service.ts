@@ -105,6 +105,8 @@ export class OrdersService {
             'name_ru', pt.name_ru
           ) as payment_type`),
         'order.total_sum',
+        'order.comment',
+        'order.location',
         knex.raw('count("order".id) over() as total')
       ])
       .from(`${this.orderRepo._tableName} as order`)
