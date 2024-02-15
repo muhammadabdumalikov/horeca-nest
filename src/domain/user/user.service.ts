@@ -44,10 +44,6 @@ export class UserService {
     return this.userRepo.selectById(currentUser.id);
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
   async findOne(id: string) {
     return this.userRepo.selectById(id);
   }

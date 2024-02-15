@@ -8,7 +8,7 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
-  @Get('all')
+  @Get('list')
   getAll(@Query() params: ListPageDto) {
     return this.categoryService.findAll(params);
   }

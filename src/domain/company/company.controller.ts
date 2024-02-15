@@ -9,7 +9,7 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) { }
   
-  @Get('all')
+  @Get('list')
   getAll(@Query() params: ListPageDto) {
     return this.companyService.findAll(params);
   }

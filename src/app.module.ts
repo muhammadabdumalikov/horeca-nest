@@ -10,6 +10,7 @@ import { FileRouterModule } from './domain/file-router/file-router.module';
 import { OrdersModule } from './domain/orders/orders.module';
 import { CompanyModule } from './domain/company/company.module';
 import { NotificationModule } from './domain/notification/notification.module';
+import { PaymentTypeModule } from './domain/payment_type/payment_type.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { NotificationModule } from './domain/notification/notification.module';
     FileRouterModule,
     OrdersModule,
     NotificationModule,
+    PaymentTypeModule
   ],
   controllers: [AppController],
   providers: [AppService, PoolService],

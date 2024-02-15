@@ -36,7 +36,7 @@ export class ProductController {
     return this.productService.listByCategory(query, user);
   }
 
-  @Get('all')
+  @Get('list')
   getAll(@Query() params: ProductListDto) {
     return this.productService.findAll(params);
   }

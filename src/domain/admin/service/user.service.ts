@@ -18,7 +18,8 @@ export class AdminUserService {
 
   setStatus(params: SetUserStatusDto) {
     return this.adminUserRepo.updateById(params.user_id, {
-      status: params.status,
+      is_deleted: params.is_deleted === 'true',
+      is_block: params.is_block === 'true',
     });
   }
 

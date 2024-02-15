@@ -8,8 +8,12 @@ export class SetUserStatusDto {
   user_id: string;
 
   @ApiProperty()
-  @IsEnum(ProductStatusEnum)
-  status: ProductStatusEnum;
+  @IsString()
+  is_deleted: string;
+
+  @ApiProperty()
+  @IsString()
+  is_block: string;
 }
 
 

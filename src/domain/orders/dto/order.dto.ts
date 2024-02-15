@@ -38,9 +38,9 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   items: SingleOrderDto[];
 
-  @ApiProperty({ enum: PaymentType })
-  @IsEnum(PaymentType)
-  payment_type: PaymentType;
+  @ApiProperty()
+  @IsString()
+  payment_type: string;
 
   @ApiPropertyOptional()
   @IsString()
