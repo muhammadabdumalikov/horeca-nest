@@ -99,6 +99,11 @@ export class OrdersService {
             'quantity', item.quantity
           )
         ) as order_item`),
+        knex.raw(`
+          jsonb_build_object(
+            'name_uz', pt.name_uz,
+            'name_ru', pt.name_ru
+          ) as payment_type`),
         'order.total_sum',
         knex.raw('count("order".id) over() as total')
       ])
@@ -108,6 +113,9 @@ export class OrdersService {
       })
       .innerJoin('products as product', function () {
         this.on('product.id', 'item.product_id').andOn(knex.raw('product.is_deleted = false'))
+      })
+      .leftJoin('payment_types as pt', function () {
+        this.on('order.payment_type', 'pt.id')
       })
       .where('order.user_id', currentUser.id)
       .where('order.is_deleted', false)
