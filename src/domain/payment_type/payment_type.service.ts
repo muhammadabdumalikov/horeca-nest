@@ -65,7 +65,7 @@ export class PaymentTypeService {
     return this.paymentTypeRepo.updateById(id, {
       name_uz: params?.name_uz,
       name_ru: params?.name_ru,
-      is_deleted: params?.is_deleted === 'true'
+      is_deleted: params?.is_deleted
     })
   }
 

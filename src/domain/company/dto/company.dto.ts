@@ -28,5 +28,5 @@ export class UpdateCompanyDto extends PartialType(CreateCompanyDto) {
   @ApiPropertyOptional()
   @IsBoolean()
   @IsOptional()
-  is_deleted?: string;
+  is_deleted?: boolean;
 }

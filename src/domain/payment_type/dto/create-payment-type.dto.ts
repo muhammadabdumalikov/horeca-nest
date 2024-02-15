@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsOptional,
   IsString,
   MaxLength,
@@ -19,7 +20,7 @@ export class CreatePaymentTypeDto {
 
 export class UpdatePaymentTypeDto extends PartialType(CreatePaymentTypeDto) { 
   @ApiPropertyOptional()
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  is_deleted: string;
+  is_deleted: boolean;
 }
