@@ -73,7 +73,7 @@ create table orders(
 	user_id varchar(24) references users(id) not null,
 	quantity smallint not null,
 	total_sum double precision null,
-	payment_type smallint not null,
+	payment_type varchar(24) not null,
 	status smallint not null default 1,
 	comment varchar(256) null,
 	location jsonb not null,

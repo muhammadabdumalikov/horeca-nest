@@ -90,7 +90,7 @@ export class BaseRepo<T extends {}> extends KnexBaseRepo {
     if (!isEmpty(onConflict) && !isEmpty(merge)) {
       queryBuilder = queryBuilder.onConflict(onConflict).merge(merge);
     }
-    return queryBuilder.then((data) => (data?.length === 1 ? data[0] : data));
+    return queryBuilder.then((data) => data);
   }
 
 
