@@ -142,5 +142,5 @@ export class SearchDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  name?: string;
+  search?: string;
 }

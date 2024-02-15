@@ -40,24 +40,7 @@ export class AuthService {
     return { auth_status: user.auth_status, token };
   }
 
-  // async login(params: UserLoginDto) {
-  //   const user: IUser = await this.userRepo.selectByPhone(params.phone);
 
-  //   if (!user) {
-  //     throw new UserNotFoundException();
-  //   }
-
-  //   const otp = Math.floor(10000 + Math.random() * 90000);
-  //   const messageKey = nanoid(15);
-
-  //   await this.userRepo.updateById(user.id, {
-  //     otp: otp,
-  //   });
-
-  //   await sendSmsTo(params.phone, messageKey, otp);
-
-  //   return { message: 'Check your phone sms box for OTP!' };
-  // }
 
   async login(params: UserLoginDto) {
     const messageKey = nanoid(15);

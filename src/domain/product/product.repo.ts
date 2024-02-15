@@ -105,18 +105,18 @@ export class ProductRepo extends BaseRepo<any> {
         'product.id',
         'product.name_uz',
         'product.name_ru',
-        'product.price',
-        knex.raw('coalesce(product.sale_price, product.price) as sale_price'),
-        'product.count',
+        'product.count_price',
+        knex.raw('coalesce(product.discount_price, product.count_price) as sale_price'),
+        'product.product_count',
         'product.image',
         knex.raw(
-          'coalesce(round(100 - ((product.sale_price / product.price) * 100)), 0) as discount',
+          'coalesce(round(100 - ((product.discount_price / product.count_price) * 100)), 0) as discount',
         ),
       ])
       .from('products as product')
       .whereRaw('product.is_deleted is not true');
 
-    const searchArr = params.name.trim().split(` `) || [];
+    const searchArr = params.search.trim().split(` `) || [];
     for (const search of searchArr) {
       const name_latin = krillToLatin(search).replace(/'/g, "''");
       const name_krill = latinToKrill(search);

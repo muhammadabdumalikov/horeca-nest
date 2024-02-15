@@ -22,6 +22,7 @@ export class OrdersService {
   async createOrder(params: CreateOrderDto, currentUser: IUser) {
     return this.orderRepo.knex.transaction(async (trx) => {
       const order = await this.orderRepo.insertWithTransaction(trx, {
+        id: this.orderRepo.generateRecordId(),
         user_id: currentUser.id,
         status: OrderStatus.REGISTERED,
         quantity: params.items.length,
