@@ -119,7 +119,7 @@ export class OrdersService {
       })
       .where('order.user_id', currentUser.id)
       .where('order.is_deleted', false)
-      .groupBy('order.id')
+      .groupBy(['order.id', 'pt.name_uz', 'pt.name_ru'])
       .orderBy('order.created_at', 'desc');
 
     if (params.limit) {
