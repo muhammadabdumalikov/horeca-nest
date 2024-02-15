@@ -62,6 +62,6 @@ export class AuthService {
 
     await sendSmsTo(params.phone, messageKey, otp);
 
-    return { otp: user.otp, phone: user.phone };
+    return { otp: otp, phone: user.phone };
   }
 }
