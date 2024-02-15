@@ -109,7 +109,14 @@ create table notifications
     created_at timestamp with time zone default now(),
 );
 
-
+create table payment_types(
+	id varchar(24) not null primary key,
+	name_uz character varying(64) not null,
+	name_ru character varying(64) not null,
+	is_deleted boolean default false,
+	created_at timestamptz default current_timestamp,
+	updated_at timestamptz
+);
 
 --------------------------
 
