@@ -4,5 +4,11 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true
-  }
+  },
+   "assets": [
+    {
+      "source": "./src/providers",
+      "destination": "./dist/providers"
+    }
+  ]
 }
