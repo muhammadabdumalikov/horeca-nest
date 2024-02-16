@@ -1,6 +1,6 @@
 import firebase from 'firebase-admin';
 
-const serviceAccount = require("../shared/utils/horeca.json");
+const serviceAccount = require("./horeca.json");
 
 // const topicName = 'HORECA';
 firebase.initializeApp({
