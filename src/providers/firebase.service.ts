@@ -1,11 +1,11 @@
 import * as admin from 'firebase-admin';
 
-const serviceAccount = require("../shared/utils/horeca.json")
+import serviceAccount from "../shared/utils/horeca.json";
 
 // const topicName = 'HORECA';
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
 });
 
 export interface IFirebaseTopicMessage {

@@ -77,6 +77,7 @@ create table orders(
 	status smallint not null default 1,
 	comment varchar(256) null,
 	location jsonb not null,
+	order_number varchar(12) not null,
 	is_deleted boolean default false,
 	created_at timestamptz default current_timestamp,
 	updated_at timestamptz,

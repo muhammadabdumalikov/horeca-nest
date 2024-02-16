@@ -10,6 +10,8 @@ import { IProduct } from '../product/interface/product.interface';
 import { OrderStatus, PaymentType } from './dto/order.enum';
 import { OrderItemsRepo } from './oreder-items.repo';
 import { IListPage } from 'src/shared/interface/list.interface';
+import { nanoid } from 'nanoid';
+import { generateOrderCode } from 'src/shared/utils/password-hash';
 
 @Injectable()
 export class OrdersService {
@@ -26,6 +28,7 @@ export class OrdersService {
         user_id: currentUser.id,
         status: OrderStatus.REGISTERED,
         quantity: params.items.length,
+        order_number: generateOrderCode(),
         comment: params?.comment,
         location: params.location,
         payment_type: params.payment_type,
