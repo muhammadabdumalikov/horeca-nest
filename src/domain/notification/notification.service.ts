@@ -4,18 +4,30 @@ import { NotificationRepo } from './notification.repo';
 import { IListPage } from 'src/shared/interface/list.interface';
 import { isEmpty } from 'lodash';
 import { NotificationNotFoundException } from 'src/errors/permission.error';
+import { IFirebaseTopicMessage, sendFirebaseToTopic } from 'src/providers/firebase.service';
 
 @Injectable()
 export class NotificationService {
   constructor(private readonly notificationRepo: NotificationRepo) { }
   
-  create(params: CreateNotificationDto) {
-    return this.notificationRepo.insert({
+  async create(params: CreateNotificationDto) {
+    const notification = await this.notificationRepo.insert({
       title: params.title,
       body: params?.body,
       image: params?.image,
       link: params?.link
-    })
+    });
+
+    const firebaseNotification: IFirebaseTopicMessage = {
+      notification: {
+        title: notification[0]?.title,
+        body: notification[0]?.body,
+      },
+      topic: 'HORECA'
+    }
+
+    await sendFirebaseToTopic(firebaseNotification);
+    return { success: true };
   }
 
   async findAll(params: IListPage) {
