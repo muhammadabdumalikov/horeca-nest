@@ -1,12 +1,11 @@
-import * as admin from 'firebase-admin';
+import firebase from 'firebase-admin';
 
-import serviceAccount from "../shared/utils/horeca.json";
+const serviceAccount = require("../shared/utils/horeca.json");
 
 // const topicName = 'HORECA';
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-});
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount)
+})
 
 export interface IFirebaseTopicMessage {
   notification: {
@@ -19,7 +18,7 @@ export interface IFirebaseTopicMessage {
 export const sendFirebaseToTopic = async (message: IFirebaseTopicMessage) => {
   // message.topic = topicName;
 
-  return admin.messaging().send(message)
+  return firebase.messaging().send(message)
     .then((response) => {
       // Response is a message ID string.
       console.log('Successfully sent message:', response);
