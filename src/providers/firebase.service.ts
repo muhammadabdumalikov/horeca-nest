@@ -1,5 +1,5 @@
 import firebase from 'firebase-admin';
-import path from 'path';
+import * as path from 'path';
 
 const serviceAccount = require(path.resolve(__dirname, './horeca.json'));
 // const serviceAccount = require("./horeca.json");
