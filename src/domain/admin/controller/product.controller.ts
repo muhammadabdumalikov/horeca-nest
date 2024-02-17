@@ -22,8 +22,8 @@ import { IUser } from 'src/domain/user/interface/user.interface';
 import { AdminCategoryListPageDto } from '../dto/category-admin.dto';
 
 @ApiTags('Admin')
-// @ApiBearerAuth('authorization')
-// @UseGuards(AdminGuard)
+@ApiBearerAuth('authorization')
+@UseGuards(AdminGuard)
 @Controller('admin/product')
 export class AdminProductController {
   constructor(

@@ -10,11 +10,11 @@ import { SetOrderStatusDto } from '../dto/product-admin.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
 import { AdminOrderService } from '../service/order.service';
-import { OrderListDto } from 'src/domain/orders/dto/order.dto';
+import { OrderListByUsersDto, OrderListDto } from 'src/domain/orders/dto/order.dto';
 
 @ApiTags('Admin')
-// @ApiBearerAuth('authorization')
-// @UseGuards(AdminGuard)
+@ApiBearerAuth('authorization')
+@UseGuards(AdminGuard)
 @Controller('admin/order')
 export class AdminOrderController {
   constructor(
@@ -29,6 +29,13 @@ export class AdminOrderController {
   @Get('list')
   async orderList(
     @Query() params: OrderListDto,
+  ) {
+    return this.adminOrderService.orderList(params);
+  }
+
+  @Get('list-by-user')
+  async orderListByUsers(
+    @Query() params: OrderListByUsersDto,
   ) {
     return this.adminOrderService.orderList(params);
   }

@@ -58,4 +58,16 @@ export class OrderListDto extends ListPageDto {
   @IsOptional()
   @IsEnum(OrderStatus)
   status?: OrderStatus;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  is_deleted?: string;
+}
+
+export class OrderListByUsersDto extends OrderListDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  user_id?: string;
 }

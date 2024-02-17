@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AdminUserRepo } from '../repo/user.repo';
-import { AdminLoginDto, CreateWorkerDto, SetUserStatusDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto, SetUserStatusDto } from '../dto/user-admin.dto';
 import { isEmpty } from 'lodash';
 import { IncorrectLoginException, IncorrectPasswordException, PhoneAlreadyRegistered, UserHasNotPermissionException, UserNotFoundException } from 'src/errors/permission.error';
 import { ListPageDto } from 'src/shared/dto/list.dto';
@@ -8,6 +8,7 @@ import { UserRoles } from 'src/domain/user/enum/user.enum';
 import { IUser } from 'src/domain/user/interface/user.interface';
 import { createPasswordHash, validateUserPassword } from 'src/shared/utils/password-hash';
 import { JwtService } from '@nestjs/jwt';
+import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
 
 @Injectable()
 export class AdminUserService {
@@ -23,17 +24,46 @@ export class AdminUserService {
     });
   }
 
-  findAll(params: ListPageDto) {
-    return this.adminUserRepo.select(
-      {
-        is_deleted: false,
-      },
-      {
-        limit: params.limit,
-        offset: params.offset,
-        order_by: { column: 'created_at', order: 'desc', use: true },
-      },
-    );
+  async findAll(params: AdminUsersListDto) {
+    const knex = this.adminUserRepo.knexService.instance;
+    let query = knex
+      .select(['*', knex.raw('count(id) over() as total')])
+      .from('users')
+      .orderBy('created_at', 'desc');
+
+
+    if (params.is_deleted === 'true') {
+      query.where('is_deleted', true);
+    }
+
+    if (params.is_deleted === 'false') {
+      query.where('is_deleted', false);
+    }
+
+    if (!isEmpty(params?.search)) {
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('first_name', `ilike`, `%${name_latin}%`)
+          .orWhere('first_name', `ilike`, `%${name_krill}%`)
+          .orWhere('last_name', `ilike`, `%${name_krill}%`)
+          .orWhere('last_name', `ilike`, `%${name_krill}%`),
+
+      );
+    }
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
   async delete(id: string) {

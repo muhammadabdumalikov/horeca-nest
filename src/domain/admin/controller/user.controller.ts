@@ -12,7 +12,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
 import { AdminUserService } from '../service/user.service';
 import { UserService } from 'src/domain/user/user.service';
-import { SetUserStatusDto } from '../dto/user-admin.dto';
+import { AdminUsersListDto, SetUserStatusDto } from '../dto/user-admin.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @ApiTags('Admin')
@@ -31,7 +31,7 @@ export class AdminUserController {
   }
 
   @Get('list')
-  async list(@Query() params: ListPageDto) {
+  async list(@Query() params: AdminUsersListDto) {
     return this.adminUserService.findAll(params);
   }
 

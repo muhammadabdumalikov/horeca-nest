@@ -1,6 +1,7 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ProductStatusEnum, UserRolesShort } from '../enum/product.enum';
+import { ListPageDto } from 'src/shared/dto/list.dto';
 
 export class SetUserStatusDto {
   @ApiProperty()
@@ -53,4 +54,16 @@ export class AdminLoginDto {
   @ApiProperty()
   @IsString()
   password: string;
+}
+
+export class AdminUsersListDto extends ListPageDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  is_deleted?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  search?: string;
 }

@@ -27,6 +27,8 @@ import { ListPageDto } from 'src/shared/dto/list.dto';
 export class AdminCategoryController {
   constructor(private readonly adminCategoryService: AdminCategoryService) {}
 
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Post()
   create(@Body() params: CreateCategoryDto) {
     return this.adminCategoryService.create(params);
@@ -37,16 +39,22 @@ export class AdminCategoryController {
     return this.adminCategoryService.findAll(params);
   }
 
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Post('set-status')
   async setStatus(@Body() params: SetCategoryStatusDto) {
     return this.adminCategoryService.setStatus(params);
   }
 
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() params: UpdateCategoryDto) {
     return this.adminCategoryService.update(id, params);
   }
 
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.adminCategoryService.delete(id);
