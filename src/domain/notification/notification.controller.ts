@@ -19,7 +19,7 @@ export class NotificationController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.notificationService.findOne(+id);
+    return this.notificationService.findOne(id);
   }
 
   @Patch(':id')

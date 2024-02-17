@@ -55,8 +55,8 @@ export class NotificationService {
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
+  findOne(id: string) {
+    return this.notificationRepo.selectById(id);
   }
 
   update(id: string, params: UpdateNotificationDto) {

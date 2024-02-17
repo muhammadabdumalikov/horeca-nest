@@ -73,6 +73,8 @@ export class UserService {
       throw new UserNotFoundException();
     }
 
-    return this.userRepo.softDeleteUser(id);
+    const deletedUser = await this.userRepo.softDeleteUser(id);
+
+    return { success: true };
   }
 }
