@@ -45,10 +45,7 @@ export class ProductService {
   async findOne(id: string) {
     const knex = this.productRepo.knex;
 
-    // if (isEmpty(product)) {
-    //   throw new ProductNotFoundException();
-    // }
-    return knex
+    const product = await knex
       .select([
         'p.*',
         knex.raw(`
@@ -74,6 +71,12 @@ export class ProductService {
       .where('p.id', id)
       .whereNot('p.is_deleted', true)
       .first();
+    
+    if (isEmpty(product)) {
+      throw new ProductNotFoundException();
+    }
+
+    return product;
   }
 
   async update(id: string, params: UpdateProductDto) {

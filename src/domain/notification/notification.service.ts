@@ -55,8 +55,14 @@ export class NotificationService {
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
-  findOne(id: string) {
-    return this.notificationRepo.selectById(id);
+  async findOne(id: string) {
+    const notification = await this.notificationRepo.selectById(id);
+
+    if (!notification) {
+      throw new NotificationNotFoundException();
+    }
+
+    return notification;
   }
 
   update(id: string, params: UpdateNotificationDto) {
