@@ -44,6 +44,14 @@ export class AdminProductService {
       .select(['*', knex.raw('count(id) over() as total')])
       .from('products')
       .orderBy('created_at', 'desc');
+    
+    if (params?.category_id) {
+      query.where('category_id', params.category_id);
+    }
+
+    if (params?.company_id) {
+      query.where('company_id', params.company_id);
+    }
 
     if (!isEmpty(params?.search)) {
       const name_latin = krillToLatin(params.search).replace(/'/g, "''");
@@ -116,5 +124,41 @@ export class AdminProductService {
       product_count: +params?.product_count,
       measure: params?.measure,
     });
+  }
+
+  async findOne(id: string) {
+    const knex = this.adminProductRepo.knex;
+
+    const product = await knex
+      .select([
+        'p.*',
+        knex.raw(`
+          jsonb_build_object(
+            'name_uz', c.name_uz,
+            'name_ru', c.name_ru
+          ) as company
+        `),
+        knex.raw(`
+          jsonb_build_object(
+            'name_uz', category.name_uz,
+            'name_ru', category.name_ru
+          ) as category 
+        `)
+      ])
+      .from('products as p')
+      .leftJoin('companies as c', function () {
+        this.on('p.company_id', 'c.id').andOn(knex.raw('c.is_deleted = false'))
+      })
+      .leftJoin('categories as category', function () {
+        this.on('p.category_id', 'category.id').andOn(knex.raw('category.is_deleted = false'))
+      })
+      .where('p.id', id)
+      .first();
+
+    if (isEmpty(product)) {
+      throw new ProductNotFoundException();
+    }
+
+    return product;
   }
 }

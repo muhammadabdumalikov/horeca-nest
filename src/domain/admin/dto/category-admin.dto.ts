@@ -26,6 +26,16 @@ export class AdminCategoryListPageDto extends ListPageDto{
   @IsString()
   @IsOptional()
   is_deleted?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  category_id?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  company_id?: string;
 }
 
 export class SetCategoryStatusDto {

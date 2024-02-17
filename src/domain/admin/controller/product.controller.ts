@@ -53,7 +53,7 @@ export class AdminProductController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.productService.findOne(id);
+    return this.adminProductService.findOne(id);
   }
 
   @Delete(':id')

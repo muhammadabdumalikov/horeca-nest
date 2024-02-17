@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateNotificationDto, UpdateNotificationDto } from './dto/create-notification.dto';
+import { CreateNotificationDto, NotificationListDto, UpdateNotificationDto } from './dto/create-notification.dto';
 import { NotificationRepo } from './notification.repo';
 import { IListPage } from 'src/shared/interface/list.interface';
 import { isEmpty } from 'lodash';
@@ -34,12 +34,11 @@ export class NotificationService {
     return { success: true };
   }
 
-  async findAll(params: IListPage) {
+  async findAll(params: NotificationListDto) {
     const knex = this.notificationRepo.knex;
     let query = knex
       .select(['*', knex.raw('count(id) over() as total')])
       .from(this.notificationRepo._tableName)
-      .where('is_deleted', false)
       .orderBy('created_at', 'desc');
 
     if (params.limit) {
@@ -48,6 +47,14 @@ export class NotificationService {
 
     if (params.offset) {
       query = query.offset(Number(params.offset));
+    }
+
+    if (params?.is_deleted === 'true') {
+      query.where('is_deleted', true);
+    }
+
+    if (params?.is_deleted === 'false') {
+      query.where('is_deleted', false);
     }
 
     const data = await query;

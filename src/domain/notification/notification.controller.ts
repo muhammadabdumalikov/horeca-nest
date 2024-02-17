@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { NotificationService } from './notification.service';
-import { CreateNotificationDto, UpdateNotificationDto } from './dto/create-notification.dto';
+import { CreateNotificationDto, NotificationListDto, UpdateNotificationDto } from './dto/create-notification.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @Controller('notification')
@@ -13,7 +13,7 @@ export class NotificationController {
   }
 
   @Get('list')
-  findAll(@Param() params: ListPageDto) {
+  findAll(@Param() params: NotificationListDto) {
     return this.notificationService.findAll(params);
   }
 

@@ -4,6 +4,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import { ListPageDto } from 'src/shared/dto/list.dto';
 
 export class CreateNotificationDto {  
   @ApiProperty()
@@ -28,3 +29,10 @@ export class CreateNotificationDto {
 }
 
 export class UpdateNotificationDto extends PartialType(CreateNotificationDto) { }
+
+export class NotificationListDto extends ListPageDto {
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  is_deleted?: string;
+}
