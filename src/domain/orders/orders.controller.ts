@@ -31,16 +31,6 @@ export class OrdersController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth('authorization')
-  @Get('list')
-  async orderList(
-    @Query() params: OrderListDto,
-    @CurrentUser() currentUser: IUser,
-  ) {
-    return this.ordersService.orderList(params, currentUser);
-  }
-
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('authorization')
   @Get('my')
   async getMyOrdersList(
     @Query() params: ListPageDto,

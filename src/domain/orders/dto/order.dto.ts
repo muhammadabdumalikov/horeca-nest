@@ -54,7 +54,8 @@ export class CreateOrderDto {
 }
 
 export class OrderListDto extends ListPageDto {
-  @ApiProperty({ enum: OrderStatus })
+  @ApiPropertyOptional({ enum: OrderStatus })
+  @IsOptional()
   @IsEnum(OrderStatus)
   status?: OrderStatus;
 }

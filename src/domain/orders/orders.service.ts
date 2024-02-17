@@ -9,8 +9,6 @@ import { isEmpty } from 'lodash';
 import { IProduct } from '../product/interface/product.interface';
 import { OrderStatus, PaymentType } from './dto/order.enum';
 import { OrderItemsRepo } from './oreder-items.repo';
-import { IListPage } from 'src/shared/interface/list.interface';
-import { nanoid } from 'nanoid';
 import { generateOrderCode } from 'src/shared/utils/password-hash';
 
 @Injectable()
@@ -131,27 +129,6 @@ export class OrdersService {
       .where('order.is_deleted', false)
       .groupBy(['order.id', 'pt.name_uz', 'pt.name_ru'])
       .orderBy('order.created_at', 'desc');
-
-    if (params.limit) {
-      query = query.limit(Number(params.limit));
-    }
-
-    if (params.offset) {
-      query = query.offset(Number(params.offset));
-    }
-    
-    const data = await query;
-
-    return { data: data, total_count: data[0] ? +data[0].total : 0 };
-  }
-
-  async orderList(params: IListPage, currentUser: IUser) {
-    const knex = this.orderRepo.knex;
-    let query = knex
-      .select(['*', knex.raw('count(id) over() as total')])
-      .from(this.orderRepo._tableName)
-      .where('is_deleted', false)
-      .orderBy('created_at', 'desc');
 
     if (params.limit) {
       query = query.limit(Number(params.limit));
