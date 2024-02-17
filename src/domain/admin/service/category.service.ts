@@ -60,7 +60,7 @@ export class AdminCategoryService {
       query.where('is_deleted', false);
     }
 
-    if (params?.search) {
+    if (!isEmpty(params?.search)) {
       const name_latin = krillToLatin(params.search).replace(/'/g, "''");
       const name_krill = latinToKrill(params.search);
       query = query.andWhere((builder) =>

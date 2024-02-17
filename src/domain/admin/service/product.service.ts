@@ -45,7 +45,7 @@ export class AdminProductService {
       .from('products')
       .orderBy('created_at', 'desc');
 
-    if (params?.search) {
+    if (!isEmpty(params?.search)) {
       const name_latin = krillToLatin(params.search).replace(/'/g, "''");
       const name_krill = latinToKrill(params.search);
       query = query.andWhere((builder) =>

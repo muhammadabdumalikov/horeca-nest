@@ -3,6 +3,7 @@ import { BaseRepo } from 'src/providers/base-dao';
 import { ProductListByCategoryDto, ProductListDto, SearchDto } from './dto/product.dto';
 import { IUser } from '../user/interface/user.interface';
 import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class ProductRepo extends BaseRepo<any> {
@@ -74,7 +75,7 @@ export class ProductRepo extends BaseRepo<any> {
     //   );
     // }
 
-    if (params.search) {
+    if (!isEmpty(params?.search)) {
       const name_latin = krillToLatin(params.search).replace(/'/g, "''");
       const name_krill = latinToKrill(params.search);
       query.andWhere((builder) => {
