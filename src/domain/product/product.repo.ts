@@ -20,6 +20,7 @@ export class ProductRepo extends BaseRepo<any> {
         knex.raw('count(product.id) over() as total'),
       ])
       .from('products as product')
+      .where('product.is_deleted', false)
       // .join('category', function () {
       //   this.on('category.id', 'product.category_id')
       //     .andOn(knex.raw('category.is_deleted is not true'))
@@ -38,13 +39,13 @@ export class ProductRepo extends BaseRepo<any> {
       query.whereRaw(`product.category_id = '${params.category_id}'`)
     }
 
-    if (params.is_deleted === 'true') {
-      query.where('product.is_deleted', true);
-    } 
+    // if (params.is_deleted === 'true') {
+    //   query.where('product.is_deleted', true);
+    // } 
 
-    if (params.is_deleted === 'false') {
-      query.where('product.is_deleted', false);
-    } 
+    // if (params.is_deleted === 'false') {
+    //   query.where('product.is_deleted', false);
+    // } 
 
     // if (params.sort) {
     //   switch (params.sort) {
