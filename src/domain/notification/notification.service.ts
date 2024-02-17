@@ -4,7 +4,7 @@ import { NotificationRepo } from './notification.repo';
 import { IListPage } from 'src/shared/interface/list.interface';
 import { isEmpty } from 'lodash';
 import { NotificationNotFoundException } from 'src/errors/permission.error';
-import { IFirebaseTopicMessage, sendFirebaseToTopic } from 'src/providers/firebase.service';
+import { IFirebaseTopicMessage, sendFirebaseNotification, sendFirebaseToTopic } from 'src/providers/firebase.service';
 
 @Injectable()
 export class NotificationService {
@@ -29,7 +29,8 @@ export class NotificationService {
       topic: 'HORECA'
     }
 
-    await sendFirebaseToTopic(firebaseNotification);
+    await sendFirebaseNotification(firebaseNotification);
+    
     return { success: true };
   }
 
