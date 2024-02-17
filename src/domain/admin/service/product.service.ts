@@ -87,20 +87,6 @@ export class AdminProductService {
 
     return { success: true };
   }
-
-  async orderList(params: OrderListDto) {
-    return await this.orderRepo.select(
-      {
-        status: Number(params.status),
-        is_deleted: false,
-      },
-      {
-        limit: params.limit,
-        offset: params.offset,
-        order_by: { column: 'created_at', order: 'desc', use: true },
-      },
-    );
-  }
   
   async update(id: string, params: UpdateProductDto) {
     const product = await this.adminProductRepo.selectById(id);

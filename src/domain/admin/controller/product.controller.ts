@@ -41,11 +41,6 @@ export class AdminProductController {
     return this.adminProductService.findAll(params);
   }
 
-  @Get('order-list')
-  async orderList(@Query() params: OrderListDto) {
-    return this.adminProductService.orderList(params);
-  }
-
   @Patch(':id')
   async update(@Param('id') id: string, @Body() params: UpdateProductDto) {
     return this.adminProductService.update(id, params);
