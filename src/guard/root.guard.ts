@@ -16,19 +16,38 @@ export class RootGuard implements CanActivate {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const basicToken = request.headers?.basic;
+    let token = request.headers.authorization;
 
-    if (
-      !basicToken ||
-      basicToken !== 'Zm9yLWNyZWF0ZS1hZG1pbjpiOTkxSTVWVnAybDFaVmxxMUZGaw=='
-    ) {
+    if (!token) {
       throw new UnauthorizedException();
     }
 
-    return true;
+    // tokenId = tokenId.substring('Bearer '.length);
+
+    try {
+      token = await this.jwtService.verifyAsync(token, {
+        secret: `store-app`,
+      });
+    } catch (error) {
+      throw new ForbiddenException();
+    }
+
+    const user: IUser = await this.userService.findOne(token.id);
+
+    if (!user || !user.id) {
+      throw new UnauthorizedException();
+    }
+
+    if (user.role === UserRoles.SUPER_ADMIN) {
+      request.user = user;
+
+      return true;
+    }
+
+    throw new UserHasNotPermissionException();
   }
 }

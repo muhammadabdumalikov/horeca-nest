@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AdminOrdersRepo } from '../repo/order.repo';
 import { SetOrderStatusDto } from '../dto/product-admin.dto';
-import { IListPage } from 'src/shared/interface/list.interface';
+import { ICurrentUser, IListPage } from 'src/shared/interface/list.interface';
 import { OrderListByUsersDto, OrderListDto } from 'src/domain/orders/dto/order.dto';
 
 @Injectable()
@@ -10,9 +10,10 @@ export class AdminOrderService {
     private readonly adminOrderRepo: AdminOrdersRepo,
   ) { }
 
-  setStatus(params: SetOrderStatusDto) {
+  setStatus(params: SetOrderStatusDto, currentUser: ICurrentUser) {
     return this.adminOrderRepo.updateById(params.order_id, {
       status: params.status,
+      updated_by: currentUser.id
     });
   }
 
