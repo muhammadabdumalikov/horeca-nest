@@ -30,6 +30,10 @@ export class AdminUserService {
       .select(['*', knex.raw('count(id) over() as total')])
       .from('users')
       .orderBy('created_at', 'desc');
+    
+    if (params?.role) {
+      query.where('role', Number(params.role));
+    }
 
 
     if (params.is_deleted === 'true') {
