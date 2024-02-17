@@ -61,7 +61,7 @@ export class OrdersService {
         totalSumOfOrder += priceForItem * item.quantity;
       }
 
-      const updatedOrder = await this.orderRepo.updateById(order[0]?.id, { total_sum: totalSumOfOrder })
+      const updatedOrder = await this.orderRepo.updateByIdWithTransaction(trx, order[0]?.id, { total_sum: totalSumOfOrder })
       
       return updatedOrder;
     })
@@ -99,7 +99,9 @@ export class OrdersService {
             'name_ru', product.name_ru,
             'price', product.count_price,
             'discount_price', product.discount_price,
-            'quantity', item.quantity
+            'price_for_item', item.price::int,
+            'quantity', item.quantity,
+            'image', product.image
           )
         ) as order_item`),
         knex.raw(`
@@ -109,6 +111,9 @@ export class OrdersService {
           ) as payment_type`),
         'order.total_sum',
         'order.comment',
+        'order.order_number',
+        'order.created_at',
+        'order.status',
         'order.location',
         knex.raw('count("order".id) over() as total')
       ])

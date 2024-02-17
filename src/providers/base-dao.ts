@@ -93,6 +93,15 @@ export class BaseRepo<T extends {}> extends KnexBaseRepo {
     return queryBuilder.then((data) => data);
   }
 
+  updateByIdWithTransaction(trx: Knex.Transaction, id: string | string[], value: T, returning = ['*']) {
+    let queryBuilder = trx.update(value).from(this._tableName).returning(returning);
+    if (Array.isArray(id) && id.length > 0) {
+      queryBuilder = queryBuilder.whereIn(`id`, id);
+    } else {
+      queryBuilder = queryBuilder.where(`id`, id);
+    }
+    return queryBuilder;
+  }
 
   select(
     where,

@@ -23,6 +23,9 @@ export class NotificationService {
         title: notification[0]?.title,
         body: notification[0]?.body,
       },
+      data: {
+        notification_id: notification[0]?.id,
+      },
       topic: 'HORECA'
     }
 

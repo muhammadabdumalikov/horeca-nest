@@ -107,7 +107,7 @@ create table notifications
     image          text        null,
     link          text        null,
     is_deleted bool        not null     default false,
-    created_at timestamp with time zone default now(),
+    created_at timestamp with time zone default now()
 );
 
 create table payment_types(

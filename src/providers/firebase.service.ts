@@ -12,6 +12,7 @@ export interface IFirebaseTopicMessage {
     title: string;
     body: string;
   },
+  data: any,
   topic: string;
 }
 

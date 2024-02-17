@@ -7,14 +7,14 @@
 //     this.instance = knex({
 //       client: 'postgresql',
 //       connection: {
-//         host: 'tiny.db.elephantsql.com',
-//         database: 'pdnbdcic',
-//         password: 'cTRCHDyN5c2GQsegP4LEqz9Qoof-f7JS',
-//         user: 'pdnbdcic',
+//         host: 'localhost',
+//         database: 'horeca',
+//         password: '4324',
+//         user: 'postgres',
 //       },
 //       pool: {
-//         min: 1,
-//         max: 3,
+//         min: 2,
+//         max: 20,
 //       },
 //     })
 //   }
