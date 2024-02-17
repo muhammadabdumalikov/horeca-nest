@@ -41,6 +41,11 @@ export class AdminProductController {
     return this.adminProductService.findAll(params);
   }
 
+  @Post('set-status')
+  async setStatus(@Body() params: SetProductStatusDto) {
+    return this.adminProductService.setStatus(params);
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() params: UpdateProductDto) {
     return this.adminProductService.update(id, params);

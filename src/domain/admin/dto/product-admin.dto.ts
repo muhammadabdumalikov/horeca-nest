@@ -9,8 +9,8 @@ export class SetProductStatusDto {
   product_id: string;
 
   @ApiProperty()
-  @IsEnum(ProductStatusEnum)
-  status: ProductStatusEnum;
+  @IsString()
+  is_deleted: string;
 }
 
 export class SetOrderStatusDto {

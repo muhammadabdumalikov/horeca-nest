@@ -76,6 +76,12 @@ export class AdminProductService {
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
+  setStatus(params: SetProductStatusDto) {
+    return this.adminProductRepo.updateById(params.product_id, {
+      is_deleted: params.is_deleted === 'true',
+    });
+  }
+
   async delete(id: string) {
     const product = await this.adminProductRepo.selectById(id);
 
