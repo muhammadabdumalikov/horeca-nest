@@ -11,8 +11,7 @@ import {
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { AdminUserService } from '../service/user.service';
 import { RootGuard } from 'src/guard/root.guard';
-import { ListPageDto } from 'src/shared/dto/list.dto';
-import { AdminLoginDto, CreateWorkerDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto } from '../dto/user-admin.dto';
 
 @ApiTags('Admin')
 // @ApiBasicAuth('basic')
@@ -32,7 +31,7 @@ export class SuperAdminController {
   }
 
   @Get('worker-list')
-  async list(@Query() params: ListPageDto) {
+  async list(@Query() params: AdminUsersListDto) {
     return this.adminUserService.findAllAdmins(params);
   }
 
