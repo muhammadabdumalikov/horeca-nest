@@ -157,18 +157,15 @@ export class AdminUserService {
     }
 
     if (!isEmpty(params?.search)) {
-      const searchArr = params.search.trim().split(` `) || [];
-      for (const search of searchArr) {
-        const name_latin = krillToLatin(search).replace(/'/g, "''");
-        const name_krill = latinToKrill(search);
-        query = query.andWhere((builder) =>
-          builder
-            .orWhere('first_name', `ilike`, `%${name_latin}%`)
-            .orWhere('first_name', `ilike`, `%${name_krill}%`)
-            .orWhere('last_name', `ilike`, `%${name_krill}%`)
-            .orWhere('last_name', `ilike`, `%${name_krill}%`),
-        );
-      }
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('first_name', `ilike`, `%${name_latin}%`)
+          .orWhere('first_name', `ilike`, `%${name_krill}%`)
+          .orWhere('last_name', `ilike`, `%${name_krill}%`)
+          .orWhere('last_name', `ilike`, `%${name_latin}%`),
+      );
     }
 
     if (params.limit) {
