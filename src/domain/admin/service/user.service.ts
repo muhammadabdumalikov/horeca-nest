@@ -94,9 +94,9 @@ export class AdminUserService {
       throw new IncorrectPasswordException();
     }
 
-    if (user.role !== UserRoles.ADMIN) {
-      throw new UserHasNotPermissionException();
-    }
+    // if (user.role === UserRoles.ADMIN) {
+    //   throw new UserHasNotPermissionException();
+    // }
 
     const token = await this.jwtService.signAsync(
       { id: user.id, auth_status: user.auth_status, role: user.role },
