@@ -9,7 +9,7 @@ export interface IProduct {
   name_ru: string,
   barcode: string,
   image: string,
-  block_count: number,
+  product_count: number,
   count_in_block: number,
   description: string,
   count_price: number,

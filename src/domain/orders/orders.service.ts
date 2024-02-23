@@ -41,6 +41,8 @@ export class OrdersService {
           throw new ProductNotFoundException();
         }
 
+        await this.productRepo.updateByIdWithTransaction(trx, item.product_id, { product_count: product.product_count - item.quantity });
+
         let priceForItem = product.discount_price ? product.discount_price : product.count_price;
 
         if (item.quantity >= product.count_in_block && +product.block_price < priceForItem) {
