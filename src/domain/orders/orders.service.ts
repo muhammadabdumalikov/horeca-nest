@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateOrderDto, OrderListDto } from './dto/order.dto';
 import { OrdersRepo } from './orders.repo';
 import { ProductRepo } from '../product/product.repo';
-import { ProductNotFoundException } from 'src/errors/permission.error';
+import { ProductCountLimitedException, ProductNotFoundException } from 'src/errors/permission.error';
 // import { KnexService } from 'src/providers/knex.service';
 import { IUser } from '../user/interface/user.interface';
 import { isEmpty } from 'lodash';
@@ -39,6 +39,10 @@ export class OrdersService {
 
         if (isEmpty(product)) {
           throw new ProductNotFoundException();
+        }
+
+        if (item.quantity > product.product_count) {
+          throw new ProductCountLimitedException();
         }
 
         await this.productRepo.updateByIdWithTransaction(trx, item.product_id, { product_count: product.product_count - item.quantity });

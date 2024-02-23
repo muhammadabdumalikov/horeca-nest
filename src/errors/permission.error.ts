@@ -48,6 +48,12 @@ export class ProductNotFoundException extends NotFoundException {
   }
 }
 
+export class ProductCountLimitedException extends BadRequestException {
+  constructor() {
+    super({ code: `${ErrorCodes.PRODUCT_COUNT_LIMITED}` });
+  }
+}
+
 export class CategoryNotFoundException extends NotFoundException {
   constructor() {
     super({ code: `${ErrorCodes.CATEGORY_NOT_FOUND}` });
