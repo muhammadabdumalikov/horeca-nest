@@ -84,3 +84,9 @@ export class IncorrectLoginException extends ForbiddenException {
   }
 }
 
+export class OrderAlreadyDeliveredException extends BadRequestException {
+  constructor() {
+    super({ code: `${ErrorCodes.ORDER_ALREADY_DELIVERED}` });
+  }
+}
+

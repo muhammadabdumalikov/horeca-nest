@@ -22,3 +22,13 @@ export class SetOrderStatusDto {
   @IsEnum(OrderStatus)
   status: OrderStatus;
 }
+
+export class SetDeliverDto {
+  @ApiProperty()
+  @IsString()
+  order_id: string;
+
+  @ApiProperty()
+  @IsString()
+  deliver_id: string;
+}
