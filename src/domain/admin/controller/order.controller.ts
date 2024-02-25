@@ -37,8 +37,8 @@ export class AdminOrderController {
     return this.adminOrderService.setDeliver(params, currentUser);
   }
 
-  // @ApiBearerAuth('authorization')
-  // @UseGuards(AdminGuard)
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Get('list')
   async orderList(
     @Query() params: OrderListDto,
@@ -60,12 +60,13 @@ export class AdminOrderController {
   @Get('list-by-deliver')
   async orderListByDeliver(
     @Query() params: OrderListByUsersDto,
+    @CurrentUser() user
   ) {
-    return this.adminOrderService.orderListByDeliver(params);
+    return this.adminOrderService.orderListByDeliver(params, user);
   }
 
-  // @ApiBearerAuth('authorization')
-  // @UseGuards(AdminGuard)
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.adminOrderService.findOne(id);

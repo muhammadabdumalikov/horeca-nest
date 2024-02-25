@@ -127,16 +127,13 @@ export class AdminOrderService {
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
-  async orderListByDeliver(params: OrderListByUsersDto) {
+  async orderListByDeliver(params: OrderListByUsersDto, user) {
     const knex = this.adminOrderRepo.knex;
     let query = knex
       .select(['*', knex.raw('count(id) over() as total')])
       .from(this.adminOrderRepo._tableName)
+      .where('deliver_id', user.id)
       .orderBy('created_at', 'desc');
-
-    if (params?.user_id) {
-      query.where('deliver_id', params.user_id)
-    }
 
     if (params?.is_deleted === 'true') {
       query.where('is_deleted', true);
