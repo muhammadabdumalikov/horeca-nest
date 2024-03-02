@@ -41,4 +41,4 @@ jobs:
             git pull
             npm install
             npm run build
-            pm2 restart horeca
+            pm2 restart horeca-nest
