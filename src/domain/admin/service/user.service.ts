@@ -152,7 +152,7 @@ export class AdminUserService {
         const password = params?.password ? await createPasswordHash(params.password) : undefined;
         // const check = validateUserPassword(password, '12343');
 
-        const [user]: [IUser] = await this.adminUserRepo.insert({
+        const [user]: [IUser] = await this.adminUserRepo.updateById(worker_id, {
           phone: params?.phone,
           role: params?.role,
           first_name: params?.first_name,
