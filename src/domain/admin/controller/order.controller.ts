@@ -6,8 +6,9 @@ import {
   Get,
   Query,
   Param,
+  Patch,
 } from '@nestjs/common';
-import { SetDeliverDto, SetOrderStatusDto } from '../dto/product-admin.dto';
+import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto } from '../dto/product-admin.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
 import { AdminOrderService } from '../service/order.service';
@@ -63,6 +64,13 @@ export class AdminOrderController {
     @CurrentUser() user
   ) {
     return this.adminOrderService.orderListByDeliver(params, user);
+  }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
+  @Patch('order-update/:id')
+  async orderUpdate(@Param('id') order_id: string, @Body() params: OrderUpdateDto) {
+    return this.adminOrderService.updateOrder(order_id, params);
   }
 
   @ApiBearerAuth('authorization')

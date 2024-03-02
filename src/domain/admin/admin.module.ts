@@ -21,6 +21,7 @@ import { AdminOrderController } from './controller/order.controller';
 import { AdminOrderService } from './service/order.service';
 import { AdminOrdersRepo } from './repo/order.repo';
 import { AdminCompanyController } from './controller/company.controller';
+import { AdminOrderItemsRepo } from './repo/order-item.repo';
 
 @Module({
   imports: [UserModule, ProductModule],
@@ -46,7 +47,8 @@ import { AdminCompanyController } from './controller/company.controller';
     CompanyService,
     CompanyRepo,
     AdminOrderService,
-    AdminOrdersRepo
+    AdminOrdersRepo,
+    AdminOrderItemsRepo,
   ],
 })
 export class AdminModule {}

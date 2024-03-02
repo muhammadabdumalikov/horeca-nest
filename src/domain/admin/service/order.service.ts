@@ -1,17 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { AdminOrdersRepo } from '../repo/order.repo';
-import { SetDeliverDto, SetOrderStatusDto } from '../dto/product-admin.dto';
+import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto } from '../dto/product-admin.dto';
 import { ICurrentUser, IListPage } from 'src/shared/interface/list.interface';
 import { OrderListByUsersDto, OrderListDto } from 'src/domain/orders/dto/order.dto';
 import { OrderStatus } from 'src/domain/orders/dto/order.enum';
 import { AdminProductRepo } from '../repo/product.repo';
-import { OrderAlreadyDeliveredException } from 'src/errors/permission.error';
+import { OrderAlreadyDeliveredException, ProductNotFoundException } from 'src/errors/permission.error';
+import { isEmpty } from 'lodash';
+import { AdminOrderItemsRepo } from '../repo/order-item.repo';
 
 @Injectable()
 export class AdminOrderService {
   constructor(
     private readonly adminOrderRepo: AdminOrdersRepo,
     private readonly adminProductRepo: AdminProductRepo,
+    private readonly adminOrderItemRepo: AdminOrderItemsRepo,
   ) { }
 
   setStatus(params: SetOrderStatusDto, currentUser: ICurrentUser) {
@@ -27,7 +30,7 @@ export class AdminOrderService {
           .from('order_items')
           .where('order_id', params.order_id)
           .where('is_deleted', false);
-        
+
         for await (let item of order_items) {
           const product = await this.adminProductRepo.selectById(item.product_id);
           await this.adminProductRepo.updateByIdWithTransaction(
@@ -35,7 +38,7 @@ export class AdminOrderService {
             item.product_id,
             { product_count: Number(product.product_count) + Number(item.quantity) }
           );
-        } 
+        }
       }
 
       return { success: true };
@@ -169,6 +172,7 @@ export class AdminOrderService {
         knex.raw(`
           json_agg(
             jsonb_build_object(
+              'order_item_id', item.id,
               'name_uz', product.name_uz,
               'name_ru', product.name_ru,
               'quantity', item.quantity,
@@ -192,7 +196,46 @@ export class AdminOrderService {
       .where('o.id', id)
       .groupBy('o.id')
       .first();
-      
+
     return product;
+  }
+
+  async updateOrder(order_id, params: OrderUpdateDto) {
+    return this.adminOrderRepo.knex.transaction(async (trx) => {
+      const order = await this.adminOrderRepo.selectById(order_id).where('is_deleted', false);
+
+      let totalSumOfOrder = order.total_sum;
+
+      for await (const item of params.items) {
+        const order_item = await this.adminOrderItemRepo.selectById(item.order_item_id);
+
+        totalSumOfOrder = totalSumOfOrder - order_item.price * order_item.quantity;
+
+        const product = await this.adminProductRepo.selectById(order_item.product_id).where('is_deleted', false);
+        if (isEmpty(order_item) || isEmpty(product)) {
+          throw new ProductNotFoundException();
+        }
+
+        let priceForItem = product.discount_price ? product.discount_price : product.count_price;
+
+        if (item.order_item_quantity >= product.count_in_block && +product.block_price < priceForItem) {
+          priceForItem = +product.block_price;
+        }
+
+        await this.adminOrderItemRepo.updateByIdWithTransaction(trx, item.order_item_id,
+          { quantity: item.order_item_quantity, price: priceForItem }
+        );
+
+        totalSumOfOrder += priceForItem * item.order_item_quantity;
+      }
+
+      const updatedOrder = await this.adminOrderRepo.updateByIdWithTransaction(
+        trx,
+        order_id,
+        { total_sum: totalSumOfOrder }
+      );
+
+      return updatedOrder;
+    })
   }
 }
