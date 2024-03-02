@@ -37,8 +37,7 @@ jobs:
           password: ${{ secrets.HOST_PASSWORD }}
           port: 22
           script: |
-            ls
-            cd Projects/horeca-nest
+            cd Project/horeca-nest
             git pull
             npm install
             npm run build
