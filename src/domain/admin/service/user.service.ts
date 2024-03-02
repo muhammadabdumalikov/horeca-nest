@@ -143,16 +143,18 @@ export class AdminUserService {
           throw new UserNotFoundException();
         }
 
-        const hasPhone: IUser = await this.adminUserRepo.selectById(params?.phone);
+        if (params?.phone) {
+          const hasPhone: IUser = await this.adminUserRepo.selectByPhone(params?.phone);
 
-        if (hasPhone) {
-          throw new PhoneAlreadyRegistered();
+          if (hasPhone) {
+            throw new PhoneAlreadyRegistered();
+          }
         }
 
         const password = params?.password ? await createPasswordHash(params.password) : undefined;
         // const check = validateUserPassword(password, '12343');
 
-        const [user]: [IUser] = await this.adminUserRepo.updateById(worker_id, {
+        const user = await this.adminUserRepo.updateById(worker_id, {
           phone: params?.phone,
           role: params?.role,
           first_name: params?.first_name,
