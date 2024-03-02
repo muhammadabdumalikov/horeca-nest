@@ -21,9 +21,11 @@ jobs:
       # - name: Run tests
       #   run: npm test
 
-      - name: Build and deploy (replace with your deployment script)
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
         run: |
-          npm install
           npm run build
 
       - name: Run DEV server
