@@ -90,3 +90,9 @@ export class OrderAlreadyDeliveredException extends BadRequestException {
   }
 }
 
+export class PaymentTypeNotAllowed extends BadRequestException {
+  constructor() {
+    super({ code: `${ErrorCodes.PAYMENT_TYPE_NOT_ALLOWED}` });
+  }
+}
+

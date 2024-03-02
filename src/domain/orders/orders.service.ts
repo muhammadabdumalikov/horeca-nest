@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateOrderDto, OrderListDto } from './dto/order.dto';
 import { OrdersRepo } from './orders.repo';
 import { ProductRepo } from '../product/product.repo';
-import { ProductCountLimitedException, ProductNotFoundException } from 'src/errors/permission.error';
+import { PaymentTypeNotAllowed, ProductCountLimitedException, ProductNotFoundException } from 'src/errors/permission.error';
 // import { KnexService } from 'src/providers/knex.service';
 import { IUser } from '../user/interface/user.interface';
 import { isEmpty } from 'lodash';
@@ -21,6 +21,16 @@ export class OrdersService {
 
   async createOrder(params: CreateOrderDto, currentUser: IUser) {
     return this.orderRepo.knex.transaction(async (trx) => {
+      const paymentType = await trx.select('*')
+        .from('payment_types')
+        .where('id', params.payment_type)
+        .where('is_deleted', false)
+        .first();
+
+      if (isEmpty(paymentType)) {
+        throw new PaymentTypeNotAllowed();
+      }
+        
       const order = await this.orderRepo.insertWithTransaction(trx, {
         id: this.orderRepo.generateRecordId(),
         user_id: currentUser.id,
@@ -30,6 +40,10 @@ export class OrdersService {
         comment: params?.comment,
         location: params.location,
         payment_type: params.payment_type,
+        payment_type_name: {
+          name_uz: paymentType.name_uz,
+          name_ru: paymentType.name_ru
+        }
       });
 
       let totalSumOfOrder = 0;
