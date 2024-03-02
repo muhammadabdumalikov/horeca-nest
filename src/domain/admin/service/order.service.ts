@@ -197,12 +197,12 @@ export class AdminOrderService {
         this.on('product.id', 'item.product_id').andOn(knex.raw('product.is_deleted = false'))
       })
       .leftJoin('users as user', function () {
-        this.on('user.id', 'order.user_id').andOn(knex.raw('user.is_deleted = false'))
+        this.on('user.id', 'o.user_id').andOn(knex.raw('"user"."is_deleted" = false'))
       })
       .where('o.id', id)
-      .groupBy('o.id')
+      .groupBy(['o.id', 'user.id'])
       .first();
-
+      
     return product;
   }
 
