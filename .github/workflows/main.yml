@@ -37,8 +37,8 @@ jobs:
           password: ${{ secrets.HOST_PASSWORD }}
           port: 22
           script: |
-            cd Projects/horeca
+            cd Projects/horeca-nest
             git pull
             npm install
             npm run build
-            pm2 restart horeca-nest
+            pm2 restart horeca
