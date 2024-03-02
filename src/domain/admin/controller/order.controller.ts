@@ -38,8 +38,8 @@ export class AdminOrderController {
     return this.adminOrderService.setDeliver(params, currentUser);
   }
 
-  // @ApiBearerAuth('authorization')
-  // @UseGuards(AdminGuard)
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Get('list')
   async orderList(
     @Query() params: OrderListDto,
@@ -73,8 +73,8 @@ export class AdminOrderController {
     return this.adminOrderService.updateOrder(order_id, params);
   }
 
-  // @ApiBearerAuth('authorization')
-  // @UseGuards(AdminGuard)
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.adminOrderService.findOne(id);

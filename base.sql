@@ -102,6 +102,8 @@ create table order_items (
         FOREIGN KEY (product_id)
         REFERENCES products(id)
 );
+ALTER TABLE order_items 
+ADD COLUMN is_deleted boolean default false;
 
 create table notifications
 (

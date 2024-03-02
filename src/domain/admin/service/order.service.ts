@@ -191,7 +191,8 @@ export class AdminOrderService {
       ])
       .from('orders as o')
       .leftJoin('order_items as item', function () {
-        this.on('item.order_id', 'o.id').andOn(knex.raw('o.is_deleted = false'))
+        this.on('item.order_id', 'o.id')
+          // .andOn(knex.raw('item.is_deleted = false'))
       })
       .leftJoin('products as product', function () {
         this.on('product.id', 'item.product_id').andOn(knex.raw('product.is_deleted = false'))
@@ -200,6 +201,7 @@ export class AdminOrderService {
         this.on('user.id', 'o.user_id').andOn(knex.raw('"user"."is_deleted" = false'))
       })
       .where('o.id', id)
+      .where('o.is_deleted', false)
       .groupBy(['o.id', 'user.id'])
       .first();
       
@@ -220,6 +222,10 @@ export class AdminOrderService {
         const product = await this.adminProductRepo.selectById(order_item.product_id).where('is_deleted', false);
         if (isEmpty(order_item) || isEmpty(product)) {
           throw new ProductNotFoundException();
+        }
+
+        if (item.order_item_quantity === 0) {
+          await this.adminOrderItemRepo.softDelete(item.order_item_id);
         }
 
         let priceForItem = product.discount_price ? product.discount_price : product.count_price;
