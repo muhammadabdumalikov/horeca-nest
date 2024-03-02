@@ -88,7 +88,7 @@ ADD COLUMN updated_by VARCHAR(24);
 ALTER TABLE orders 
 ADD COLUMN deliver_id VARCHAR(24);
 ALTER TABLE orders 
-ADD COLUMN payment_type_name VARCHAR(24);
+ADD COLUMN payment_type_name jsonb;
 
 create table order_items (
     id varchar(24) PRIMARY KEY,
