@@ -143,13 +143,13 @@ export class AdminUserService {
           throw new UserNotFoundException();
         }
 
-        if (params?.phone) {
-          const hasPhone: IUser = await this.adminUserRepo.selectByPhone(params?.phone);
+        // if (params?.phone) {
+        //   const hasPhone: IUser = await this.adminUserRepo.selectByPhone(params?.phone);
 
-          if (hasPhone) {
-            throw new PhoneAlreadyRegistered();
-          }
-        }
+        //   if (hasPhone) {
+        //     throw new PhoneAlreadyRegistered();
+        //   }
+        // }
 
         const password = params?.password ? await createPasswordHash(params.password) : undefined;
         // const check = validateUserPassword(password, '12343');
