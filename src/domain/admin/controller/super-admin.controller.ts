@@ -7,22 +7,27 @@ import {
   Delete,
   Get,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { AdminUserService } from '../service/user.service';
-import { RootGuard } from 'src/guard/root.guard';
-import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto, UpdateWorkerDto } from '../dto/user-admin.dto';
 
 @ApiTags('Admin')
 // @ApiBasicAuth('basic')
 // @UseGuards(RootGuard)
 @Controller('root')
 export class SuperAdminController {
-  constructor(private readonly adminUserService: AdminUserService) {}
+  constructor(private readonly adminUserService: AdminUserService) { }
 
   @Post('create-worker')
   async createWorker(@Body() params: CreateWorkerDto) {
     return this.adminUserService.createworker(params);
+  }
+
+  @Patch('update-worker/:id')
+  update(@Param('id') id: string, @Body() updateWorkerDto: UpdateWorkerDto) {
+    return this.adminUserService.updateWorker(id, updateWorkerDto);
   }
 
   @Post('login')

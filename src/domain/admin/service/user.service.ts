@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AdminUserRepo } from '../repo/user.repo';
-import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto, SetUserStatusDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto, SetUserStatusDto, UpdateWorkerDto } from '../dto/user-admin.dto';
 import { isEmpty } from 'lodash';
 import { IncorrectLoginException, IncorrectPasswordException, PhoneAlreadyRegistered, UserHasNotPermissionException, UserNotFoundException } from 'src/errors/permission.error';
 import { UserRoles } from 'src/domain/user/enum/user.enum';
@@ -132,7 +132,41 @@ export class AdminUserService {
         .then((data) => {
           return data;
         });
-    }
+  }
+  
+  async updateWorker(worker_id: string, params: UpdateWorkerDto) {
+    return this.adminUserRepo.knex
+      .transaction(async () => {
+        const hasUser: IUser = await this.adminUserRepo.selectById(worker_id);
+
+        if (!hasUser) {
+          throw new UserNotFoundException();
+        }
+
+        const hasPhone: IUser = await this.adminUserRepo.selectById(params?.phone);
+
+        if (hasPhone) {
+          throw new PhoneAlreadyRegistered();
+        }
+
+        const password = params?.password ? await createPasswordHash(params.password) : undefined;
+        // const check = validateUserPassword(password, '12343');
+
+        const [user]: [IUser] = await this.adminUserRepo.insert({
+          phone: params?.phone,
+          role: params?.role,
+          first_name: params?.first_name,
+          last_name: params?.last_name,
+          login: params?.login,
+          password: password,
+        });
+
+        return { success: true, user };
+      })
+      .then((data) => {
+        return data;
+      });
+  }
 
   async findAllAdmins(params: AdminUsersListDto) {
     const knex = this.adminUserRepo.knexService.instance;
