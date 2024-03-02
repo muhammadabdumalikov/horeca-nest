@@ -169,6 +169,9 @@ export class AdminOrderService {
     const product = knex
       .select([
         'o.*',
+        'user.first_name',
+        'user.last_name',
+        'user.phone',
         knex.raw(`
           json_agg(
             jsonb_build_object(
@@ -192,6 +195,9 @@ export class AdminOrderService {
       })
       .leftJoin('products as product', function () {
         this.on('product.id', 'item.product_id').andOn(knex.raw('product.is_deleted = false'))
+      })
+      .leftJoin('users as user', function () {
+        this.on('user.id', 'order.user_id').andOn(knex.raw('user.is_deleted = false'))
       })
       .where('o.id', id)
       .groupBy('o.id')
