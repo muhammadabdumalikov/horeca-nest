@@ -23,6 +23,7 @@ jobs:
 
       - name: Build and deploy (replace with your deployment script)
         run: |
+          npm install
           npm run build
 
       - name: Run DEV server
