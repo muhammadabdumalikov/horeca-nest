@@ -30,6 +30,6 @@ jobs:
       - name: Build and deploy (replace with your deployment script)
         run: |
           npm run build
-          pm2 restart horeca
+          pm2 start ./dist/main.js --name horeca
         env:
           NODE_ENV: production
