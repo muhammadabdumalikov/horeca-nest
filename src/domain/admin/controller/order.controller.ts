@@ -66,15 +66,15 @@ export class AdminOrderController {
     return this.adminOrderService.orderListByDeliver(params, user);
   }
 
-  @ApiBearerAuth('authorization')
-  @UseGuards(AdminGuard)
+  // @ApiBearerAuth('authorization')
+  // @UseGuards(AdminGuard)
   @Patch('order-update/:id')
   async orderUpdate(@Param('id') order_id: string, @Body() params: OrderUpdateDto) {
     return this.adminOrderService.updateOrder(order_id, params);
   }
 
-  @ApiBearerAuth('authorization')
-  @UseGuards(AdminGuard)
+  // @ApiBearerAuth('authorization')
+  // @UseGuards(AdminGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.adminOrderService.findOne(id);
