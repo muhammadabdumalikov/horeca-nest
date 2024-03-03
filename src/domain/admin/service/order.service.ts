@@ -185,7 +185,7 @@ export class AdminOrderService {
               'discount_price', product.discount_price,
               'block_price', product.block_price,
               'count_in_block', product.count_in_block,
-              'price_for_item', nullif(item.price, '')::number
+              'price_for_item', nullif(item.price, '')::int
             )
           ) as order_items
         `)
@@ -193,7 +193,7 @@ export class AdminOrderService {
       .from('orders as o')
       .leftJoin('order_items as item', function () {
         this.on('item.order_id', 'o.id')
-          // .andOn(knex.raw('item.is_deleted = false'))
+        // .andOn(knex.raw('item.is_deleted = false'))
       })
       .leftJoin('products as product', function () {
         this.on('product.id', 'item.product_id').andOn(knex.raw('product.is_deleted = false'))
@@ -205,7 +205,7 @@ export class AdminOrderService {
       .where('o.is_deleted', false)
       .groupBy(['o.id', 'user.id'])
       .first();
-      
+
     return product;
   }
 
