@@ -38,8 +38,8 @@ export class AdminOrderController {
     return this.adminOrderService.setDeliver(params, currentUser);
   }
 
-  @ApiBearerAuth('authorization')
-  @UseGuards(AdminGuard)
+  // @ApiBearerAuth('authorization')
+  // @UseGuards(AdminGuard)
   @Get('list')
   async orderList(
     @Query() params: OrderListDto,
