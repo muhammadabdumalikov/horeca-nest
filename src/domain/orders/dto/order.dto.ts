@@ -36,6 +36,7 @@ export class CreateOrderDto {
   @ApiProperty({ isArray: true, type: () => SingleOrderDto })
   @Type(() => SingleOrderDto)
   @ValidateNested({ each: true })
+  @IsArray()
   items: SingleOrderDto[];
 
   @ApiProperty()
