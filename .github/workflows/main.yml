@@ -18,18 +18,27 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install PM2
-        run: npm install pm2 -g
+      # - name: Run tests
+      #   run: npm test
 
       - name: Install dependencies
         run: npm install
 
-      # - name: Run tests
-      #   run: npm test
-
-      - name: Build and deploy (replace with your deployment script)
+      - name: Build
         run: |
           npm run build
-          pm2 start ./dist/main.js --name horeca
-        env:
-          NODE_ENV: production
+
+      - name: Run DEV server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          # key: ${{ secrets.PRIVATE_KEY }}
+          password: ${{ secrets.HOST_PASSWORD }}
+          port: 22
+          script: |
+            cd Project/horeca-nest
+            git pull
+            npm install
+            npm run build
+            pm2 restart horeca
