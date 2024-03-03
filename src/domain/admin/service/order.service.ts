@@ -185,7 +185,7 @@ export class AdminOrderService {
               'discount_price', product.discount_price,
               'block_price', product.block_price,
               'count_in_block', product.count_in_block,
-              'price_for_item', item.price
+              'price_for_item', nullif(item.price, '')::number
             )
           ) as order_items
         `)
