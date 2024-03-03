@@ -5,6 +5,13 @@ export enum UserRoles {
   DELIVER = 4,
 }
 
+export enum UserRolesAsString {
+  SUPER_ADMIN = '1',
+  ADMIN = '2',
+  SELLER = '3',
+  DELIVER = '4',
+}
+
 export enum UserStatus {
   REGISTERED = 0,
   ACTIVE = 1,
