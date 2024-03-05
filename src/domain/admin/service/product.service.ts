@@ -10,6 +10,7 @@ import { CreateProductDto, UpdateProductDto } from 'src/domain/product/dto/produ
 import { IUser } from 'src/domain/user/interface/user.interface';
 import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
 import { AdminCategoryListPageDto } from '../dto/category-admin.dto';
+import { generateProductBarcodeCode } from 'src/shared/utils/password-hash';
 
 @Injectable()
 export class AdminProductService {
@@ -31,7 +32,7 @@ export class AdminProductService {
       block_price: +params?.block_price,
       discount_price: +params?.discount_price,
       description: params?.description,
-      barcode: params.barcode,
+      barcode: generateProductBarcodeCode(),
       count_in_block: +params?.count_in_block,
       product_count: +params?.product_count,
       measure: params?.measure,
@@ -119,7 +120,7 @@ export class AdminProductService {
       block_price: +params?.block_price,
       discount_price: +params?.discount_price,
       description: params?.description,
-      barcode: params.barcode,
+      barcode: params?.barcode,
       count_in_block: +params?.count_in_block,
       product_count: +params?.product_count,
       measure: params?.measure,

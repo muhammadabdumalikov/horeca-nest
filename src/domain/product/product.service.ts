@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CreateProductDto,
-  ProductListByCategoryDto,
   ProductListDto,
   SearchDto,
   UpdateProductDto,
@@ -13,7 +11,6 @@ import {
   UserHasNotOwnerPermissionException,
 } from 'src/errors/permission.error';
 import { isEmpty } from 'lodash';
-import { ListPageDto } from 'src/shared/dto/list.dto';
 import { IListPage } from 'src/shared/interface/list.interface';
 
 @Injectable()
@@ -96,7 +93,7 @@ export class ProductService {
       block_price: +params?.block_price,
       discount_price: +params?.discount_price,
       description: params?.description,
-      barcode: params.barcode,
+      barcode: params?.barcode,
       count_in_block: +params?.count_in_block,
       block_count: +params?.product_count,
       measure: params?.measure,
