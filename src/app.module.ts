@@ -11,6 +11,8 @@ import { OrdersModule } from './domain/orders/orders.module';
 import { CompanyModule } from './domain/company/company.module';
 import { NotificationModule } from './domain/notification/notification.module';
 import { PaymentTypeModule } from './domain/payment_type/payment_type.module';
+import { ReportService } from './domain/admin/service/report.service';
+import { AdminOrdersRepo } from './domain/admin/repo/order.repo';
 
 @Module({
   imports: [
@@ -25,6 +27,6 @@ import { PaymentTypeModule } from './domain/payment_type/payment_type.module';
     PaymentTypeModule
   ],
   controllers: [AppController],
-  providers: [AppService, PoolService],
+  providers: [AppService, PoolService, ReportService, AdminOrdersRepo],
 })
 export class AppModule {}

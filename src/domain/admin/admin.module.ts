@@ -22,6 +22,8 @@ import { AdminOrderService } from './service/order.service';
 import { AdminOrdersRepo } from './repo/order.repo';
 import { AdminCompanyController } from './controller/company.controller';
 import { AdminOrderItemsRepo } from './repo/order-item.repo';
+import { ReportService } from './service/report.service';
+import { ReportController } from './controller/report.controller';
 
 @Module({
   imports: [UserModule, ProductModule],
@@ -31,7 +33,8 @@ import { AdminOrderItemsRepo } from './repo/order-item.repo';
     AdminProductController,
     AdminUserController,
     AdminOrderController,
-    AdminCompanyController
+    AdminCompanyController,
+    ReportController
   ],
   providers: [
     AdminCategoryService,
@@ -49,6 +52,8 @@ import { AdminOrderItemsRepo } from './repo/order-item.repo';
     AdminOrderService,
     AdminOrdersRepo,
     AdminOrderItemsRepo,
+
+    ReportService
   ],
 })
 export class AdminModule {}

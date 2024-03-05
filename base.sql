@@ -89,6 +89,10 @@ ALTER TABLE orders
 ADD COLUMN deliver_id VARCHAR(24);
 ALTER TABLE orders 
 ADD COLUMN payment_type_name jsonb;
+ALTER TABLE orders 
+ADD COLUMN registrator_id VARCHAR(24);
+ALTER TABLE orders 
+ADD COLUMN deliver_user_json jsonb;
 
 create table order_items (
     id varchar(24) PRIMARY KEY,

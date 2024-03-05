@@ -21,6 +21,7 @@ export class AdminOrderService {
     return this.adminOrderRepo.knex.transaction(async (trx) => {
       await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_id, {
         status: params.status,
+        registrator_id: currentUser.id,
         updated_by: currentUser.id
       });
 
@@ -55,6 +56,11 @@ export class AdminOrderService {
 
       await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_id, {
         deliver_id: params.deliver_id,
+        deliver_user_json: await trx
+          .select(['first_name', 'last_name', 'role', 'phone'])
+          .from('users')
+          .where('id', params.deliver_id)
+          .first(),
         updated_by: currentUser.id
       });
 
