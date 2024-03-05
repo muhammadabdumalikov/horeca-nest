@@ -13,13 +13,11 @@ create table users
     additional_name varchar(256) null,
     is_block   bool        not null     default false,
     auth_status bool       not null     default false, 
+		login VARCHAR(32),
+		password VARCHAR(64),
     is_deleted bool        not null     default false,
     created_at timestamp with time zone default now()
 );
-ALTER TABLE users 
-ADD COLUMN login VARCHAR(32);
-ALTER TABLE users 
-ADD COLUMN password VARCHAR(64);
 
 create table categories(
 	id varchar(24) not null primary key,
@@ -78,21 +76,16 @@ create table orders(
 	comment varchar(256) null,
 	location jsonb not null,
 	order_number varchar(12),
+	updated_by VARCHAR(24),
+	deliver_id VARCHAR(24),
+	payment_type_name jsonb,
+	registrator_id VARCHAR(24),
+	deliver_user_json jsonb,
 	is_deleted boolean default false,
 	created_at timestamptz default current_timestamp,
 	updated_at timestamptz,
 	CONSTRAINT fk_customer FOREIGN KEY (user_id) REFERENCES users(id)
 );
-ALTER TABLE orders 
-ADD COLUMN updated_by VARCHAR(24);
-ALTER TABLE orders 
-ADD COLUMN deliver_id VARCHAR(24);
-ALTER TABLE orders 
-ADD COLUMN payment_type_name jsonb;
-ALTER TABLE orders 
-ADD COLUMN registrator_id VARCHAR(24);
-ALTER TABLE orders 
-ADD COLUMN deliver_user_json jsonb;
 
 create table order_items (
     id varchar(24) PRIMARY KEY,
@@ -101,6 +94,7 @@ create table order_items (
     quantity smallint NOT NULL,
 		unit_type SMALLINT NOT NULL,
     price varchar(24) NOT NULL,
+		is_deleted boolean default false,
     CONSTRAINT fk_order
         FOREIGN KEY (order_id)
         REFERENCES orders(id),
@@ -108,8 +102,6 @@ create table order_items (
         FOREIGN KEY (product_id)
         REFERENCES products(id)
 );
-ALTER TABLE order_items 
-ADD COLUMN is_deleted boolean default false;
 
 create table notifications
 (
