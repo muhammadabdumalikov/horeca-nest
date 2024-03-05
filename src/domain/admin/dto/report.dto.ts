@@ -3,8 +3,8 @@ import { IsArray, IsISO8601, IsOptional, IsString } from "class-validator";
 
 export class GenerateFakturaReportDto {
   @ApiPropertyOptional()
-  @IsString()
-  @IsArray({ each: true })
+  @IsString({ each: true })
+  @IsArray()
   @IsOptional()
   user_ids?: string[];
 
