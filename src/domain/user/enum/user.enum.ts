@@ -1,15 +1,17 @@
 export enum UserRoles {
   SUPER_ADMIN = 1,
   ADMIN = 2,
-  SELLER = 3,
+  CLIENT = 3,
   DELIVER = 4,
+  PROVIDER = 5
 }
 
 export enum UserRolesAsString {
   SUPER_ADMIN = '1',
   ADMIN = '2',
-  SELLER = '3',
+  CLIENT = '3',
   DELIVER = '4',
+  PROVIDER = '5'
 }
 
 export enum UserStatus {

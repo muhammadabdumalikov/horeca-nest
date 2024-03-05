@@ -20,6 +20,11 @@ export class CreateProductDto {
   @IsString()
   category_id: string;
 
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  provider_id: string;
+
   @ApiProperty()
   @IsString()
   @MaxLength(128)

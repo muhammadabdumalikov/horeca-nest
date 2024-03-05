@@ -5,7 +5,8 @@ export enum ProductStatusEnum {
 
 export enum UserRolesShort {
   ADMIN = 2,
-  SELLER = 3,
+  CLIENT = 3,
   DELIVER = 4,
+  PROVIDER = 5,
 }
 

@@ -52,6 +52,9 @@ create table products(
 	created_at timestamptz default current_timestamp,
 	updated_at timestamptz
 ); 
+alter table products
+add column 	provider_id VARCHAR(24);
+
 insert into products(
 	company_id, category_id, uz_name, ru_name, en_name, barcode, image, blokda_soni, description, dona_price, blok_price, disc_price
 ) values 

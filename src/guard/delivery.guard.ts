@@ -42,7 +42,7 @@ export class DeliveryGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    if (user.role === UserRoles.SELLER) {
+    if (user.role === UserRoles.CLIENT) {
       throw new UserHasNotPermissionException();
     }
 

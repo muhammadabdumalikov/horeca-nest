@@ -55,7 +55,7 @@ export class AuthService {
     } else {
       user = await this.userRepo.insert({
         phone: params.phone,
-        role: UserRoles.SELLER,
+        role: UserRoles.CLIENT,
         otp: otp,
       });
     }

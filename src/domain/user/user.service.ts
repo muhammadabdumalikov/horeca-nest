@@ -11,7 +11,7 @@ import { nanoid } from "nanoid";
 export class UserService {
   constructor(
     private readonly userRepo: UserRepo,
-  ) {}
+  ) { }
 
   async signUp(params: CreateUserDto) {
     return this.userRepo.knex
@@ -27,7 +27,7 @@ export class UserService {
 
         const [user]: [IUser] = await this.userRepo.insert({
           phone: params.phone,
-          role: UserRoles.SELLER,
+          role: UserRoles.CLIENT,
           otp: otp,
         });
 
