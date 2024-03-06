@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AdminOrdersRepo } from '../repo/order.repo';
-import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto } from '../dto/product-admin.dto';
-import { ICurrentUser, IListPage } from 'src/shared/interface/list.interface';
+import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto, SetPaymentDto } from '../dto/product-admin.dto';
+import { ICurrentUser } from 'src/shared/interface/list.interface';
 import { OrderListByUsersDto, OrderListDto } from 'src/domain/orders/dto/order.dto';
 import { OrderStatus } from 'src/domain/orders/dto/order.enum';
 import { AdminProductRepo } from '../repo/product.repo';
-import { OrderAlreadyDeliveredException, ProductNotFoundException } from 'src/errors/permission.error';
+import { OrderAlreadyDeliveredException, PaymentPriceExceed, ProductNotFoundException } from 'src/errors/permission.error';
 import { isEmpty } from 'lodash';
 import { AdminOrderItemsRepo } from '../repo/order-item.repo';
 
@@ -65,6 +65,18 @@ export class AdminOrderService {
       });
 
       return { success: true };
+    });
+  }
+
+  async setPayment(params: SetPaymentDto, currentUser: ICurrentUser) {
+    const order = await this.adminOrderRepo.selectById(params.order_id);
+    if (params.paid_price > order.total_sum) {
+      throw new PaymentPriceExceed(); 
+    }
+
+    return this.adminOrderRepo.updateById(params.order_id, {
+      paid: params.paid_price,
+      updated_by: currentUser.id
     });
   }
 

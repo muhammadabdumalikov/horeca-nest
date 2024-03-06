@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ErrorCodes } from './error-codes.enum';
+import { ErrorCodes, ErrorMessages } from './error-codes.enum';
 
 export class UserHasNotPermissionException extends UnauthorizedException {
   constructor() {
@@ -92,7 +92,12 @@ export class OrderAlreadyDeliveredException extends BadRequestException {
 
 export class PaymentTypeNotAllowed extends BadRequestException {
   constructor() {
-    super({ code: `${ErrorCodes.PAYMENT_TYPE_NOT_ALLOWED}` });
+    super({ code: `${ErrorCodes.PAYMENT_TYPE_NOT_ALLOWED}`, message: ErrorMessages.PAYMENT_TYPE_NOT_ALLOWED });
   }
 }
 
+export class PaymentPriceExceed extends BadRequestException {
+  constructor() {
+    super({ code: `${ErrorCodes.PAYMENT_PRICE_EXCEED}`, message: ErrorMessages.PAYMENT_PRICE_EXCEED });
+  }
+}

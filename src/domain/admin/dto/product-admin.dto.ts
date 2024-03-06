@@ -51,3 +51,13 @@ export class OrderUpdateDto {
   @IsArray()
   items: OrderItemDetailDto[]
 }
+
+export class SetPaymentDto {
+  @ApiProperty()
+  @IsString()
+  order_id: string;
+
+  @ApiProperty()
+  @IsNumber()
+  paid_price: number;
+}
