@@ -89,6 +89,8 @@ create table orders(
 	updated_at timestamptz,
 	CONSTRAINT fk_customer FOREIGN KEY (user_id) REFERENCES users(id)
 );
+alter table orders 
+add column paid double precision null;
 
 create table order_items (
     id varchar(24) PRIMARY KEY,
