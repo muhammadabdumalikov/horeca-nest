@@ -32,6 +32,7 @@ export class AdminProductService {
       count_price: +params?.count_price !== 0 ? +params?.count_price : null,
       block_price: +params?.block_price !== 0 ? +params?.block_price : null,
       discount_price: +params?.discount_price !== 0 ? +params?.discount_price : null,
+      provider_price: +params?.provider_price !== 0 ? +params?.provider_price : null,
       description: params?.description,
       barcode: generateProductBarcodeCode(),
       count_in_block: +params?.count_in_block,
@@ -145,6 +146,12 @@ export class AdminProductService {
             'name_uz', category.name_uz,
             'name_ru', category.name_ru
           ) as category 
+        `),
+        knex.raw(`
+          jsonb_build_object(
+            'first_name', provider.first_name,
+            'last_name', provider.last_name
+          ) as provider 
         `)
       ])
       .from('products as p')
@@ -153,6 +160,9 @@ export class AdminProductService {
       })
       .leftJoin('categories as category', function () {
         this.on('p.category_id', 'category.id').andOn(knex.raw('category.is_deleted = false'))
+      })
+      .leftJoin('users as provider', function () {
+        this.on('p.provider_id', 'provider.id').andOn(knex.raw('provider.is_deleted = false'))
       })
       .where('p.id', id)
       .first();

@@ -76,6 +76,11 @@ export class CreateProductDto {
   @IsNumber()
   @IsOptional()
   block_price?: number;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @IsOptional()
+  provider_price?: number;
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
