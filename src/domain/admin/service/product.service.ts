@@ -121,6 +121,7 @@ export class AdminProductService {
       count_price: +params?.count_price !== 0 ? +params?.count_price : null,
       block_price: +params?.block_price !== 0 ? +params?.block_price : null,
       discount_price: +params?.discount_price !== 0 ? +params?.discount_price : null,
+      provider_price: +params?.provider_price !== 0 ? +params?.provider_price : null,
       description: params?.description,
       barcode: params?.barcode,
       count_in_block: +params?.count_in_block,
