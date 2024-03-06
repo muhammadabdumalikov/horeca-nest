@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import ObjectID from 'bson-objectid';
-import { s3 } from 'src/providers/file-upload';
+import { s3, s3Report } from 'src/providers/file-upload';
 
 @Injectable()
 export class FileRouterService {
@@ -34,7 +34,42 @@ export class FileRouterService {
       };
     } catch (error) {
       console.log(error);
-      
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async uploadReport(file) {
+    try {
+      const {
+        // originalname,
+        mimetype,
+        // size,
+        buffer,
+      } = file;
+
+      const fileContent = Buffer.from(buffer);
+
+      const filename = ObjectID().toHexString();
+
+      const data = s3Report
+        .putObject({
+          Body: fileContent, // The actual file content
+          Bucket: 'reports',
+          Key: filename, // The name of the file
+          ContentType: mimetype,
+        })
+        .promise();
+      await data;
+
+      // https://usc1.contabostorage.com/6888fe4012724b1e990f016e5f9ef705:reports
+      return {
+        sucess: true,
+        file_id: filename,
+        file_url: `https://usc1.contabostorage.com/6888fe4012724b1e990f016e5f9ef705:${'reports'}/${filename}`,
+      };
+    } catch (error) {
+      console.log(error);
+
       throw new InternalServerErrorException(error);
     }
   }

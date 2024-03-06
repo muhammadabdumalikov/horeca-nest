@@ -20,3 +20,11 @@ export const s3 = new AWS.S3({
 //   // secretAccessKey: '312a91e1c8ca403d396a9e16d20883f6',
 //   // s3BucketEndpoint: true,
 // });
+
+export const s3Report = new AWS.S3({
+  endpoint: `https://usc1.contabostorage.com/reports`, // e.g. https://eu2.contabostorage.com/bucketname
+  accessKeyId: 'd5506460ccc5b86f32fe11c61409c99f',
+  secretAccessKey: '2d38a658ab6d3a607449d3474ee0d1c0',
+  s3BucketEndpoint: true,
+});
+

@@ -13,6 +13,7 @@ import { NotificationModule } from './domain/notification/notification.module';
 import { PaymentTypeModule } from './domain/payment_type/payment_type.module';
 import { ReportService } from './domain/admin/service/report.service';
 import { AdminOrdersRepo } from './domain/admin/repo/order.repo';
+import { FileRouterService } from './domain/file-router/file-router.service';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { AdminOrdersRepo } from './domain/admin/repo/order.repo';
     PaymentTypeModule
   ],
   controllers: [AppController],
-  providers: [AppService, PoolService, ReportService, AdminOrdersRepo],
+  providers: [AppService, PoolService, ReportService, AdminOrdersRepo, FileRouterService],
 })
 export class AppModule {}

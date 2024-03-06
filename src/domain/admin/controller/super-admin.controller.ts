@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { AdminUserService } from '../service/user.service';
-import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto, UpdateWorkerDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateProviderDto, CreateWorkerDto, UpdateWorkerDto } from '../dto/user-admin.dto';
 
 @ApiTags('Admin')
 // @ApiBasicAuth('basic')
@@ -23,6 +23,11 @@ export class SuperAdminController {
   @Post('create-worker')
   async createWorker(@Body() params: CreateWorkerDto) {
     return this.adminUserService.createworker(params);
+  }
+
+  @Post('create-provider')
+  async createProvider(@Body() params: CreateProviderDto) {
+    return this.adminUserService.createProvider(params);
   }
 
   @Patch('update-worker/:id')

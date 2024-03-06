@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AdminUserRepo } from '../repo/user.repo';
-import { AdminLoginDto, AdminUsersListDto, CreateWorkerDto, SetUserStatusDto, UpdateWorkerDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateProviderDto, CreateWorkerDto, SetUserStatusDto, UpdateWorkerDto } from '../dto/user-admin.dto';
 import { isEmpty } from 'lodash';
 import { IncorrectLoginException, IncorrectPasswordException, PhoneAlreadyRegistered, UserHasNotPermissionException, UserNotFoundException } from 'src/errors/permission.error';
-import { UserRoles } from 'src/domain/user/enum/user.enum';
+import { PersonType, UserRoles } from 'src/domain/user/enum/user.enum';
 import { IUser } from 'src/domain/user/interface/user.interface';
 import { createPasswordHash, validateUserPassword } from 'src/shared/utils/password-hash';
 import { JwtService } from '@nestjs/jwt';
@@ -132,6 +132,35 @@ export class AdminUserService {
         .then((data) => {
           return data;
         });
+  }
+
+  async createProvider(params: CreateProviderDto) {
+    return this.adminUserRepo.knex
+      .transaction(async () => {
+        const hasUser: IUser = await this.adminUserRepo.selectByPhone(params.phone);
+
+        if (hasUser) {
+          throw new PhoneAlreadyRegistered();
+        }
+        // const check = validateUserPassword(password, '12343');
+
+        const [user]: [IUser] = await this.adminUserRepo.insert({
+          phone: params?.phone,
+          role: UserRoles.PROVIDER,
+          person_type: params?.person_type,
+          first_name: params?.first_name,
+          last_name: params?.last_name,
+          legal_name: params?.person_type === PersonType.JURIDIC ? params?.legal_name : null,
+          additional_name: params?.additional_name,
+          address: params?.address,
+          auth_status: true
+        });
+
+        return { success: true, user };
+      })
+      .then((data) => {
+        return data;
+      });
   }
   
   async updateWorker(worker_id: string, params: UpdateWorkerDto) {

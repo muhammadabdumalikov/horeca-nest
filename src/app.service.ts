@@ -5,11 +5,12 @@ import { DocumentMimeTypes } from './shared/enum/report';
 import { ReportService } from './domain/admin/service/report.service';
 import * as path from 'path';
 import { XLSTableStyles } from './shared/utils/xlsx-styles';
+import { FileRouterService } from './domain/file-router/file-router.service';
 
 
 @Injectable()
 export class AppService {
-  constructor(private readonly reportService: ReportService) { }
+  constructor(private readonly reportService: ReportService, private readonly fileRouterService: FileRouterService) { }
 
   async getHello() {
     const workbook = new ExcelJS.Workbook();
@@ -219,7 +220,7 @@ export class AppService {
       startRowIndex += 10 + order_raw.items.length;
     }
 
-    const buffer: any = await workbook.xlsx.writeFile(path.join(__dirname, '/../example.xlsx'), { filename: 'Faktura hisobot' });
+    const buffer: any = await workbook.xlsx.writeBuffer();
 
     const file: IFile = {
       originalname: String('Faktura hisobot'),
@@ -230,10 +231,10 @@ export class AppService {
       encoding: '',
     };
 
-    return buffer;
+    // return buffer;
 
-    // const uploadFile: any = await this.fileRouterService.upload(file, user);
+    const uploadFile: any = await this.fileRouterService.uploadReport(file);
 
-    // return { id: uploadFile?.id };
+    return uploadFile;
   }
 }

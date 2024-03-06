@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserRolesShort } from '../enum/product.enum';
 import { ListPageDto } from 'src/shared/dto/list.dto';
-import { UserRolesAsString } from 'src/domain/user/enum/user.enum';
+import { PersonType, UserRolesAsString } from 'src/domain/user/enum/user.enum';
 
 export class SetUserStatusDto {
   @ApiProperty()
@@ -43,6 +43,40 @@ export class CreateWorkerDto {
   @ApiProperty({ enum: UserRolesShort })
   @IsEnum(UserRolesShort)
   role: UserRolesShort
+}
+
+export class CreateProviderDto {
+  @ApiProperty()
+  @IsString()
+  phone: string;
+
+  @ApiProperty()
+  @IsString()
+  first_name: string;
+
+  @ApiProperty()
+  @IsString()
+  last_name: string;
+
+  @ApiPropertyOptional({ enum: PersonType })
+  @IsEnum(PersonType)
+  @IsOptional()
+  person_type?: PersonType;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  legal_name?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  additional_name?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  address?: string;
 }
 
 export class UpdateWorkerDto extends PartialType(CreateWorkerDto) { }
