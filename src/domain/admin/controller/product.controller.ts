@@ -13,22 +13,18 @@ import { AdminProductService } from '../service/product.service';
 import { SetProductStatusDto } from '../dto/product-admin.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
-import { ProductService } from 'src/domain/product/product.service';
-import { OrderListDto } from 'src/domain/orders/dto/order.dto';
-import { ListPageDto } from 'src/shared/dto/list.dto';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
 import { CreateProductDto, UpdateProductDto } from 'src/domain/product/dto/product.dto';
 import { IUser } from 'src/domain/user/interface/user.interface';
 import { AdminCategoryListPageDto } from '../dto/category-admin.dto';
 
 @ApiTags('Admin')
-// @ApiBearerAuth('authorization')
-// @UseGuards(AdminGuard)
+@ApiBearerAuth('authorization')
+@UseGuards(AdminGuard)
 @Controller('admin/product')
 export class AdminProductController {
   constructor(
     private readonly adminProductService: AdminProductService,
-    private readonly productService: ProductService,
   ) { }
 
   @Post()

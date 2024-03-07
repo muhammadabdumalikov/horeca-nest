@@ -70,8 +70,8 @@ export class AdminOrderService {
 
   async setPayment(params: SetPaymentDto, currentUser: ICurrentUser) {
     const order = await this.adminOrderRepo.selectById(params.order_id);
-    if (params.paid_price > order.total_sum) {
-      throw new PaymentPriceExceed(); 
+    if (params.paid_price > order.total_sum || (order.paid + params.paid_price) > order.total_sum) {
+      throw new PaymentPriceExceed();
     }
 
     return this.adminOrderRepo.updateById(params.order_id, {
@@ -83,7 +83,16 @@ export class AdminOrderService {
   async orderList(params: OrderListDto) {
     const knex = this.adminOrderRepo.knex;
     let query = knex
-      .select(['*', knex.raw('count(id) over() as total')])
+      .select([
+        '*',
+        knex.raw('count(id) over() as total'),
+        knex.raw(`case
+          when total_sum > paid and paid > 0 then 'Qisman tolangan'
+          when paid = 0 then 'Tolanmagan'
+          when total_sum = paid then 'Tolangan'
+          else null
+          end as paid_status
+        `)])
       .from(this.adminOrderRepo._tableName)
       .orderBy('created_at', 'desc');
 

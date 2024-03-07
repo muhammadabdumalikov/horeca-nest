@@ -42,11 +42,6 @@ export class CreateProductDto {
 
   @ApiProperty()
   @IsString()
-  @MaxLength(24)
-  barcode: string;
-
-  @ApiProperty()
-  @IsString()
   image: string;
 
   @ApiProperty()
@@ -83,7 +78,12 @@ export class CreateProductDto {
   provider_price?: number;
 }
 
-export class UpdateProductDto extends PartialType(CreateProductDto) {}
+export class UpdateProductDto extends PartialType(CreateProductDto) {
+  @ApiProperty()
+  @IsString()
+  @MaxLength(24)
+  barcode: string;
+}
 
 export class ProductListByCategoryDto extends ListPageDto {
   @ApiProperty()
