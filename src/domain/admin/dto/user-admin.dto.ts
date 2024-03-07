@@ -46,17 +46,20 @@ export class CreateWorkerDto {
 }
 
 export class CreateProviderDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
-  phone: string;
+  @IsOptional()
+  phone?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
-  first_name: string;
+  @IsOptional()
+  first_name?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
-  last_name: string;
+  @IsOptional()
+  last_name?: string;
 
   @ApiPropertyOptional({ enum: PersonType })
   @IsEnum(PersonType)
