@@ -133,8 +133,14 @@ export class OrdersService {
         'order.created_at',
         'order.status',
         'order.location',
-        knex.raw('count("order".id) over() as total')
-      ])
+        knex.raw('count("order".id) over() as total'),
+        knex.raw(`case
+          when order.total_sum > order.paid and order.paid > 0 then 'Qisman tolangan'
+          when order.paid = 0 then 'Tolanmagan'
+          when order.total_sum = paid then 'Tolangan'
+          else null
+          end as order_paid_status
+        `)])
       .from(`${this.orderRepo._tableName} as order`)
       .innerJoin('order_items as item', function () {
         this.on('order.id', 'item.order_id')
