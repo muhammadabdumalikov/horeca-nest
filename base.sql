@@ -212,3 +212,5 @@ create table order_payment_history(
 	created_at timestamptz default current_timestamp,
 	updated_at timestamptz
 );
+alter table order_payment_history
+add column receiver_id varchar(24);
