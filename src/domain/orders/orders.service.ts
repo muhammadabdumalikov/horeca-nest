@@ -2,21 +2,23 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateOrderDto, OrderListDto } from './dto/order.dto';
 import { OrdersRepo } from './orders.repo';
 import { ProductRepo } from '../product/product.repo';
-import { PaymentTypeNotAllowed, ProductCountLimitedException, ProductNotFoundException } from 'src/errors/permission.error';
+import { OnlySuperUserAllowedException, PaymentTypeNotAllowed, ProductCountLimitedException, ProductNotFoundException } from 'src/errors/permission.error';
 // import { KnexService } from 'src/providers/knex.service';
 import { IUser } from '../user/interface/user.interface';
 import { isEmpty } from 'lodash';
 import { IProduct } from '../product/interface/product.interface';
-import { OrderStatus, PaymentType } from './dto/order.enum';
+import { OrderPaymentHistoryTypes, OrderStatus, PaymentTypesEnum } from './dto/order.enum';
 import { OrderItemsRepo } from './oreder-items.repo';
 import { generateOrderCode } from 'src/shared/utils/password-hash';
+import { OrderPaymentHistoryRepo } from './order-payment-history.repo';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly orderRepo: OrdersRepo,
     private readonly orderItemsRepo: OrderItemsRepo,
-    private readonly productRepo: ProductRepo, // private readonly knexService: KnexService,
+    private readonly productRepo: ProductRepo,
+    private readonly orderPaymentHistoryRepo: OrderPaymentHistoryRepo
   ) { }
 
   async createOrder(params: CreateOrderDto, currentUser: IUser) {
@@ -30,8 +32,14 @@ export class OrdersService {
       if (isEmpty(paymentType)) {
         throw new PaymentTypeNotAllowed();
       }
-        
-      const order = await this.orderRepo.insertWithTransaction(trx, {
+
+      if (params.payment_type === PaymentTypesEnum.DEBT) {
+        if (!currentUser.super_user) {
+          throw new OnlySuperUserAllowedException();
+        }
+      }
+
+      const [order] = await this.orderRepo.insertWithTransaction(trx, {
         id: this.orderRepo.generateRecordId(),
         user_id: currentUser.id,
         status: OrderStatus.REGISTERED,
@@ -69,7 +77,7 @@ export class OrdersService {
         
         const order_item = await this.orderItemsRepo.insertWithTransaction(trx, {
           id: this.orderItemsRepo.generateRecordId(),
-          order_id: order[0]?.id,
+          order_id: order?.id,
           product_id: item.product_id,
           quantity: item.quantity,
           unit_type: product.measure,
@@ -79,8 +87,19 @@ export class OrdersService {
         totalSumOfOrder += priceForItem * item.quantity;
       }
 
-      const updatedOrder = await this.orderRepo.updateByIdWithTransaction(trx, order[0]?.id, { total_sum: totalSumOfOrder })
-      
+      const updatedOrder = await this.orderRepo.updateByIdWithTransaction(trx, order.id, { total_sum: totalSumOfOrder });
+
+      if (params.payment_type === PaymentTypesEnum.DEBT) {
+        await this.orderPaymentHistoryRepo.insertWithTransaction(trx, {
+          id: this.orderPaymentHistoryRepo.generateRecordId(),
+          user_id: currentUser.id,
+          user_json: currentUser,
+          order_id: order.id,
+          type: OrderPaymentHistoryTypes.DEBT,
+          value: totalSumOfOrder
+        })
+      }
+
       return updatedOrder;
     })
 
@@ -163,7 +182,7 @@ export class OrdersService {
     if (params.offset) {
       query = query.offset(Number(params.offset));
     }
-    
+
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };

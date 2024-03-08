@@ -42,7 +42,15 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    request.user = user;
+    request.user = {
+      id: user.id,
+      phone: user.phone,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role: UserRoles,
+      auth_status: user.auth_status,
+      super_user: user.super_user
+};
 
     return true;
   }

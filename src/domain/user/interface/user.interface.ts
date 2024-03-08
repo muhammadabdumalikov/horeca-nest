@@ -9,6 +9,7 @@ export interface IUser {
   auth_status: boolean;
   otp: string;
   password: string;
+  super_user: string;
 }
 
 export interface IUpdateUser {

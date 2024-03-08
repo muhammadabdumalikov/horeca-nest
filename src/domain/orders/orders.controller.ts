@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto, OrderListDto } from './dto/order.dto';
+import { CreateOrderDto } from './dto/order.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IUser } from '../user/interface/user.interface';
 import { CurrentUser } from 'src/decorator/current-user.decorator';

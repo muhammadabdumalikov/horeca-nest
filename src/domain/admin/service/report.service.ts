@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AdminOrdersRepo } from '../repo/order.repo';
-import { GenerateFakturaReportDto } from '../dto/report.dto';
+import { GenerateAktSverkaReportDto, GenerateFakturaReportDto } from '../dto/report.dto';
 import { isEmpty } from 'lodash';
 
 @Injectable()
@@ -55,6 +55,19 @@ export class ReportService {
     if (!isEmpty(params.user_ids)) {
       query.whereIn('client.id', params.user_ids)
     }
+
+    return query;
+  }
+
+  async getActSverkaReport(params: GenerateAktSverkaReportDto) {
+    const knex = this.adminOrderRepo.knex;
+
+    const query = knex
+      .select('history.*')
+      .from('order_payment_history as history')
+      .where('history.user_id', params.user_id)
+      .whereRaw(`"history".created_at between '${params.from_date}'::date and '${params.to_date}'::date`)
+      .orderBy('history.created_at', 'asc');
 
     return query;
   }

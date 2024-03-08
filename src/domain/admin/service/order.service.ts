@@ -3,11 +3,12 @@ import { AdminOrdersRepo } from '../repo/order.repo';
 import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto, SetPaymentDto } from '../dto/product-admin.dto';
 import { ICurrentUser } from 'src/shared/interface/list.interface';
 import { OrderListByUsersDto, OrderListDto } from 'src/domain/orders/dto/order.dto';
-import { OrderStatus } from 'src/domain/orders/dto/order.enum';
+import { OrderPaymentHistoryTypes, OrderStatus, PaymentTypesEnum } from 'src/domain/orders/dto/order.enum';
 import { AdminProductRepo } from '../repo/product.repo';
 import { OrderAlreadyDeliveredException, PaymentPriceExceed, ProductNotFoundException } from 'src/errors/permission.error';
 import { isEmpty } from 'lodash';
 import { AdminOrderItemsRepo } from '../repo/order-item.repo';
+import { AdminOrderPaymentHistoryRepo } from '../repo/order-payment-history.repo';
 
 @Injectable()
 export class AdminOrderService {
@@ -15,6 +16,7 @@ export class AdminOrderService {
     private readonly adminOrderRepo: AdminOrdersRepo,
     private readonly adminProductRepo: AdminProductRepo,
     private readonly adminOrderItemRepo: AdminOrderItemsRepo,
+    private readonly adminOrderPaymentHistoryRepo: AdminOrderPaymentHistoryRepo
   ) { }
 
   setStatus(params: SetOrderStatusDto, currentUser: ICurrentUser) {
@@ -72,6 +74,18 @@ export class AdminOrderService {
     const order = await this.adminOrderRepo.selectById(params.order_id);
     if (params.paid_price > order.total_sum || (order.paid + params.paid_price) > order.total_sum) {
       throw new PaymentPriceExceed();
+    }
+
+    if (order.payment_type === PaymentTypesEnum.DEBT) {
+      await this.adminOrderPaymentHistoryRepo.insert({
+        id: this.adminOrderPaymentHistoryRepo.generateRecordId(),
+        user_id: order.user_id,
+        // user_json: currentUser,
+        receiver_id: currentUser.id,
+        order_id: order.id,
+        type: OrderPaymentHistoryTypes.PAYMENT,
+        value: params.paid_price
+      })
     }
 
     return this.adminOrderRepo.updateById(params.order_id, {

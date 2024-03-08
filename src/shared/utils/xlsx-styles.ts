@@ -46,6 +46,7 @@ export const XLSTableStyles = {
       size: 12,
     },
   },
+
   tableCellTextLeft: {
     border: {
       top: {
@@ -66,6 +67,30 @@ export const XLSTableStyles = {
       },
     },
     alignment: { vertical: 'middle', horizontal: 'left', wrapText: true },
+    font: {
+      size: 12,
+    },
+  },
+  tableCellTextRight: {
+    border: {
+      top: {
+        style: 'thin',
+        color: '#000000',
+      },
+      left: {
+        style: 'thin',
+        color: '#000000',
+      },
+      right: {
+        style: 'thin',
+        color: '#000000',
+      },
+      bottom: {
+        style: 'thin',
+        color: '#000000',
+      },
+    },
+    alignment: { vertical: 'middle', horizontal: 'right', wrapText: true },
     font: {
       size: 12,
     },
@@ -145,6 +170,34 @@ export const XLSTableStyles = {
       bgColor: {
         argb: 'FFD9D9D9',
       },
+    },
+  },
+
+  tableCellTextRightColorRed: {
+    border: {
+      top: {
+        style: 'thin',
+        color: '#000000',
+      },
+      left: {
+        style: 'thin',
+        color: '#000000',
+      },
+      right: {
+        style: 'thin',
+        color: '#000000',
+      },
+      bottom: {
+        style: 'thin',
+        color: '#000000',
+      },
+    },
+    alignment: { vertical: 'middle', horizontal: 'left', wrapText: true },
+    font: {
+      size: 12,
+      color: {
+        argb: 'FF0000'
+      }
     },
   },
 };

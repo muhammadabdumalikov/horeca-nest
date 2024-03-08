@@ -9,4 +9,9 @@ export class AppController {
   getHello() {
     return this.appService.getHello();
   }
+
+  @Get('akt-sverka')
+  getBye() {
+    return this.appService.getBye();
+  }
 }

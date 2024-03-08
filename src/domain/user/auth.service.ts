@@ -17,7 +17,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userRepo: UserRepo,
-  ) {}
+  ) { }
 
   async confirmOtp(params: ConfirmOtpDto) {
     const user: IUser = await this.userRepo.selectByPhone(params.phone);
@@ -33,10 +33,10 @@ export class AuthService {
     // const updatedUser: IUser = await this.userRepo.updateById(user.id, { auth_status: true })
 
     const token = await this.jwtService.signAsync(
-      { id: user.id, auth_status: user.auth_status, role: user.role },
+      { id: user.id, auth_status: user.auth_status, role: user.role, super_user: user.super_user },
       { privateKey: 'store-app' },
     );
-    
+
     return { auth_status: user.auth_status, token };
   }
 

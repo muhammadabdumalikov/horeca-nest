@@ -6,6 +6,7 @@ import { ReportService } from './domain/admin/service/report.service';
 import * as path from 'path';
 import { XLSTableStyles } from './shared/utils/xlsx-styles';
 import { FileRouterService } from './domain/file-router/file-router.service';
+import { OrderPaymentHistoryTypes, OrderPaymentHistoryTypesStr } from './domain/orders/dto/order.enum';
 
 
 @Injectable()
@@ -218,6 +219,58 @@ export class AppService {
       worksheet.getCell(`G${startRowIndex + 8 + order_raw.items.length}`).value = `Сдал____________     Принял____________`;
 
       startRowIndex += 10 + order_raw.items.length;
+    }
+
+    const buffer: any = await workbook.xlsx.writeBuffer();
+
+    const file: IFile = {
+      originalname: String('Faktura hisobot'),
+      size: String(buffer?.length),
+      buffer,
+      mimetype: String(DocumentMimeTypes?.XLSX),
+      fieldname: String('Faktura hisobot'),
+      encoding: '',
+    };
+
+    // return buffer;
+
+    const uploadFile: any = await this.fileRouterService.uploadReport(file);
+
+    return uploadFile;
+  }
+
+  async getBye() {
+    const workbook = new ExcelJS.Workbook();
+    workbook.addWorksheet('table_1', {
+      pageSetup: {
+        fitToWidth: 1,
+        orientation: 'landscape',
+      },
+    });
+    let startRowIndex = 1;
+    let worksheet = workbook.getWorksheet(1);
+
+    let data = await this.reportService.getActSverkaReport(
+      {
+        user_id: '65e735e8c4f2286bf3e4f7d9',
+        "from_date": "2024-01-01",
+        "to_date": "2024-03-010"
+      }
+    );
+
+    const cell_right_color_red_style: any = XLSTableStyles.tableCellTextRightColorRed;
+    const cell_right_style: any = XLSTableStyles.tableCellTextRight;
+
+    for (let i = 0; i < data.length; i++) {
+      const history_raw = data[i];
+      worksheet.getCell(`A${startRowIndex + i}`).value = history_raw.created_at;
+
+      worksheet.getCell(`B${startRowIndex + i}`).value = OrderPaymentHistoryTypesStr[history_raw.type];
+
+      worksheet.getCell(`C${startRowIndex + i}`).style = history_raw.type === OrderPaymentHistoryTypes.DEBT
+        ? cell_right_color_red_style
+        : cell_right_style;
+      worksheet.getCell(`C${startRowIndex + i}`).value = history_raw.value;
     }
 
     const buffer: any = await workbook.xlsx.writeBuffer();

@@ -101,3 +101,9 @@ export class PaymentPriceExceed extends BadRequestException {
     super({ code: `${ErrorCodes.PAYMENT_PRICE_EXCEED}`, message: ErrorMessages.PAYMENT_PRICE_EXCEED });
   }
 }
+
+export class OnlySuperUserAllowedException extends BadRequestException {
+  constructor() {
+    super({ code: `${ErrorCodes.ONLY_SUPER_USER_ALLOWED}`, message: ErrorMessages.ONLY_SUPER_USER_ALLOWED });
+  }
+}

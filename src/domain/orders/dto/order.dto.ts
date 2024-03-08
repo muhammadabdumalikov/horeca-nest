@@ -5,10 +5,9 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { OrderStatus, PaymentType } from './order.enum';
+import { OrderStatus } from './order.enum';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 import { Type } from 'class-transformer';
 

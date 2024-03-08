@@ -16,3 +16,17 @@ export class GenerateFakturaReportDto {
   @IsISO8601()
   to_date: string;
 }
+
+export class GenerateAktSverkaReportDto {
+  @ApiProperty()
+  @IsString()
+  user_id: string;
+
+  @ApiProperty()
+  @IsISO8601()
+  from_date: string;
+
+  @ApiProperty()
+  @IsISO8601()
+  to_date: string;
+}

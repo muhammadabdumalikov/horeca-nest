@@ -54,6 +54,8 @@ create table products(
 ); 
 alter table products
 add column 	provider_id VARCHAR(24);
+alter table products
+add column 	provider_price double precision;
 
 insert into products(
 	company_id, category_id, uz_name, ru_name, en_name, barcode, image, blokda_soni, description, dona_price, blok_price, disc_price
@@ -198,3 +200,15 @@ insert into companies(uz_name, ru_name, en_name, uz_country, ru_country, en_coun
 ('Bonduella', 'Бондуэлла', 'Bonduella', 'Fransiya', 'Франция', 'France'),
 ('Zer', 'Зер', 'Zer', 'Turkiya', 'Турция', 'Türkiye'),
 ('Kalleh', 'Каллех', 'Kalleh', 'Eron', 'Иран', 'Iran');
+
+create table order_payment_history(
+  id      varchar(24) not null primary key,
+	user_id varchar(24) references users(id) not null,
+	order_id varchar(24) REFERENCES orders(id) not null,
+	user_json jsonb,
+	type smallint not null,
+	value double precision not null,
+	is_deleted boolean default false,
+	created_at timestamptz default current_timestamp,
+	updated_at timestamptz
+);
