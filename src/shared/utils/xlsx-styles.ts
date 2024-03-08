@@ -192,7 +192,7 @@ export const XLSTableStyles = {
         color: '#000000',
       },
     },
-    alignment: { vertical: 'middle', horizontal: 'left', wrapText: true },
+    alignment: { vertical: 'middle', horizontal: 'right', wrapText: true },
     font: {
       size: 12,
       color: {

@@ -9,6 +9,7 @@ import { OrderAlreadyDeliveredException, PaymentPriceExceed, ProductNotFoundExce
 import { isEmpty } from 'lodash';
 import { AdminOrderItemsRepo } from '../repo/order-item.repo';
 import { AdminOrderPaymentHistoryRepo } from '../repo/order-payment-history.repo';
+import { AdminUserRepo } from '../repo/user.repo';
 
 @Injectable()
 export class AdminOrderService {
@@ -16,7 +17,8 @@ export class AdminOrderService {
     private readonly adminOrderRepo: AdminOrdersRepo,
     private readonly adminProductRepo: AdminProductRepo,
     private readonly adminOrderItemRepo: AdminOrderItemsRepo,
-    private readonly adminOrderPaymentHistoryRepo: AdminOrderPaymentHistoryRepo
+    private readonly adminOrderPaymentHistoryRepo: AdminOrderPaymentHistoryRepo,
+    private readonly adminUserRepo: AdminUserRepo,
   ) { }
 
   setStatus(params: SetOrderStatusDto, currentUser: ICurrentUser) {
@@ -71,27 +73,36 @@ export class AdminOrderService {
   }
 
   async setPayment(params: SetPaymentDto, currentUser: ICurrentUser) {
-    const order = await this.adminOrderRepo.selectById(params.order_id);
-    if (params.paid_price > order.total_sum || (order.paid + params.paid_price) > order.total_sum) {
-      throw new PaymentPriceExceed();
-    }
+    return this.adminOrderRepo.knex.transaction(async (trx) => {
+      const order = await this.adminOrderRepo.selectById(params.order_id);
 
-    if (order.payment_type === PaymentTypesEnum.DEBT) {
-      await this.adminOrderPaymentHistoryRepo.insert({
-        id: this.adminOrderPaymentHistoryRepo.generateRecordId(),
-        user_id: order.user_id,
-        // user_json: currentUser,
-        receiver_id: currentUser.id,
-        order_id: order.id,
-        type: OrderPaymentHistoryTypes.PAYMENT,
-        value: params.paid_price
-      })
-    }
+      if (params.paid_price > order.total_sum || (order.paid + params.paid_price) > order.total_sum) {
+        throw new PaymentPriceExceed();
+      }
 
-    return this.adminOrderRepo.updateById(params.order_id, {
-      paid: params.paid_price,
-      updated_by: currentUser.id
-    });
+      if (order.payment_type === PaymentTypesEnum.DEBT) {
+        await this.adminOrderPaymentHistoryRepo.insertWithTransaction(trx, {
+          id: this.adminOrderPaymentHistoryRepo.generateRecordId(),
+          user_id: order.user_id,
+          // user_json: currentUser,
+          receiver_id: currentUser.id,
+          order_id: order.id,
+          type: OrderPaymentHistoryTypes.PAYMENT,
+          value: params.paid_price
+        });
+
+        await this.adminUserRepo.updateByIdWithTransaction(trx, order.user_id, {
+          balance: trx.raw(`balance + ${params.paid_price}`)
+        });
+      }
+
+      await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_id, {
+        paid: params.paid_price,
+        updated_by: currentUser.id
+      });
+
+      return { success: true };
+    })
   }
 
   async orderList(params: OrderListDto) {

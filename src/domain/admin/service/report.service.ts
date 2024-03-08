@@ -121,8 +121,20 @@ export class ReportService {
     const knex = this.adminOrderRepo.knex;
 
     const query = knex
-      .select('history.*')
-      .from('order_payment_history as history')
+      .select([
+        'history.*',
+        'user.balance',
+        knex.raw(`
+          CASE WHEN "user".person_type = 2 then "user".legal_name
+              WHEN "user".person_type = 1 THEN "user".first_name || ' ' || "user".last_name
+            END as user_name
+        `),
+      ])
+      .from('users as user')
+      .join('order_payment_history as history', function () {
+        this.on('history.user_id', 'user.id');
+      })
+      .where('user.id', params.user_id)
       .where('history.user_id', params.user_id)
       .whereRaw(`"history".created_at between '${params.from_date}'::date and '${params.to_date}'::date`)
       .orderBy('history.created_at', 'asc');

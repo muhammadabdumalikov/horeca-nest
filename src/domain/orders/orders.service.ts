@@ -11,6 +11,7 @@ import { OrderPaymentHistoryTypes, OrderStatus, PaymentTypesEnum } from './dto/o
 import { OrderItemsRepo } from './oreder-items.repo';
 import { generateOrderCode } from 'src/shared/utils/password-hash';
 import { OrderPaymentHistoryRepo } from './order-payment-history.repo';
+import { UserRepo } from '../user/user.repo';
 
 @Injectable()
 export class OrdersService {
@@ -18,7 +19,8 @@ export class OrdersService {
     private readonly orderRepo: OrdersRepo,
     private readonly orderItemsRepo: OrderItemsRepo,
     private readonly productRepo: ProductRepo,
-    private readonly orderPaymentHistoryRepo: OrderPaymentHistoryRepo
+    private readonly orderPaymentHistoryRepo: OrderPaymentHistoryRepo,
+    private readonly userRepo: UserRepo,
   ) { }
 
   async createOrder(params: CreateOrderDto, currentUser: IUser) {
@@ -74,7 +76,7 @@ export class OrdersService {
         if (item.quantity >= product.count_in_block && +product.block_price < priceForItem) {
           priceForItem = +product.block_price;
         }
-        
+
         const order_item = await this.orderItemsRepo.insertWithTransaction(trx, {
           id: this.orderItemsRepo.generateRecordId(),
           order_id: order?.id,
@@ -97,7 +99,11 @@ export class OrdersService {
           order_id: order.id,
           type: OrderPaymentHistoryTypes.DEBT,
           value: totalSumOfOrder
-        })
+        });
+
+        await this.userRepo.updateByIdWithTransaction(trx, currentUser.id, {
+          balance: trx.raw(`balance - ${totalSumOfOrder}`)
+        });
       }
 
       return updatedOrder;

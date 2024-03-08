@@ -30,7 +30,6 @@ export class AppService {
       }
     );
 
-
     worksheet.getColumn(1).width = 4;
     worksheet.getColumn(2).width = 40;
     worksheet.getColumn(3).width = 20;
@@ -246,30 +245,109 @@ export class AppService {
         orientation: 'landscape',
       },
     });
-    let startRowIndex = 1;
+    let startRowIndex = 7;
     let worksheet = workbook.getWorksheet(1);
 
     let data = await this.reportService.getActSverkaReport(
       {
         user_id: '65e735e8c4f2286bf3e4f7d9',
         "from_date": "2024-01-01",
-        "to_date": "2024-03-010"
+        "to_date": "2024-03-10"
       }
     );
 
     const cell_right_color_red_style: any = XLSTableStyles.tableCellTextRightColorRed;
     const cell_right_style: any = XLSTableStyles.tableCellTextRight;
+    const cell_center_bold: any = XLSTableStyles.tableCellTextCenterAndBold;
+    const cell_style: any = XLSTableStyles.tableCellTextCenter;
 
+    worksheet.getColumn(1).width = 25;
+    worksheet.getColumn(2).width = 5;
+    worksheet.getColumn(3).width = 20;
+    worksheet.getColumn(4).width = 20;
+    worksheet.getColumn(5).width = 20;
+    worksheet.getColumn(6).width = 5;
+    worksheet.getColumn(7).width = 25;
+
+    worksheet.getRow(1).height = 15;
+
+    worksheet.getCell('A1').style = cell_center_bold;
+    worksheet.mergeCells('A1:F1');
+    worksheet.getCell('A1').value = `Акт сверки между "HORECA TRADE GROUP" и "${data[0]?.user_name}"`
+
+    worksheet.getCell('A2').style = cell_center_bold;
+    worksheet.mergeCells('A2:C2');
+    worksheet.getCell('A2').value = 'Время отчета:';
+
+    worksheet.getCell('D2').style = cell_center_bold;
+    worksheet.mergeCells('D2:F2');
+    worksheet.getCell('D2').value = new Date();
+
+    worksheet.getCell('A3').style = cell_center_bold;
+    worksheet.mergeCells('A3:C3');
+    worksheet.getCell('A3').value = 'Начало периода:';
+
+    worksheet.getCell('D3').style = cell_center_bold;
+    worksheet.mergeCells('D3:F3');
+    worksheet.getCell('D3').value = '2024-03-01';
+
+    worksheet.getCell('A4').style = cell_center_bold;
+    worksheet.mergeCells('A4:C4');
+    worksheet.getCell('A4').value = 'Конец периода:';
+
+    worksheet.getCell('D4').style = cell_center_bold;
+    worksheet.mergeCells('D4:F4');
+    worksheet.getCell('D4').value = '2024-03-10';
+
+    worksheet.getCell('A5').style = cell_center_bold;
+    worksheet.mergeCells('A5:B5');
+    worksheet.getCell('A5').value = 'Дата';
+
+    worksheet.getCell('C5').style = cell_center_bold;
+    worksheet.mergeCells('C5:D5');
+    worksheet.getCell('C5').value = 'Наименование';
+
+    worksheet.getCell('E5').style = cell_center_bold;
+    worksheet.mergeCells('E5:F5');
+    worksheet.getCell('E5').value = 'Сумма';
+
+    worksheet.getCell('G5').style = cell_center_bold;
+    worksheet.getCell('G5').value = 'Баланс';
+
+    worksheet.getCell('A6').style = cell_center_bold;
+    worksheet.mergeCells('A6:F6');
+    worksheet.getCell('A6').value = 'Баланс';
+
+    worksheet.getCell('G6').style = data[0]?.balance < 0 ? cell_right_color_red_style : cell_right_style;
+    worksheet.getCell('G6').value = data[0]?.balance;
+
+    let monthly_balance = 0;
     for (let i = 0; i < data.length; i++) {
       const history_raw = data[i];
+      const isDebt = history_raw.type === OrderPaymentHistoryTypes.DEBT;
+
+      worksheet.getCell(`A${startRowIndex + i}`).style = cell_style;
+      worksheet.mergeCells(`A${startRowIndex + i}:B${startRowIndex + i}`);
       worksheet.getCell(`A${startRowIndex + i}`).value = history_raw.created_at;
 
-      worksheet.getCell(`B${startRowIndex + i}`).value = OrderPaymentHistoryTypesStr[history_raw.type];
+      worksheet.getCell(`C${startRowIndex + i}`).style = cell_style;
+      worksheet.mergeCells(`C${startRowIndex + i}:D${startRowIndex + i}`);
+      worksheet.getCell(`C${startRowIndex + i}`).value = OrderPaymentHistoryTypesStr[history_raw.type];
 
-      worksheet.getCell(`C${startRowIndex + i}`).style = history_raw.type === OrderPaymentHistoryTypes.DEBT
+      worksheet.getCell(`E${startRowIndex + i}`).style = isDebt
         ? cell_right_color_red_style
         : cell_right_style;
-      worksheet.getCell(`C${startRowIndex + i}`).value = history_raw.value;
+      worksheet.mergeCells(`E${startRowIndex + i}:F${startRowIndex + i}`);
+      worksheet.getCell(`E${startRowIndex + i}`).value = Number(`${isDebt ? '-' : ''}${history_raw.value}`);
+
+      if (isDebt) {
+        monthly_balance -= history_raw.value
+      } else {
+        monthly_balance += history_raw.value
+      }
+
+      worksheet.getCell(`G${startRowIndex + i}`).style = monthly_balance < 0 ? cell_right_color_red_style : cell_right_style;
+      worksheet.getCell(`G${startRowIndex + i}`).value = Number(monthly_balance);
     }
 
     const buffer: any = await workbook.xlsx.writeBuffer();
