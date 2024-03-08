@@ -30,7 +30,7 @@ export class ReportController {
     return this.reportService.getActSverkaReport(params);
   }
 
-  @Post('faktura-list')
+  @Get('faktura-list')
   async fakturaReportList(@Query() params: FakturaReportListDto) {
     return this.reportService.fakturaReportList(params);
   }
