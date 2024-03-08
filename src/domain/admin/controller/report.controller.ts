@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ReportService } from '../service/report.service';
-import { GenerateAktSverkaReportDto, GenerateFakturaReportDto } from '../dto/report.dto';
+import { FakturaReportListDto, GenerateAktSverkaReportDto, GenerateFakturaReportDto, SetFakturaReportArchiveDto } from '../dto/report.dto';
 import { AdminGuard } from 'src/guard/admin.guard';
 
 @ApiTags('Admin')
@@ -27,5 +27,20 @@ export class ReportController {
   @Post('get-akt-sverka')
   async getAktSverkaReport(@Body() params: GenerateAktSverkaReportDto) {
     return this.reportService.getActSverkaReport(params);
+  }
+
+  @Post('faktura-list')
+  async fakturaReportList(@Body() params: FakturaReportListDto) {
+    return this.reportService.fakturaReportList(params);
+  }
+
+  @Post('set-faktura-archive')
+  async setFakturaArchive(@Body() params: SetFakturaReportArchiveDto) {
+    return this.reportService.setFakturaReportArchive(params);
+  }
+
+  @Post('get-faktura-order')
+  async getFakturaOrder(@Body() params: GenerateFakturaReportDto) {
+    return this.reportService.getFakturaReport(params);
   }
 }

@@ -214,3 +214,11 @@ create table order_payment_history(
 );
 alter table order_payment_history
 add column receiver_id varchar(24);
+
+create table faktura_report_history(
+  id      	varchar(24) not null primary key,
+	order_id varchar(24) REFERENCES orders(id) not null,
+	is_archive boolean default false,
+	created_at timestamptz default current_timestamp,
+	updated_at timestamptz
+);

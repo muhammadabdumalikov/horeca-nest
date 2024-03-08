@@ -25,6 +25,7 @@ import { AdminOrderItemsRepo } from './repo/order-item.repo';
 import { ReportService } from './service/report.service';
 import { ReportController } from './controller/report.controller';
 import { AdminOrderPaymentHistoryRepo } from './repo/order-payment-history.repo';
+import { AdminFakturaReportHistoryRepo } from './repo/faktura-report-history';
 
 @Module({
   imports: [UserModule, ProductModule],
@@ -54,6 +55,7 @@ import { AdminOrderPaymentHistoryRepo } from './repo/order-payment-history.repo'
     AdminOrdersRepo,
     AdminOrderItemsRepo,
     AdminOrderPaymentHistoryRepo,
+    AdminFakturaReportHistoryRepo,
 
     ReportService
   ],

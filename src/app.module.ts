@@ -14,6 +14,7 @@ import { PaymentTypeModule } from './domain/payment_type/payment_type.module';
 import { ReportService } from './domain/admin/service/report.service';
 import { AdminOrdersRepo } from './domain/admin/repo/order.repo';
 import { FileRouterService } from './domain/file-router/file-router.service';
+import { AdminFakturaReportHistoryRepo } from './domain/admin/repo/faktura-report-history';
 
 @Module({
   imports: [
@@ -28,6 +29,6 @@ import { FileRouterService } from './domain/file-router/file-router.service';
     PaymentTypeModule
   ],
   controllers: [AppController],
-  providers: [AppService, PoolService, ReportService, AdminOrdersRepo, FileRouterService],
+  providers: [AppService, PoolService, ReportService, AdminOrdersRepo, FileRouterService, AdminFakturaReportHistoryRepo],
 })
 export class AppModule {}

@@ -17,6 +17,20 @@ export class GenerateFakturaReportDto {
   to_date: string;
 }
 
+export class GenerateFakturaOrderReportDto {
+  @ApiProperty()
+  @IsString()
+  order_id: string;
+
+  @ApiProperty()
+  @IsISO8601()
+  from_date: string;
+
+  @ApiProperty()
+  @IsISO8601()
+  to_date: string;
+}
+
 export class GenerateAktSverkaReportDto {
   @ApiProperty()
   @IsString()
@@ -29,4 +43,21 @@ export class GenerateAktSverkaReportDto {
   @ApiProperty()
   @IsISO8601()
   to_date: string;
+}
+
+
+export class FakturaReportListDto {
+  @ApiProperty()
+  @IsISO8601()
+  from_date: string;
+
+  @ApiProperty()
+  @IsISO8601()
+  to_date: string;
+}
+
+export class SetFakturaReportArchiveDto {
+  @ApiProperty()
+  @IsString()
+  order_id: string;
 }
