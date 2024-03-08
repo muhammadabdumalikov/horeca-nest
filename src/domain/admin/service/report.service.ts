@@ -142,6 +142,7 @@ export class ReportService {
         'order.comment',
         'order.payment_type_name',
         'order.reported',
+        'order.created_at',
         knex.raw(`
           CASE WHEN client.person_type = 2 then client.legal_name
               WHEN client.person_type = 1 THEN client.first_name || ' ' || client.last_name
