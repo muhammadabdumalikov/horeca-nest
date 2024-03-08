@@ -95,6 +95,8 @@ alter table orders
 add column paid double precision null;
 ALTER TABLE orders
 ALTER COLUMN paid SET DEFAULT 0;
+ALTER TABLE orders
+ALTER COLUMN reported SET DEFAULT false;
 
 create table order_items (
     id varchar(24) PRIMARY KEY,

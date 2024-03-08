@@ -112,7 +112,6 @@ export class ReportService {
         this.on('client.id', 'order.user_id')
       })
       .where('order.id', params.order_id)
-      .whereRaw(`"order".created_at between '${params.from_date}'::date and '${params.to_date}'::date`)
       .groupBy(['order.id', 'client.id', 'registrator.id']);
 
     return query;
@@ -134,13 +133,15 @@ export class ReportService {
   async fakturaReportList(params: FakturaReportListDto) {
     const knex = this.adminOrderRepo.knex;
 
-    let data = await knex
+    let query = knex
       .select([
+        knex.raw('count("order".id) over() as total'),
         'order.id',
         'order.order_number',
         'order.total_sum',
         'order.comment',
         'order.payment_type_name',
+        'order.reported',
         knex.raw(`
           CASE WHEN client.person_type = 2 then client.legal_name
               WHEN client.person_type = 1 THEN client.first_name || ' ' || client.last_name
@@ -152,16 +153,30 @@ export class ReportService {
       .leftJoin('users as client', function () {
         this.on('client.id', 'order.user_id')
       })
-      .leftJoin('faktura_report_history as report', function () {
-        this.on('order.id', 'report.order_id');
-      })
-      .whereRaw('report.is_archived is not true')
       .whereRaw(`"order".created_at between '${params.from_date}'::date and '${params.to_date}'::date`);
+
+    if (params?.is_archived === 'true') {
+      query.where('order.reported', true)
+    }
+
+    if (params?.is_archived === 'false') {
+      query.where('order.reported', false)
+    }
+
+    if (params.limit) {
+      query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query.offset(Number(params.offset));
+    }
+
+    const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
   async setFakturaReportArchive(params: SetFakturaReportArchiveDto) {
-    return this.adminFakturaHistoryRepo.insert({ order_id: params.order_id, is_archived: true });
+    return this.adminOrderRepo.updateById(params.order_id, { reported: true });
   }
 }

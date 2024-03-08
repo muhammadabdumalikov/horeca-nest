@@ -27,8 +27,6 @@ export class AppService {
     let data = await this.reportService.getFakturaOrder(
       {
         order_id: "65e9cb626cfe07539592327f",
-        "from_date": "2024-01-01",
-        "to_date": "2024-03-10"
       }
     );
 

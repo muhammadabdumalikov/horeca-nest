@@ -3,11 +3,12 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ReportService } from '../service/report.service';
-import { FakturaReportListDto, GenerateAktSverkaReportDto, GenerateFakturaReportDto, SetFakturaReportArchiveDto } from '../dto/report.dto';
+import { FakturaReportListDto, GenerateAktSverkaReportDto, GenerateFakturaOrderReportDto, GenerateFakturaReportDto, SetFakturaReportArchiveDto } from '../dto/report.dto';
 import { AdminGuard } from 'src/guard/admin.guard';
 
 @ApiTags('Admin')
@@ -30,7 +31,7 @@ export class ReportController {
   }
 
   @Post('faktura-list')
-  async fakturaReportList(@Body() params: FakturaReportListDto) {
+  async fakturaReportList(@Query() params: FakturaReportListDto) {
     return this.reportService.fakturaReportList(params);
   }
 
@@ -40,7 +41,7 @@ export class ReportController {
   }
 
   @Post('get-faktura-order')
-  async getFakturaOrder(@Body() params: GenerateFakturaReportDto) {
-    return this.reportService.getFakturaReport(params);
+  async getFakturaOrder(@Body() params: GenerateFakturaOrderReportDto) {
+    return this.reportService.getFakturaOrder(params);
   }
 }
