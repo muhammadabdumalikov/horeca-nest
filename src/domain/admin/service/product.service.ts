@@ -117,6 +117,7 @@ export class AdminProductService {
       name_ru: params?.name_ru,
       category_id: params?.category_id,
       company_id: params?.company_id,
+      provider_id: params?.provider_id,
       image: params?.image,
       count_price: +params?.count_price !== 0 ? +params?.count_price : null,
       block_price: +params?.block_price !== 0 ? +params?.block_price : null,
