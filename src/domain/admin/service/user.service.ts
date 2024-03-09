@@ -50,7 +50,7 @@ export class AdminUserService {
         builder
           .orWhere('first_name', `ilike`, `%${name_latin}%`)
           .orWhere('first_name', `ilike`, `%${name_krill}%`)
-          .orWhere('last_name', `ilike`, `%${name_krill}%`)
+          .orWhere('last_name', `ilike`, `%${name_latin}%`)
           .orWhere('last_name', `ilike`, `%${name_krill}%`),
 
       );

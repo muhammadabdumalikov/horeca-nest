@@ -48,6 +48,11 @@ export class FakturaReportListDto  extends ListPageDto{
   @IsISO8601()
   to_date: string;
 
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  search?: string;
+
   @ApiProperty()
   @IsString()
   is_archived: string;

@@ -9,6 +9,7 @@ import {
 } from '../dto/report.dto';
 import { isEmpty } from 'lodash';
 import { AdminFakturaReportHistoryRepo } from '../repo/faktura-report-history';
+import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
 
 @Injectable()
 export class ReportService {
@@ -174,6 +175,18 @@ export class ReportService {
 
     if (params?.is_archived === 'false') {
       query.where('order.reported', false)
+    }
+
+    if (!isEmpty(params?.search)) {
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('client.first_name', `ilike`, `%${name_latin}%`)
+          .orWhere('client.first_name', `ilike`, `%${name_krill}%`)
+          .orWhere('client.last_name', `ilike`, `%${name_latin}%`)
+          .orWhere('client.last_name', `ilike`, `%${name_krill}%`),
+      );
     }
 
     if (params.limit) {
