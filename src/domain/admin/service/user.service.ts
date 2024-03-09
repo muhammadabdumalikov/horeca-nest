@@ -34,7 +34,6 @@ export class AdminUserService {
       query.where('role', Number(params.role));
     }
 
-
     if (params.is_deleted === 'true') {
       query.where('is_deleted', true);
     }
@@ -52,7 +51,6 @@ export class AdminUserService {
           .orWhere('first_name', `ilike`, `%${name_krill}%`)
           .orWhere('last_name', `ilike`, `%${name_latin}%`)
           .orWhere('last_name', `ilike`, `%${name_krill}%`),
-
       );
     }
 
