@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 import { UserRolesShort } from '../enum/product.enum';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 import { PersonType, UserRolesAsString } from 'src/domain/user/enum/user.enum';
@@ -18,10 +18,21 @@ export class SetUserStatusDto {
   is_block: string;
 }
 
+export class SetSuperUserDto {
+  @ApiProperty()
+  @IsString()
+  user_id: string;
+
+  @ApiProperty()
+  @IsString()
+  super_user: string;
+}
+
 
 export class CreateWorkerDto {
   @ApiProperty()
   @IsString()
+  @MaxLength(12)
   phone: string;
 
   @ApiProperty()

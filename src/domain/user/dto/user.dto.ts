@@ -1,10 +1,11 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PersonType } from '../enum/user.enum';
 
 export class CreateUserDto {
   @ApiProperty()
   @IsString()
+  @MaxLength(12)
   phone: string;
 }
 
@@ -43,6 +44,7 @@ export class UpdateUserDto {
 export class ConfirmOtpDto {
   @ApiProperty()
   @IsString()
+  @MaxLength(12)
   phone: string;
 
   @ApiProperty()
@@ -53,5 +55,6 @@ export class ConfirmOtpDto {
 export class UserLoginDto {
   @ApiProperty()
   @IsString()
+  @MaxLength(12)
   phone: string;
 }

@@ -12,7 +12,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
 import { AdminUserService } from '../service/user.service';
 import { UserService } from 'src/domain/user/user.service';
-import { AdminUsersListDto, SetUserStatusDto } from '../dto/user-admin.dto';
+import { AdminUsersListDto, SetSuperUserDto, SetUserStatusDto } from '../dto/user-admin.dto';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 
 @ApiTags('Admin')
@@ -28,6 +28,11 @@ export class AdminUserController {
   @Post('set-status')
   async setStatus(@Body() params: SetUserStatusDto) {
     return this.adminUserService.setStatus(params);
+  }
+
+  @Post('set-super-user')
+  async setSuperUser(@Body() params: SetSuperUserDto) {
+    return this.adminUserService.setSuperUser(params);
   }
 
   @Get('list')

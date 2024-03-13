@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AdminUserRepo } from '../repo/user.repo';
-import { AdminLoginDto, AdminUsersListDto, CreateProviderDto, CreateWorkerDto, SetUserStatusDto, UpdateWorkerDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateProviderDto, CreateWorkerDto, SetSuperUserDto, SetUserStatusDto, UpdateWorkerDto } from '../dto/user-admin.dto';
 import { isEmpty } from 'lodash';
 import { IncorrectLoginException, IncorrectPasswordException, PhoneAlreadyRegistered, UserHasNotPermissionException, UserNotFoundException } from 'src/errors/permission.error';
 import { PersonType, UserRoles } from 'src/domain/user/enum/user.enum';
@@ -20,6 +20,12 @@ export class AdminUserService {
     return this.adminUserRepo.updateById(params.user_id, {
       is_deleted: params.is_deleted === 'true',
       is_block: params.is_block === 'true',
+    });
+  }
+
+  setSuperUser(params: SetSuperUserDto) {
+    return this.adminUserRepo.updateById(params.user_id, {
+      super_user: params.super_user === 'true',
     });
   }
 
