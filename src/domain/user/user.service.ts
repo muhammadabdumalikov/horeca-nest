@@ -80,7 +80,7 @@ export class UserService {
     })
   }
 
-  async getUserHome(currentUser: IUser, params: AddHomeOtpDto) {
+  async getUserHome(currentUser: IUser) {
     return this.userRepo.knex.select('home_adresses').from('users').where('id', currentUser.id).where('is_deleted', false).first();
   }
 

@@ -63,7 +63,14 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Patch('add-home')
   addHome(@Body() updateUserDto: AddHomeOtpDto, @CurrentUser() user: IUser) {
-    return this.userService.update(user, updateUserDto);
+    return this.userService.addHome(user, updateUserDto);
+  }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
+  @Get('get-home')
+  getHome(@CurrentUser() user: IUser) {
+    return this.userService.getUserHome(user);
   }
 
   @ApiBearerAuth('authorization')
