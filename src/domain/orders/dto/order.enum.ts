@@ -4,7 +4,8 @@ export enum OrderStatus {
   DELIVERED = '3',
   REJECTED = '4',
   PARTIALLY_PAID = '5',
-  FULLY_PAID = '6'
+  FULLY_PAID = '6',
+  IN_WAREHOUSE = '7'
 }
 
 //                           DELIVERY_PROCESS
@@ -27,5 +28,5 @@ export enum OrderPaymentHistoryTypes {
 export const OrderPaymentHistoryTypesStr = {
   1: 'Заказ',
   2: 'Оплаты от контрагентов',
-  3: 'Возврат по заказу' 
+  3: 'Возврат по заказу'
 }

@@ -80,7 +80,7 @@ export class AdminUserService {
   }
 
   async adminLogin(params: AdminLoginDto) {
-    const user: IUser = await this.adminUserRepo.selectByLogin(params.login);
+    const user = await this.adminUserRepo.selectByLogin(params.login);
 
     if (!user) {
       throw new IncorrectLoginException();

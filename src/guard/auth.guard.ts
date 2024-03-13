@@ -47,6 +47,7 @@ export class AuthGuard implements CanActivate {
       phone: user.phone,
       first_name: user.first_name,
       last_name: user.last_name,
+      legal_name: user.legal_name,
       role: UserRoles,
       auth_status: user.auth_status,
       super_user: user.super_user

@@ -16,7 +16,7 @@ export class UserService {
   async signUp(params: CreateUserDto) {
     return this.userRepo.knex
       .transaction(async () => {
-        const hasUser: IUser = await this.userRepo.selectByPhone(params.phone);
+        const hasUser = await this.userRepo.selectByPhone(params.phone);
 
         if (hasUser) {
           throw new PhoneAlreadyRegistered();
@@ -25,7 +25,7 @@ export class UserService {
         const messageKey = nanoid(15);
         const otp = Math.floor(10000 + Math.random() * 90000);
 
-        const [user]: [IUser] = await this.userRepo.insert({
+        const [user] = await this.userRepo.insert({
           phone: params.phone,
           role: UserRoles.CLIENT,
           otp: otp,

@@ -75,6 +75,7 @@ insert into products(
 create table orders(
 	id varchar(24) not null primary key,
 	user_id varchar(24) references users(id) not null,
+	user_json jsonb,
 	quantity smallint not null,
 	total_sum double precision null,
 	payment_type varchar(24) not null,

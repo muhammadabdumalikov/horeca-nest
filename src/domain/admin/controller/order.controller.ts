@@ -8,7 +8,7 @@ import {
   Param,
   Patch,
 } from '@nestjs/common';
-import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto, SetPaymentDto } from '../dto/product-admin.dto';
+import { OrderUpdateDto, SetDeliverDto, SetDeliverMultipleDto, SetOrderStatusDto, SetOrderStatusMultipleDto, SetPaymentDto } from '../dto/product-admin.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
 import { AdminOrderService } from '../service/order.service';
@@ -33,9 +33,23 @@ export class AdminOrderController {
 
   @ApiBearerAuth('authorization')
   @UseGuards(AdminGuard)
+  @Post('set-status-multiple')
+  async setStatusMultiple(@Body() params: SetOrderStatusMultipleDto, @CurrentUser() currentUser: ICurrentUser) {
+    return this.adminOrderService.setStatusMultipeOrders(params, currentUser);
+  }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
   @Post('set-deliver')
   async setDeliver(@Body() params: SetDeliverDto, @CurrentUser() currentUser: ICurrentUser) {
     return this.adminOrderService.setDeliver(params, currentUser);
+  }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
+  @Post('set-deliver-multiple')
+  async setDeliverMultiple(@Body() params: SetDeliverMultipleDto, @CurrentUser() currentUser: ICurrentUser) {
+    return this.adminOrderService.setDeliverMultiple(params, currentUser);
   }
 
   @ApiBearerAuth('authorization')

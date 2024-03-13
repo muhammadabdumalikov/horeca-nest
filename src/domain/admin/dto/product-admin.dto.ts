@@ -24,10 +24,32 @@ export class SetOrderStatusDto {
   status: OrderStatus;
 }
 
+export class SetOrderStatusMultipleDto {
+  @ApiProperty()
+  @IsString({ each: true })
+  @IsArray()
+  order_ids: string[];
+
+  @ApiProperty({ enum: OrderStatus })
+  @IsEnum(OrderStatus)
+  status: OrderStatus;
+}
+
 export class SetDeliverDto {
   @ApiProperty()
   @IsString()
   order_id: string;
+
+  @ApiProperty()
+  @IsString()
+  deliver_id: string;
+}
+
+export class SetDeliverMultipleDto {
+  @ApiProperty()
+  @IsString({ each: true })
+  @IsArray()
+  order_ids: string[];
 
   @ApiProperty()
   @IsString()
