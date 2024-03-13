@@ -23,7 +23,7 @@ export class AdminUserController {
   constructor(
     private readonly adminUserService: AdminUserService,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
   @Post('set-status')
   async setStatus(@Body() params: SetUserStatusDto) {
@@ -38,6 +38,11 @@ export class AdminUserController {
   @Get('list')
   async list(@Query() params: AdminUsersListDto) {
     return this.adminUserService.findAll(params);
+  }
+
+  @Get('in-debt-list')
+  async inDebtList(@Query() params: AdminUsersListDto) {
+    return this.adminUserService.inDebtList(params);
   }
 
   @Get(':id')

@@ -73,6 +73,51 @@ export class AdminUserService {
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
   }
 
+  async inDebtList(params: AdminUsersListDto) {
+    const knex = this.adminUserRepo.knexService.instance;
+    let query = knex
+      .select(['*', knex.raw('count(id) over() as total')])
+      .from('users')
+      .where('balance', '<', 0)
+      .orderBy('created_at', 'desc');
+
+    if (params?.role) {
+      query.where('role', Number(params.role));
+    }
+
+    if (params.is_deleted === 'true') {
+      query.where('is_deleted', true);
+    }
+
+    if (params.is_deleted === 'false') {
+      query.where('is_deleted', false);
+    }
+
+    if (!isEmpty(params?.search)) {
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('first_name', `ilike`, `%${name_latin}%`)
+          .orWhere('first_name', `ilike`, `%${name_krill}%`)
+          .orWhere('last_name', `ilike`, `%${name_latin}%`)
+          .orWhere('last_name', `ilike`, `%${name_krill}%`),
+      );
+    }
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
+  }
+
   async delete(id: string) {
     const user = await this.adminUserRepo.selectById(id);
 
