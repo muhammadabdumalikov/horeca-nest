@@ -1,6 +1,8 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
 import { PersonType } from '../enum/user.enum';
+import { NamedLocationDto } from 'src/domain/orders/dto/order.dto';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -57,4 +59,16 @@ export class UserLoginDto {
   @IsString()
   @MaxLength(12)
   phone: string;
+}
+
+
+export class AddHomeOtpDto {
+  @ApiProperty()
+  @IsString()
+  user_id: string;
+
+  @ApiProperty({ type: () => NamedLocationDto })
+  @Type(() => NamedLocationDto)
+  @ValidateNested({ each: true })
+  location: NamedLocationDto;
 }

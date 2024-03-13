@@ -16,6 +16,7 @@ create table users
 		balance 		bool null,
 		login VARCHAR(32),
 		password VARCHAR(64),
+		home_adresses jsonb,
     is_deleted bool        not null     default false,
     created_at timestamp with time zone default now()
 );
