@@ -11,6 +11,11 @@ import { OrderStatus } from './order.enum';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 import { Type } from 'class-transformer';
 
+export enum SortType {
+  asc = 'asc',
+  desc = 'desc'
+}
+
 class SingleOrderDto {
   @ApiProperty()
   @IsNumber()
@@ -63,6 +68,11 @@ export class OrderListDto extends ListPageDto {
   @IsOptional()
   @IsString()
   is_deleted?: string;
+
+  @ApiPropertyOptional({enum: SortType})
+  @IsOptional()
+  @IsEnum(SortType)
+  sort?: SortType;
 }
 
 export class OrderListByUsersDto extends OrderListDto {

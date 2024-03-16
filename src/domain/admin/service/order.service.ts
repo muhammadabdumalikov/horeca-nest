@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AdminOrdersRepo } from '../repo/order.repo';
 import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto, SetPaymentDto } from '../dto/product-admin.dto';
 import { ICurrentUser } from 'src/shared/interface/list.interface';
-import { OrderListByUsersDto, OrderListDto } from 'src/domain/orders/dto/order.dto';
+import { OrderListByUsersDto, OrderListDto, SortType } from 'src/domain/orders/dto/order.dto';
 import { OrderPaymentHistoryTypes, OrderStatus, PaymentTypesEnum } from 'src/domain/orders/dto/order.enum';
 import { AdminProductRepo } from '../repo/product.repo';
 import { OrderAlreadyDeliveredException, PaymentPriceExceed, ProductNotFoundException } from 'src/errors/permission.error';
@@ -177,6 +177,14 @@ export class AdminOrderService {
       query.offset(Number(params.offset));
     }
 
+    if (params?.sort === SortType.asc) {
+      query.orderBy('created_at', 'asc')
+    }
+
+    if (params?.sort === SortType.desc) {
+      query.orderBy('created_at', 'desc')
+    }
+
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
@@ -208,6 +216,14 @@ export class AdminOrderService {
 
     if (params.offset) {
       query.offset(Number(params.offset));
+    }
+
+    if (params?.sort === SortType.asc) {
+      query.orderBy('created_at', 'asc')
+    }
+
+    if (params?.sort === SortType.desc) {
+      query.orderBy('created_at', 'desc')
     }
 
     const data = await query;
