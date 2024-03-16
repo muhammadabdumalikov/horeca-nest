@@ -24,7 +24,11 @@ export class AdminProductService {
 
     if (params?.discount_price > params?.count_price) {
       throw new BadRequestException();
-     }
+    }
+    
+    if (params?.block_price > params?.count_price) {
+      throw new BadRequestException();
+    }
     
     return this.adminProductRepo.insert({
       name_uz: params?.name_uz,
