@@ -17,7 +17,7 @@ import { IListPage } from 'src/shared/interface/list.interface';
 export class ProductService {
   constructor(
     private readonly productRepo: ProductRepo,
-  ) {}
+  ) { }
 
   listByCategory(params: ProductListDto, user: IUser) {
     return this.productRepo.listByCategory(params);
@@ -47,8 +47,7 @@ export class ProductService {
         'p.*',
         knex.raw(`
           jsonb_build_object(
-            'name_uz', c.name_uz,
-            'name_ru', c.name_ru
+            'name', c.name
           ) as company
         `),
         knex.raw(`
@@ -68,7 +67,7 @@ export class ProductService {
       .where('p.id', id)
       .whereNot('p.is_deleted', true)
       .first();
-    
+
     if (isEmpty(product)) {
       throw new ProductNotFoundException();
     }
