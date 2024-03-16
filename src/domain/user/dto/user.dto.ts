@@ -63,10 +63,6 @@ export class UserLoginDto {
 
 
 export class AddHomeOtpDto {
-  @ApiProperty()
-  @IsString()
-  user_id: string;
-
   @ApiProperty({ type: () => NamedLocationDto })
   @Type(() => NamedLocationDto)
   @ValidateNested({ each: true })

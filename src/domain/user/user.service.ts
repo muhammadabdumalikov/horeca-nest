@@ -6,6 +6,7 @@ import { IUpdateUser, IUser } from './interface/user.interface';
 import { PhoneAlreadyRegistered, UserNotFoundException } from 'src/errors/permission.error';
 import { sendSmsTo } from 'src/providers/sms-sender.service';
 import { nanoid } from "nanoid";
+import { NamedLocationDto } from '../orders/dto/order.dto';
 
 @Injectable()
 export class UserService {
@@ -72,11 +73,35 @@ export class UserService {
     if (!hasUser) {
       throw new UserNotFoundException();
     }
+    
+    const homeJson: Array<any> = hasUser.home_adresses?.length
+      ? hasUser.home_adresses.push(params.location)
+      : [params.location];
+    
+    return this.userRepo.updateById(currentUser.id, {
+      home_adresses: JSON.stringify(homeJson)
+    })
+  }
 
-    const homeJson: Array<any> = JSON.parse(hasUser.home_adresses);
+
+  async updateHome(currentUser: IUser, params: AddHomeOtpDto) {
+    const hasUser = await this.userRepo.selectById(currentUser.id);
+
+    if (!hasUser) {
+      throw new UserNotFoundException();
+    }
+
+    const homeIndex = (hasUser.home_adresses as [NamedLocationDto])?.findIndex(obj => obj?.name === params.location.name);
+
+    if (homeIndex === -1 || homeIndex === undefined) {
+      return;
+    }
+
+    const updatedHome = hasUser.home_adresses;
+    updatedHome[homeIndex] = params.location;
 
     return this.userRepo.updateById(currentUser.id, {
-      home_adresses: homeJson ? homeJson.push(params.location) : []
+      home_adresses: JSON.stringify(updatedHome),
     })
   }
 
