@@ -74,34 +74,8 @@ export class UserService {
       throw new UserNotFoundException();
     }
     
-    const homeJson: Array<any> = hasUser.home_adresses?.length
-      ? hasUser.home_adresses.push(params.location)
-      : [params.location];
-    
     return this.userRepo.updateById(currentUser.id, {
-      home_adresses: JSON.stringify(homeJson)
-    })
-  }
-
-
-  async updateHome(currentUser: IUser, params: AddHomeOtpDto) {
-    const hasUser = await this.userRepo.selectById(currentUser.id);
-
-    if (!hasUser) {
-      throw new UserNotFoundException();
-    }
-
-    const homeIndex = (hasUser.home_adresses as [NamedLocationDto])?.findIndex(obj => obj?.name === params.location.name);
-
-    if (homeIndex === -1 || homeIndex === undefined) {
-      return;
-    }
-
-    const updatedHome = hasUser.home_adresses;
-    updatedHome[homeIndex] = params.location;
-
-    return this.userRepo.updateById(currentUser.id, {
-      home_adresses: JSON.stringify(updatedHome),
+      home_adresses: JSON.stringify(params)
     })
   }
 

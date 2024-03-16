@@ -62,15 +62,8 @@ export class UserController {
   @ApiBearerAuth('authorization')
   @UseGuards(AuthGuard)
   @Post('add-home')
-  addHome(@Body() updateUserDto: AddHomeOtpDto, @CurrentUser() user: IUser) {
+  addHome(@Body() updateUserDto, @CurrentUser() user: IUser) {
     return this.userService.addHome(user, updateUserDto);
-  }
-
-  @ApiBearerAuth('authorization')
-  @UseGuards(AuthGuard)
-  @Patch('update-home')
-  updateHome(@Body() updateUserDto: AddHomeOtpDto, @CurrentUser() user: IUser) {
-    return this.userService.updateHome(user, updateUserDto);
   }
 
   @ApiBearerAuth('authorization')
