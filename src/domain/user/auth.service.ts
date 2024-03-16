@@ -20,7 +20,7 @@ export class AuthService {
   ) { }
 
   async confirmOtp(params: ConfirmOtpDto) {
-    const user: IUser = await this.userRepo.selectByPhone(params.phone);
+    const user = await this.userRepo.selectByPhone(params.phone);
 
     if (!user) {
       throw new UserNotFoundException();

@@ -44,6 +44,7 @@ export class OrdersService {
       const [order] = await this.orderRepo.insertWithTransaction(trx, {
         id: this.orderRepo.generateRecordId(),
         user_id: currentUser.id,
+        user_json: currentUser,
         status: OrderStatus.REGISTERED,
         quantity: params.items.length,
         order_number: generateOrderCode(),
@@ -71,9 +72,9 @@ export class OrdersService {
 
         await this.productRepo.updateByIdWithTransaction(trx, item.product_id, { product_count: product.product_count - item.quantity });
 
-        let priceForItem = product.discount_price ? product.discount_price : product.count_price;
+        let priceForItem = !isEmpty(product.discount_price) ? product.discount_price : product.count_price;
 
-        if (item.quantity >= product.count_in_block && +product.block_price < priceForItem) {
+        if (item.quantity >= product.count_in_block && !isEmpty(product.block_price) && +product.block_price < priceForItem) {
           priceForItem = +product.block_price;
         }
 

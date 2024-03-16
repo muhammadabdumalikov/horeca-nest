@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { AddHomeOtpDto, CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserRepo } from './user.repo';
 import { PersonType, UserRoles } from './enum/user.enum';
 import { IUpdateUser, IUser } from './interface/user.interface';
@@ -16,7 +16,7 @@ export class UserService {
   async signUp(params: CreateUserDto) {
     return this.userRepo.knex
       .transaction(async () => {
-        const hasUser: IUser = await this.userRepo.selectByPhone(params.phone);
+        const hasUser = await this.userRepo.selectByPhone(params.phone);
 
         if (hasUser) {
           throw new PhoneAlreadyRegistered();
@@ -25,7 +25,7 @@ export class UserService {
         const messageKey = nanoid(15);
         const otp = Math.floor(10000 + Math.random() * 90000);
 
-        const [user]: [IUser] = await this.userRepo.insert({
+        const [user] = await this.userRepo.insert({
           phone: params.phone,
           role: UserRoles.CLIENT,
           otp: otp,
@@ -65,6 +65,25 @@ export class UserService {
       auth_status: hasUser.first_name || params?.first_name ? true : false,
     })
   }
+
+  async addHome(currentUser: IUser, params: AddHomeOtpDto) {
+    const hasUser = await this.userRepo.selectById(currentUser.id);
+
+    if (!hasUser) {
+      throw new UserNotFoundException();
+    }
+
+    const homeJson: Array<any> = JSON.parse(hasUser.home_adresses);
+
+    return this.userRepo.updateById(currentUser.id, {
+      home_adresses: homeJson ? homeJson.push(params.location) : []
+    })
+  }
+
+  async getUserHome(currentUser: IUser) {
+    return this.userRepo.knex.select('home_adresses').from('users').where('id', currentUser.id).where('is_deleted', false).first();
+  }
+
 
   async delete(id: string) {
     const user = await this.userRepo.selectById(id);

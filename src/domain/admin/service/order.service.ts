@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AdminOrdersRepo } from '../repo/order.repo';
-import { OrderUpdateDto, SetDeliverDto, SetOrderStatusDto, SetPaymentDto } from '../dto/product-admin.dto';
+import { OrderUpdateDto, SetDeliverDto, SetDeliverMultipleDto, SetOrderStatusDto, SetOrderStatusMultipleDto, SetPaymentDto } from '../dto/product-admin.dto';
 import { ICurrentUser } from 'src/shared/interface/list.interface';
 import { OrderListByUsersDto, OrderListDto, SortType } from 'src/domain/orders/dto/order.dto';
 import { OrderPaymentHistoryTypes, OrderStatus, PaymentTypesEnum } from 'src/domain/orders/dto/order.enum';
@@ -50,6 +50,35 @@ export class AdminOrderService {
     });
   }
 
+  setStatusMultipeOrders(params: SetOrderStatusMultipleDto, currentUser: ICurrentUser) {
+    return this.adminOrderRepo.knex.transaction(async (trx) => {
+      await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_ids, {
+        status: params.status,
+        registrator_id: currentUser.id,
+        updated_by: currentUser.id
+      });
+
+      if (params.status === OrderStatus.REJECTED) {
+        const order_items = await this.adminOrderRepo.knex
+          .select(['product_id', 'quantity'])
+          .from('order_items')
+          .where('order_id', params.order_ids[0])
+          .where('is_deleted', false);
+
+        for await (let item of order_items) {
+          const product = await this.adminProductRepo.selectById(item.product_id);
+          await this.adminProductRepo.updateByIdWithTransaction(
+            trx,
+            item.product_id,
+            { product_count: Number(product.product_count) + Number(item.quantity) }
+          );
+        }
+      }
+
+      return { success: true };
+    });
+  }
+
   setDeliver(params: SetDeliverDto, currentUser: ICurrentUser) {
     return this.adminOrderRepo.knex.transaction(async (trx) => {
       const order = await this.adminOrderRepo.selectById(params.order_id);
@@ -59,6 +88,28 @@ export class AdminOrderService {
       }
 
       await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_id, {
+        deliver_id: params.deliver_id,
+        deliver_user_json: await trx
+          .select(['first_name', 'last_name', 'role', 'phone'])
+          .from('users')
+          .where('id', params.deliver_id)
+          .first(),
+        updated_by: currentUser.id
+      });
+
+      return { success: true };
+    });
+  }
+
+  setDeliverMultiple(params: SetDeliverMultipleDto, currentUser: ICurrentUser) {
+    return this.adminOrderRepo.knex.transaction(async (trx) => {
+      // const order = await this.adminOrderRepo.selectById(params.order_id);
+
+      // if (order.status === OrderStatus.DELIVERED) {
+      //   throw new OrderAlreadyDeliveredException();
+      // }
+
+      await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_ids, {
         deliver_id: params.deliver_id,
         deliver_user_json: await trx
           .select(['first_name', 'last_name', 'role', 'phone'])

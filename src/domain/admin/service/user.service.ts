@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AdminUserRepo } from '../repo/user.repo';
-import { AdminLoginDto, AdminUsersListDto, CreateProviderDto, CreateWorkerDto, SetUserStatusDto, UpdateWorkerDto } from '../dto/user-admin.dto';
+import { AdminLoginDto, AdminUsersListDto, CreateProviderDto, CreateWorkerDto, SetSuperUserDto, SetUserStatusDto, UpdateWorkerDto } from '../dto/user-admin.dto';
 import { isEmpty } from 'lodash';
 import { IncorrectLoginException, IncorrectPasswordException, PhoneAlreadyRegistered, UserHasNotPermissionException, UserNotFoundException } from 'src/errors/permission.error';
 import { PersonType, UserRoles } from 'src/domain/user/enum/user.enum';
@@ -23,6 +23,12 @@ export class AdminUserService {
     });
   }
 
+  setSuperUser(params: SetSuperUserDto) {
+    return this.adminUserRepo.updateById(params.user_id, {
+      super_user: params.super_user === 'true',
+    });
+  }
+
   async findAll(params: AdminUsersListDto) {
     const knex = this.adminUserRepo.knexService.instance;
     let query = knex
@@ -30,6 +36,51 @@ export class AdminUserService {
       .from('users')
       .orderBy('created_at', 'desc');
     
+    if (params?.role) {
+      query.where('role', Number(params.role));
+    }
+
+    if (params.is_deleted === 'true') {
+      query.where('is_deleted', true);
+    }
+
+    if (params.is_deleted === 'false') {
+      query.where('is_deleted', false);
+    }
+
+    if (!isEmpty(params?.search)) {
+      const name_latin = krillToLatin(params.search).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.search);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhere('first_name', `ilike`, `%${name_latin}%`)
+          .orWhere('first_name', `ilike`, `%${name_krill}%`)
+          .orWhere('last_name', `ilike`, `%${name_latin}%`)
+          .orWhere('last_name', `ilike`, `%${name_krill}%`),
+      );
+    }
+
+    if (params.limit) {
+      query = query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query = query.offset(Number(params.offset));
+    }
+
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
+  }
+
+  async inDebtList(params: AdminUsersListDto) {
+    const knex = this.adminUserRepo.knexService.instance;
+    let query = knex
+      .select(['*', knex.raw('count(id) over() as total')])
+      .from('users')
+      .where('balance', '<', 0)
+      .orderBy('created_at', 'desc');
+
     if (params?.role) {
       query.where('role', Number(params.role));
     }
@@ -80,7 +131,7 @@ export class AdminUserService {
   }
 
   async adminLogin(params: AdminLoginDto) {
-    const user: IUser = await this.adminUserRepo.selectByLogin(params.login);
+    const user = await this.adminUserRepo.selectByLogin(params.login);
 
     if (!user) {
       throw new IncorrectLoginException();

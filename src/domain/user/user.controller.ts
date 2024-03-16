@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
+  AddHomeOtpDto,
   ConfirmOtpDto,
   CreateUserDto,
   UpdateUserDto,
@@ -56,6 +57,20 @@ export class UserController {
   @Patch('update-profile')
   update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() user: IUser) {
     return this.userService.update(user, updateUserDto);
+  }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
+  @Patch('add-home')
+  addHome(@Body() updateUserDto: AddHomeOtpDto, @CurrentUser() user: IUser) {
+    return this.userService.addHome(user, updateUserDto);
+  }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
+  @Get('get-home')
+  getHome(@CurrentUser() user: IUser) {
+    return this.userService.getUserHome(user);
   }
 
   @ApiBearerAuth('authorization')

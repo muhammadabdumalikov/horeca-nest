@@ -26,7 +26,21 @@ class SingleOrderDto {
   product_id: string;
 }
 
-class LocationDto {
+export class LocationDto {
+  @ApiProperty()
+  @IsString()
+  lat: string;
+
+  @ApiProperty()
+  @IsString()
+  long: string;
+}
+
+export class NamedLocationDto {
+  @ApiProperty()
+  @IsString()
+  name: string;
+
   @ApiProperty()
   @IsString()
   lat: string;
