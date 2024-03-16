@@ -6,12 +6,7 @@ export class CreateCompanyDto {
   @ApiProperty()
   @IsString()
   @MaxLength(128)
-  name_uz: string;
-
-  @ApiProperty()
-  @IsString()
-  @MaxLength(128)
-  name_ru: string;
+  name: string;
 
   @ApiProperty()
   @IsString()

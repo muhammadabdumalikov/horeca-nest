@@ -1,8 +1,7 @@
 import { IListPage } from "src/shared/interface/list.interface";
 
 export interface ICreateCompany {
-  name_uz: string;
-  name_ru: string;
+  name: string;
   country_uz: string;
   country_ru: string;
 }

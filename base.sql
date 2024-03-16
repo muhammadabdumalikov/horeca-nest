@@ -189,8 +189,7 @@ insert into districts(region_id, uz_name, ru_name, en_name) values
 
 create table companies(
 	id varchar(24) not null primary key,
-	name_uz character varying(128) not null,
-	name_ru character varying(128) not null,
+	name character varying(128) not null,
 	country_uz character varying(128) not null,
 	country_ru character varying(128) not null,
 	is_deleted boolean default false,

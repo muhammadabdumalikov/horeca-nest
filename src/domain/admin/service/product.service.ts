@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { SetProductStatusDto } from '../dto/product-admin.dto';
 import { AdminProductRepo } from '../repo/product.repo';
 import { isEmpty } from 'lodash';
@@ -22,6 +22,10 @@ export class AdminProductService {
   async create(params: CreateProductDto, currentUser: IUser) {
     currentUser;
 
+    if (params?.discount_price > params?.count_price) {
+      throw new BadRequestException();
+     }
+    
     return this.adminProductRepo.insert({
       name_uz: params?.name_uz,
       name_ru: params?.name_ru,

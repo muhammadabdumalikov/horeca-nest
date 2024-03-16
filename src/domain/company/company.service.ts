@@ -16,8 +16,7 @@ export class CompanyService {
 
   async create(params: ICreateCompany) {
     return this.companyRepo.insert({
-      name_uz: params.name_uz,
-      name_ru: params.name_ru,
+      name: params.name,
       country_uz: params.country_uz,
       country_ru: params.country_ru,
     });
@@ -89,8 +88,7 @@ export class CompanyService {
     }
 
     return await this.companyRepo.updateById(id, {
-      name_uz: params?.name_uz,
-      name_ru: params?.name_ru,
+      name: params?.name,
       country_ru: params?.country_ru,
       country_uz: params?.country_uz,
       is_deleted: params?.is_deleted
