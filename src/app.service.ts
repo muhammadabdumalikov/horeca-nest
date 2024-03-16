@@ -367,4 +367,67 @@ export class AppService {
 
     return uploadFile;
   }
+
+  async getAllProducts() {
+    const workbook = new ExcelJS.Workbook();
+    workbook.addWorksheet('table_1', {
+      pageSetup: {
+        fitToWidth: 1,
+        orientation: 'landscape',
+      },
+    });
+    let startRowIndex = 1;
+    let worksheet = workbook.getWorksheet(1);
+
+    let data = await this.reportService.getAllProductsListForExcel();
+
+    worksheet.getColumn(1).width = 35;
+    worksheet.getColumn(2).width = 25;
+    worksheet.getColumn(3).width = 60;
+    worksheet.getColumn(4).width = 60;
+    worksheet.getColumn(5).width = 15;
+
+    for (let i = 0; i < data.length; i++) {
+      const data_raw = data[i];
+      worksheet.getCell(`A${startRowIndex + i}`).value = data_raw.id;
+      worksheet.getCell(`B${startRowIndex + i}`).value = data_raw.barcode;
+      worksheet.getCell(`C${startRowIndex + i}`).value = data_raw.name_uz;
+      worksheet.getCell(`D${startRowIndex + i}`).value = data_raw.name_ru;
+      worksheet.getCell(`E${startRowIndex + i}`).value = data_raw.product_count;
+    }
+
+    const buffer: any = await workbook.xlsx
+      .writeFile(path.join(__dirname, '/../example.xlsx'), { filename: 'Faktura hisobot' });
+
+    const file: IFile = {
+      originalname: String(`Mahsulotlar qoldig'i`),
+      size: String(buffer?.length),
+      buffer,
+      mimetype: String(DocumentMimeTypes?.XLSX),
+      fieldname: String(`Mahsulotlar qoldig'i`),
+      encoding: '',
+    };
+
+    // return buffer;
+
+    // const uploadFile: any = await this.fileRouterService.uploadReport(file);
+
+    // return uploadFile;
+  }
+
+  async readExcel() {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile('./example.xlsx');
+    const productObj = {};
+    // Assuming the data is on the first worksheet
+    const worksheet = workbook.getWorksheet(1);
+
+    for (let i = 1; i <= worksheet.rowCount; i++) {
+      const prodIndex = worksheet.getCell(`A${i}`).value || 'ERROR';
+      productObj[prodIndex as string] = worksheet.getCell(`E${i}`).value;
+    }
+
+    return this.reportService.setRestProductCount(productObj);
+  }
+
 }

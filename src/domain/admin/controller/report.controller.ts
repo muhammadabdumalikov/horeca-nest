@@ -44,4 +44,9 @@ export class ReportController {
   async getFakturaOrder(@Body() params: GenerateFakturaOrderReportDto) {
     return this.reportService.getFakturaOrder(params);
   }
+
+  @Get('get-all-products-excel-data')
+  async getAllProductListForExcel() {
+    return this.reportService.getAllProductsListForExcel();
+  }
 }

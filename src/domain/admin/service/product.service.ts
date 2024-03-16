@@ -74,19 +74,19 @@ export class AdminProductService {
       );
     }
 
-    if (params.is_deleted === 'true') {
+    if (params?.is_deleted === 'true') {
       query.where('is_deleted', true);
     }
 
-    if (params.is_deleted === 'false') {
+    if (params?.is_deleted === 'false') {
       query.where('is_deleted', false);
     }
 
-    if (params.limit) {
+    if (params?.limit) {
       query = query.limit(Number(params.limit));
     }
 
-    if (params.offset) {
+    if (params?.offset) {
       query = query.offset(Number(params.offset));
     }
 

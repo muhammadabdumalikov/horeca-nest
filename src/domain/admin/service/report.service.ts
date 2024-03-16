@@ -205,4 +205,29 @@ export class ReportService {
   async setFakturaReportArchive(params: SetFakturaReportArchiveDto) {
     return this.adminOrderRepo.updateById(params.order_id, { reported: true });
   }
+
+  async getAllProductsListForExcel() {
+    return this.adminOrderRepo.knex
+      .select(['id', 'barcode', 'name_uz', 'name_ru', 'product_count'])
+      .from('products')
+      .where('is_deleted', false);
+      // .orderBy('id');
+  }
+
+  async setRestProductCount(data) {
+    return this.adminOrderRepo.knex.transaction(async(trx) => {
+      const queryText = `
+        UPDATE products
+        SET product_count = product_updates.product_count
+        FROM (VALUES 
+          ${Object.entries(data).map(([id, product_count]) => `('${id}', ${product_count})`).join(',')}
+          ) AS product_updates(id, product_count)
+        WHERE products.id = product_updates.id;
+      `;
+
+      await trx.raw(queryText);
+
+      return { success: true };
+    })
+  }
 }
