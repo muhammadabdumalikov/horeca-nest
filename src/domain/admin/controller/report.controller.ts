@@ -49,4 +49,9 @@ export class ReportController {
   async getAllProductListForExcel() {
     return this.reportService.getAllProductsListForExcel();
   }
+
+  @Post('set-products-ostatok')
+  async setProductsOstatok(@Body() params) {
+    return this.reportService.setRestProductCount(params);
+  }
 }

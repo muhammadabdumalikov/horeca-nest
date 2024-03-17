@@ -20,8 +20,9 @@ export class GenerateFakturaReportDto {
 
 export class GenerateFakturaOrderReportDto {
   @ApiProperty()
-  @IsString()
-  order_id: string;
+  @IsString({each: true})
+  @IsArray()
+  order_ids: string[];
 }
 
 export class GenerateAktSverkaReportDto {

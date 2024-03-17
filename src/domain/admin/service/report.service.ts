@@ -84,9 +84,10 @@ export class ReportService {
               WHEN client.person_type = 1 THEN client.first_name || ' ' || client.last_name
             END as client_name
         `),
-        'client.phone',
+        'client.phone as client_phone',
         'registrator.first_name as registrator_first_name',
         'registrator.last_name as registrator_last_name',
+        'registrator.phone as registrator_phone',
         'order.payment_type_name',
         knex.raw(`
           json_agg(json_build_object(
@@ -112,7 +113,7 @@ export class ReportService {
       .leftJoin('users as client', function () {
         this.on('client.id', 'order.user_id')
       })
-      .where('order.id', params.order_id)
+      .whereIn('order.id', params.order_ids)
       .groupBy(['order.id', 'client.id', 'registrator.id']);
 
     return query;
