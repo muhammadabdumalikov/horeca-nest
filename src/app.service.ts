@@ -443,7 +443,7 @@ export class AppService {
 
     let data = await this.reportService.getFakturaOrder(
       {
-        order_ids: ["65f5db9ffffcd3362049961d", "65e9cb626cfe07539592327f", "65e9cca96cfe075395923284"],
+        order_ids: ["65f5db9ffffcd3362049961d", "65e9cb626cfe07539592327f", "65e9cca96cfe075395923284", "65e736dac4f2286bf3e4f7da"],
       }
     );
 
@@ -525,7 +525,7 @@ export class AppService {
       worksheet.getCell(`E${startRowIndex + i + 6}`).style = cell_bold_center_style;
 
       for (let k = 0; k < order_raw.items?.length; k++) {
-        let innerStartRowIndex = startRowIndex + 7 + k + 1;
+        let innerStartRowIndex = startRowIndex + 7 + i;
         const item_raw = order_raw.items[k];
 
         worksheet.getCell(`A${innerStartRowIndex + k}`).value = k + 1;
@@ -543,7 +543,7 @@ export class AppService {
         worksheet.getCell(`E${innerStartRowIndex + k}`).value = item_raw?.total_sum;
         worksheet.getCell(`E${innerStartRowIndex + k}`).style = cell_style;
 
-        innerStartRowIndex += k + order_raw.items?.length;
+        // innerStartRowIndex += k + 1;
       }
 
       worksheet.getCell(`A${startRowIndex + i + 7 + order_raw.items.length}`).style = cell_bold_right_style;
