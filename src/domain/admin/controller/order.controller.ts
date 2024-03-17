@@ -53,7 +53,7 @@ export class AdminOrderController {
   }
 
   @ApiBearerAuth('authorization')
-  @UseGuards(AdminGuard)
+  @UseGuards(DeliveryGuard)
   @Post('set-payment')
   async setPayment(@Body() params: SetPaymentDto, @CurrentUser() currentUser: ICurrentUser) {
     return this.adminOrderService.setPayment(params, currentUser);
