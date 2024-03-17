@@ -244,10 +244,34 @@ export class AdminOrderService {
   async orderListByDeliver(params: OrderListByUsersDto, user) {
     const knex = this.adminOrderRepo.knex;
     let query = knex
-      .select(['*', knex.raw('count(id) over() as total')])
-      .from(this.adminOrderRepo._tableName)
-      .where('deliver_id', user.id)
-      .orderBy('created_at', 'desc');
+      .select([
+        'o.*',
+        knex.raw(`
+          json_agg(
+            jsonb_build_object(
+              'order_item_id', item.id,
+              'name_uz', product.name_uz,
+              'name_ru', product.name_ru,
+              'quantity', item.quantity,
+              'barcode', product.barcode,
+              'image', product.image,
+              'count_price', product.count_price,
+              'discount_price', product.discount_price,
+              'block_price', product.block_price,
+              'count_in_block', product.count_in_block,
+              'price_for_item', item.price
+            )
+          ) as order_items`),
+        knex.raw('count(o.id) over() as total')
+      ])
+      .from('orders as o')
+      .leftJoin('order_items as item', function () {
+        this.on('item.order_id', 'o.id')
+        // .andOn(knex.raw('item.is_deleted = false'))
+      })
+      .where('o.deliver_id', user.id)
+      .orderBy('o.created_at', 'desc')
+      .groupBy('o.id');
 
     if (params?.is_deleted === 'true') {
       query.where('is_deleted', true);
