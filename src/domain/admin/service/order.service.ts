@@ -269,6 +269,9 @@ export class AdminOrderService {
         this.on('item.order_id', 'o.id')
         // .andOn(knex.raw('item.is_deleted = false'))
       })
+      .leftJoin('products as product', function () {
+        this.on('product.id', 'item.product_id').andOn(knex.raw('product.is_deleted = false'))
+      })
       .where('o.deliver_id', user.id)
       .orderBy('o.created_at', 'desc')
       .groupBy('o.id');
