@@ -25,7 +25,7 @@ export class AdminOrderController {
   ) { }
 
   @ApiBearerAuth('authorization')
-  @UseGuards(AdminGuard)
+  @UseGuards(DeliveryGuard)
   @Post('set-status')
   async setStatus(@Body() params: SetOrderStatusDto, @CurrentUser() currentUser: ICurrentUser) {
     return this.adminOrderService.setStatus(params, currentUser);
@@ -88,14 +88,14 @@ export class AdminOrderController {
   }
 
   @ApiBearerAuth('authorization')
-  @UseGuards(AdminGuard)
+  @UseGuards(DeliveryGuard)
   @Patch('order-update/:id')
   async orderUpdate(@Param('id') order_id: string, @Body() params: OrderUpdateDto) {
     return this.adminOrderService.updateOrder(order_id, params);
   }
 
   @ApiBearerAuth('authorization')
-  @UseGuards(AdminGuard)
+  @UseGuards(DeliveryGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.adminOrderService.findOne(id);
