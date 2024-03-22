@@ -51,7 +51,7 @@ export class ReportController {
     return this.reportService.getAllProductsListForExcel();
   }
 
-  @Get('get-all-itog-orders')
+  @Post('get-all-itog-orders')
   async getTotalOrdersReport(@Body() params: GenerateFakturaOrderReportDto, @CurrentUser() currentUser) {
     return this.reportService.getTotalOrdersReport(params, currentUser);
   }
