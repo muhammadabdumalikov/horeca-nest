@@ -15,6 +15,7 @@ import { ReportService } from './domain/admin/service/report.service';
 import { AdminOrdersRepo } from './domain/admin/repo/order.repo';
 import { FileRouterService } from './domain/file-router/file-router.service';
 import { AdminFakturaReportHistoryRepo } from './domain/admin/repo/faktura-report-history';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { AdminFakturaReportHistoryRepo } from './domain/admin/repo/faktura-repor
     PaymentTypeModule
   ],
   controllers: [AppController],
-  providers: [AppService, PoolService, ReportService, AdminOrdersRepo, FileRouterService, AdminFakturaReportHistoryRepo],
+  providers: [AppService, PoolService, ReportService, AdminOrdersRepo, FileRouterService, AdminFakturaReportHistoryRepo, JwtService],
 })
 export class AppModule {}

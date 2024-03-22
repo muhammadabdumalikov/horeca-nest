@@ -83,7 +83,7 @@ create table orders(
 	status smallint not null default 1,
 	comment varchar(256) null,
 	location jsonb not null,
-	order_number varchar(12),
+	order_number serial,
 	updated_by VARCHAR(24),
 	deliver_id VARCHAR(24),
 	payment_type_name jsonb,

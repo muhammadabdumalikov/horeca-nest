@@ -206,13 +206,6 @@ export class AdminOrderService {
     if (params?.created_at_order === 'desc') {
       query.orderBy('created_at', 'desc')
     }
-    knex.raw(`case
-          when "order".total_sum > "order".paid and "order".paid > 0 then 'Qisman tolangan'
-          when "order".paid = 0 then 'Tolanmagan'
-          when "order".total_sum = paid then 'Tolangan'
-          else null
-          end as order_paid_status
-        `)
 
     if (!isEmpty(params?.paid_status)) {
       switch (params.paid_status) {

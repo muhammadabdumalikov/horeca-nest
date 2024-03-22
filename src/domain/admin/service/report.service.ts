@@ -18,6 +18,40 @@ export class ReportService {
     private readonly adminFakturaHistoryRepo: AdminFakturaReportHistoryRepo
   ) { }
 
+  async getTotalOrdersReport(params: GenerateFakturaOrderReportDto, currentUser) {
+    const knex = this.adminOrderRepo.knex;
+
+    const query = knex
+      .select([
+        'order.order_number',
+        knex.raw(`
+          json_agg(
+            jsonb_build_object(
+              'name_uz', product.name_uz,
+              'quantity', item.quantity,
+              'total_price', item.quantity * item.price,
+              'count_in_block', product.count_in_block
+            )
+          ) as order_items
+        `)
+      ])
+      .from('orders as order')
+      .join('order_items as item', function () {
+        this.on('order.id', 'item.order_id').andOn(knex.raw('item.is_deleted = false'));
+      })
+      .leftJoin('products as product', function () {
+        this.on('product.id', 'item.product_id')
+      })
+      .where('order.is_deleted', false)
+      .whereIn('order.id', params.order_ids)
+      .groupBy('order.id')
+      .orderBy('order.order_number')
+    
+    const data = await query;
+
+    return { data, currentUser };
+  }
+
   async getFakturaReport(params: GenerateFakturaReportDto) {
     const knex = this.adminOrderRepo.knex;
 
@@ -212,11 +246,11 @@ export class ReportService {
       .select(['id', 'barcode', 'name_uz', 'name_ru', 'product_count'])
       .from('products')
       .where('is_deleted', false);
-      // .orderBy('id');
+    // .orderBy('id');
   }
 
   async setRestProductCount(data) {
-    return this.adminOrderRepo.knex.transaction(async(trx) => {
+    return this.adminOrderRepo.knex.transaction(async (trx) => {
       const queryText = `
         UPDATE products
         SET product_count = product_updates.product_count

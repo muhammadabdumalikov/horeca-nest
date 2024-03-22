@@ -7,6 +7,8 @@ import * as path from 'path';
 import { XLSTableStyles } from './shared/utils/xlsx-styles';
 import { FileRouterService } from './domain/file-router/file-router.service';
 import { OrderPaymentHistoryTypes, OrderPaymentHistoryTypesStr } from './domain/orders/dto/order.enum';
+import formatDateYYYYMMDD from './shared/utils/format-date';
+import { IUser } from './domain/user/interface/user.interface';
 
 
 @Injectable()
@@ -565,6 +567,118 @@ export class AppService {
       buffer,
       mimetype: String(DocumentMimeTypes?.XLSX),
       fieldname: String('Faktura hisobot'),
+      encoding: '',
+    };
+
+    // return buffer;
+
+    const uploadFile: any = await this.fileRouterService.uploadReport(file);
+
+    return uploadFile;
+  }
+
+  async getTotalOrdersReport(currentUser: IUser) {
+    const workbook = new ExcelJS.Workbook();
+    workbook.addWorksheet('table_1', {
+      pageSetup: {
+        fitToWidth: 1,
+        orientation: 'landscape',
+      },
+    });
+    let startRowIndex = 7;
+    let worksheet = workbook.getWorksheet(1);
+
+    let data = await this.reportService.getTotalOrdersReport(
+      {
+        order_ids: ["65f5db9ffffcd3362049961d", "65e9cb626cfe07539592327f", "65e9cca96cfe075395923284", "65e736dac4f2286bf3e4f7da"],
+      },
+      currentUser
+    );
+
+    worksheet.getColumn(1).width = 10;
+    worksheet.getColumn(2).width = 50;
+    worksheet.getColumn(3).width = 15;
+    worksheet.getColumn(4).width = 20;
+    worksheet.getColumn(5).width = 20;
+
+    const cell_style: any = XLSTableStyles.tableCellTextLeft;
+    const cell_bold_left_style: any = XLSTableStyles.tableCellTextLeftWithBold;
+    const cell_center_style: any = XLSTableStyles.tableCellTextCenter;
+    const cell_bold_right_style: any = XLSTableStyles.tableCellTextRightWithBold;
+    const cell_right_style: any = XLSTableStyles.tableCellTextRight
+
+    worksheet.mergeCells(`A1:E1`);
+    worksheet.getCell('A1').value = `Даты отгрузки: ${formatDateYYYYMMDD(new Date())}`;
+    worksheet.mergeCells(`A2:E2`);
+    worksheet.getCell('A2').value = `Агенты: ${data.currentUser?.phone} (${data.currentUser?.first_name} ${data.currentUser?.last_name})`;
+    worksheet.mergeCells(`A3:E3`);
+    worksheet.getCell('A3').value = `Рабочие пространства: -`;
+    worksheet.mergeCells(`A4:E4`);
+    worksheet.getCell('A4').value = `№ :${data.data.map(item => ' ' + item?.order_number)}`;
+    worksheet.mergeCells(`A5:E5`);
+    worksheet.getCell('A5').value = `Кол. фактури: ${data.data.length}`;
+
+    worksheet.getCell('A6').style = cell_style;
+    worksheet.getCell('A6').value = `Код`;
+    worksheet.getCell('B6').style = cell_style;
+    worksheet.getCell('B6').value = `Наименование`;
+    worksheet.getCell('C6').style = cell_style;
+    worksheet.getCell('C6').value = `Кол-во`;
+    worksheet.getCell('D6').style = cell_style;
+    worksheet.getCell('D6').value = `Кор + шт`;
+    worksheet.getCell('E6').style = cell_style;
+    worksheet.getCell('E6').value = `Сумма`;
+
+    let i = 0;
+    let dataRowIndex = 0;
+
+    while (i < data.data.length) {
+      const order_raw = data.data[i];
+      for (let k = 0; k < order_raw?.order_items?.length; k++) {
+        worksheet.getCell(`A${startRowIndex + dataRowIndex}`).style = cell_style;
+        worksheet.getCell(`A${startRowIndex + dataRowIndex}`).value = order_raw?.order_number;
+        worksheet.getCell(`B${startRowIndex + dataRowIndex}`).style = cell_style;
+        worksheet.getCell(`B${startRowIndex + dataRowIndex}`).value = order_raw?.order_items[k]?.name_uz;
+        worksheet.getCell(`C${startRowIndex + dataRowIndex}`).style = cell_right_style;
+        worksheet.getCell(`C${startRowIndex + dataRowIndex}`).value = parseInt(order_raw?.order_items[k]?.quantity);
+        const block = Math.floor(+order_raw?.order_items[k]?.quantity / +order_raw?.order_items[k]?.count_in_block);
+        const remainingPieces = +order_raw?.order_items[k]?.quantity % +order_raw?.order_items[k]?.count_in_block;
+        worksheet.getCell(`D${startRowIndex + dataRowIndex}`).style = cell_center_style;
+        worksheet.getCell(`D${startRowIndex + dataRowIndex}`).value =
+          (block > 0 ? `${block} Кор` : '') +
+          (remainingPieces > 0 ? `${remainingPieces}+ шт` : '');
+        worksheet.getCell(`E${startRowIndex + dataRowIndex}`).style = cell_style;
+        worksheet.getCell(`E${startRowIndex + dataRowIndex}`).value = parseFloat(order_raw?.order_items[k]?.total_price);
+
+        dataRowIndex++;
+      }
+      i++;
+    }
+
+    worksheet.getCell(`A${startRowIndex + dataRowIndex}`).style = cell_bold_left_style;
+    worksheet.getCell(`A${startRowIndex + dataRowIndex}`).value = 'Сумма';
+    worksheet.getCell(`B${startRowIndex + dataRowIndex}`).style = cell_bold_left_style;
+    worksheet.getCell(`B${startRowIndex + dataRowIndex}`).value = 'ИТОГО';
+    worksheet.getCell(`C${startRowIndex + dataRowIndex}`).style = cell_bold_right_style;
+    worksheet.getCell(`C${startRowIndex + dataRowIndex}`).value = {
+      formula: `SUM(C${startRowIndex}:C${startRowIndex + data.data.length})`,
+      date1904: false,
+    };
+    worksheet.getCell(`D${startRowIndex + dataRowIndex}`).style = cell_bold_left_style;
+    worksheet.getCell(`E${startRowIndex + dataRowIndex}`).style = cell_bold_left_style;
+    worksheet.getCell(`E${startRowIndex + dataRowIndex}`).value = {
+      formula: `SUM(E${startRowIndex}:E${startRowIndex + data.data.length})`,
+      date1904: false,
+    };
+
+    const buffer: any = await workbook.xlsx.writeBuffer();
+
+    const file: IFile = {
+      originalname: String('ИТОГ'),
+      size: String(buffer?.length),
+      buffer,
+      mimetype: String(DocumentMimeTypes?.XLSX),
+      fieldname: String('ИТОГ'),
       encoding: '',
     };
 
