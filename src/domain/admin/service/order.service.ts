@@ -3,13 +3,14 @@ import { AdminOrdersRepo } from '../repo/order.repo';
 import { OrderUpdateDto, SetDeliverDto, SetDeliverMultipleDto, SetOrderStatusDto, SetOrderStatusMultipleDto, SetPaymentDto } from '../dto/product-admin.dto';
 import { ICurrentUser } from 'src/shared/interface/list.interface';
 import { OrderListByUsersDto, OrderListDto, SortType } from 'src/domain/orders/dto/order.dto';
-import { OrderPaymentHistoryTypes, OrderStatus, PaymentTypesEnum } from 'src/domain/orders/dto/order.enum';
+import { OrderPaymentHistoryTypes, OrderStatus, PaidStatusFilterEnum, PaymentTypesEnum } from 'src/domain/orders/dto/order.enum';
 import { AdminProductRepo } from '../repo/product.repo';
 import { OrderAlreadyDeliveredException, PaymentPriceExceed, ProductNotFoundException } from 'src/errors/permission.error';
 import { isEmpty } from 'lodash';
 import { AdminOrderItemsRepo } from '../repo/order-item.repo';
 import { AdminOrderPaymentHistoryRepo } from '../repo/order-payment-history.repo';
 import { AdminUserRepo } from '../repo/user.repo';
+import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
 
 @Injectable()
 export class AdminOrderService {
@@ -21,7 +22,13 @@ export class AdminOrderService {
     private readonly adminUserRepo: AdminUserRepo,
   ) { }
 
-  setStatus(params: SetOrderStatusDto, currentUser: ICurrentUser) {
+  async setStatus(params: SetOrderStatusDto, currentUser: ICurrentUser) {
+    const order = await this.adminOrderRepo.selectById(params.order_id);
+
+    if (order.status === OrderStatus.DELIVERED && (![OrderStatus.PARTIALLY_PAID || OrderStatus.FULLY_PAID].includes(params.status))) {
+      return { success: true };
+    }
+
     return this.adminOrderRepo.knex.transaction(async (trx) => {
       await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_id, {
         status: params.status,
@@ -192,6 +199,47 @@ export class AdminOrderService {
       query.offset(Number(params.offset));
     }
 
+    if (params?.created_at_order === 'asc') {
+      query.orderBy('created_at', 'asc')
+    }
+
+    if (params?.created_at_order === 'desc') {
+      query.orderBy('created_at', 'desc')
+    }
+    knex.raw(`case
+          when "order".total_sum > "order".paid and "order".paid > 0 then 'Qisman tolangan'
+          when "order".paid = 0 then 'Tolanmagan'
+          when "order".total_sum = paid then 'Tolangan'
+          else null
+          end as order_paid_status
+        `)
+
+    if (!isEmpty(params?.paid_status)) {
+      switch (params.paid_status) {
+        case PaidStatusFilterEnum.FULLY_PAID:
+          query.where('paid >= total_sum');
+          break;
+        case PaidStatusFilterEnum.PARTIALLY_PAID:
+          query.where('total_sum > paid and paid > 0');
+          break;
+        case PaidStatusFilterEnum.NOT_PAID:
+          query.where('paid <= 0');
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (!isEmpty(params?.client_name)) {
+      const name_latin = krillToLatin(params.client_name).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.client_name);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_latin}%`)
+          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_krill}%`)
+      );
+    }
+
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
@@ -236,6 +284,32 @@ export class AdminOrderService {
       query.orderBy('created_at', 'desc')
     }
 
+    if (!isEmpty(params?.paid_status)) {
+      switch (params.paid_status) {
+        case PaidStatusFilterEnum.FULLY_PAID:
+          query.where('paid >= total_sum');
+          break;
+        case PaidStatusFilterEnum.PARTIALLY_PAID:
+          query.where('total_sum > paid and paid > 0');
+          break;
+        case PaidStatusFilterEnum.NOT_PAID:
+          query.where('paid <= 0');
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (!isEmpty(params?.client_name)) {
+      const name_latin = krillToLatin(params.client_name).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.client_name);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_latin}%`)
+          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_krill}%`)
+      );
+    }
+
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
@@ -277,15 +351,15 @@ export class AdminOrderService {
       .groupBy('o.id');
 
     if (params?.is_deleted === 'true') {
-      query.where('is_deleted', true);
+      query.where('o.is_deleted', true);
     }
 
     if (params?.is_deleted === 'false') {
-      query.where('is_deleted', false);
+      query.where('o.is_deleted', false);
     }
 
     if (params?.status) {
-      query.where('status', params.status)
+      query.where('o.status', params.status)
     }
 
     if (params.limit) {
@@ -297,11 +371,37 @@ export class AdminOrderService {
     }
 
     if (params?.sort === SortType.asc) {
-      query.orderBy('created_at', 'asc')
+      query.orderBy('o.created_at', 'asc')
     }
 
     if (params?.sort === SortType.desc) {
-      query.orderBy('created_at', 'desc')
+      query.orderBy('o.created_at', 'desc')
+    }
+
+    if (!isEmpty(params?.paid_status)) {
+      switch (params.paid_status) {
+        case PaidStatusFilterEnum.FULLY_PAID:
+          query.where('o.paid >= o.total_sum');
+          break;
+        case PaidStatusFilterEnum.PARTIALLY_PAID:
+          query.where('o.total_sum > o.paid and o.paid > 0');
+          break;
+        case PaidStatusFilterEnum.NOT_PAID:
+          query.where('o.paid <= 0');
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (!isEmpty(params?.client_name)) {
+      const name_latin = krillToLatin(params.client_name).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.client_name);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhereRaw(`"o".user_json ->> 'full_name' ilike %${name_latin}%`)
+          .orWhereRaw(`"o".user_json ->> 'full_name' ilike %${name_krill}%`)
+      );
     }
 
     const data = await query;
@@ -358,6 +458,10 @@ export class AdminOrderService {
   async updateOrder(order_id, params: OrderUpdateDto) {
     return this.adminOrderRepo.knex.transaction(async (trx) => {
       const order = await this.adminOrderRepo.selectById(order_id).where('is_deleted', false);
+
+      if (order.status === OrderStatus.DELIVERED) {
+        throw new OrderAlreadyDeliveredException();
+      }
 
       let totalSumOfOrder = order.total_sum;
 

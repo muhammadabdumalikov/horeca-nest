@@ -7,11 +7,12 @@ import { OnlySuperUserAllowedException, PaymentTypeNotAllowed, ProductCountLimit
 import { IUser } from '../user/interface/user.interface';
 import { isEmpty } from 'lodash';
 import { IProduct } from '../product/interface/product.interface';
-import { OrderPaymentHistoryTypes, OrderStatus, PaymentTypesEnum } from './dto/order.enum';
+import { OrderPaymentHistoryTypes, OrderStatus, PaidStatusFilterEnum, PaymentTypesEnum } from './dto/order.enum';
 import { OrderItemsRepo } from './oreder-items.repo';
 import { generateOrderCode } from 'src/shared/utils/password-hash';
 import { OrderPaymentHistoryRepo } from './order-payment-history.repo';
 import { UserRepo } from '../user/user.repo';
+import { krillToLatin, latinToKrill } from 'src/shared/utils/translate';
 
 @Injectable()
 export class OrdersService {
@@ -158,6 +159,7 @@ export class OrdersService {
         'order.order_number',
         'order.created_at',
         'order.status',
+        'paid.status',
         'order.location',
         knex.raw('count("order".id) over() as total'),
         knex.raw(`case
@@ -188,6 +190,44 @@ export class OrdersService {
 
     if (params.offset) {
       query = query.offset(Number(params.offset));
+    }
+
+    if (params?.created_at_order === 'asc') {
+      query.orderBy('order.created_at', 'asc')
+    }
+
+    if (params?.created_at_order === 'desc') {
+      query.orderBy('order.created_at', 'desc')
+    }
+
+    if (!isEmpty(params?.paid_status)) {
+      switch (params.paid_status) {
+        case PaidStatusFilterEnum.FULLY_PAID:
+          query.where('order.paid >= order.total_sum');
+          break;
+        case PaidStatusFilterEnum.PARTIALLY_PAID:
+          query.where('order.total_sum > order.paid and order.paid > 0');
+          break;
+        case PaidStatusFilterEnum.NOT_PAID:
+          query.where('order.paid <= 0');
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (!isEmpty(params?.order_number)) {
+      query.where('order.order_number', params.order_number)
+    }
+
+    if (!isEmpty(params?.client_name)) {
+      const name_latin = krillToLatin(params.client_name).replace(/'/g, "''");
+      const name_krill = latinToKrill(params.client_name);
+      query = query.andWhere((builder) =>
+        builder
+          .orWhereRaw(`"order".user_json ->> 'full_name' ilike %${name_latin}%`)
+          .orWhereRaw(`"order".user_json ->> 'full_name' ilike %${name_krill}%`)
+      );
     }
 
     const data = await query;

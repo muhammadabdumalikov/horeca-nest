@@ -6,10 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserRoles } from 'src/domain/user/enum/user.enum';
+import { PersonType, UserRoles } from 'src/domain/user/enum/user.enum';
 import { IUser } from 'src/domain/user/interface/user.interface';
 import { UserService } from 'src/domain/user/user.service';
-import { UserHasNotPermissionException } from 'src/errors/permission.error';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -36,7 +35,7 @@ export class AuthGuard implements CanActivate {
       throw new ForbiddenException();
     }
 
-    const user: IUser = await this.userService.findOne(token.id);
+    const user = await this.userService.findOne(token.id);
 
     if (!user || !user.id) {
       throw new UnauthorizedException();
@@ -48,6 +47,7 @@ export class AuthGuard implements CanActivate {
       first_name: user.first_name,
       last_name: user.last_name,
       legal_name: user.legal_name,
+      full_name: user.person_type === PersonType.JURIDIC ? user.legal_name : `${user.first_name} ${user.last_name}`,
       role: UserRoles,
       auth_status: user.auth_status,
       super_user: user.super_user

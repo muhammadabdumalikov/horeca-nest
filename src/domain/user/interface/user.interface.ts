@@ -6,6 +6,7 @@ export interface IUser {
   first_name: string;
   last_name: string;
   legal_name: string;
+  full_name: string;
   role: UserRoles;
   auth_status: boolean;
   super_user: string;

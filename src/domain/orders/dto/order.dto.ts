@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { OrderStatus } from './order.enum';
+import { OrderStatus, PaidStatusFilterEnum } from './order.enum';
 import { ListPageDto } from 'src/shared/dto/list.dto';
 import { Type } from 'class-transformer';
 
@@ -87,6 +87,21 @@ export class OrderListDto extends ListPageDto {
   @IsOptional()
   @IsEnum(SortType)
   sort?: SortType;
+
+  @ApiPropertyOptional({ enum: PaidStatusFilterEnum })
+  @IsOptional()
+  @IsEnum(PaidStatusFilterEnum)
+  paid_status: PaidStatusFilterEnum;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  order_number?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  client_name?: string;
 }
 
 export class OrderListByUsersDto extends OrderListDto {

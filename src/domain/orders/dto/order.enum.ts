@@ -8,6 +8,12 @@ export enum OrderStatus {
   IN_WAREHOUSE = '7'
 }
 
+export enum PaidStatusFilterEnum {
+  NOT_PAID = '1',
+  PARTIALLY_PAID = '2',
+  FULLY_PAID = '3',
+}
+
 //                           DELIVERY_PROCESS
 //                           FULLY_PAID
 // REGISTERED -> REJECTED -> PARTIALLY_PAID -> DELIVERED
