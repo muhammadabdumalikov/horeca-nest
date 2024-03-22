@@ -640,7 +640,7 @@ export class AppService {
         worksheet.getCell(`B${startRowIndex + dataRowIndex}`).style = cell_style;
         worksheet.getCell(`B${startRowIndex + dataRowIndex}`).value = order_raw?.order_items[k]?.name_uz;
         worksheet.getCell(`C${startRowIndex + dataRowIndex}`).style = cell_right_style;
-        worksheet.getCell(`C${startRowIndex + dataRowIndex}`).value = parseInt(order_raw?.order_items[k]?.quantity);
+        worksheet.getCell(`C${startRowIndex + dataRowIndex}`).value = +order_raw?.order_items[k]?.quantity;
         const block = Math.floor(+order_raw?.order_items[k]?.quantity / +order_raw?.order_items[k]?.count_in_block);
         const remainingPieces = +order_raw?.order_items[k]?.quantity % +order_raw?.order_items[k]?.count_in_block;
         worksheet.getCell(`D${startRowIndex + dataRowIndex}`).style = cell_center_style;
@@ -648,7 +648,7 @@ export class AppService {
           (block > 0 ? `${block} Кор` : '') +
           (remainingPieces > 0 ? `${remainingPieces}+ шт` : '');
         worksheet.getCell(`E${startRowIndex + dataRowIndex}`).style = cell_style;
-        worksheet.getCell(`E${startRowIndex + dataRowIndex}`).value = parseFloat(order_raw?.order_items[k]?.total_price);
+        worksheet.getCell(`E${startRowIndex + dataRowIndex}`).value = +order_raw?.order_items[k]?.total_price;
 
         dataRowIndex++;
       }
@@ -688,5 +688,4 @@ export class AppService {
 
     return uploadFile;
   }
-
 }

@@ -10,6 +10,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ReportService } from '../service/report.service';
 import { FakturaReportListDto, GenerateAktSverkaReportDto, GenerateFakturaOrderReportDto, GenerateFakturaReportDto, SetFakturaReportArchiveDto } from '../dto/report.dto';
 import { AdminGuard } from 'src/guard/admin.guard';
+import { CurrentUser } from 'src/decorator/current-user.decorator';
 
 @ApiTags('Admin')
 @ApiBearerAuth('authorization')
@@ -48,6 +49,11 @@ export class ReportController {
   @Get('get-all-products-excel-data')
   async getAllProductListForExcel() {
     return this.reportService.getAllProductsListForExcel();
+  }
+
+  @Get('get-all-itog-orders')
+  async getTotalOrdersReport(@Body() params: GenerateFakturaOrderReportDto, @CurrentUser() currentUser) {
+    return this.reportService.getTotalOrdersReport(params, currentUser);
   }
 
   @Post('set-products-ostatok')
