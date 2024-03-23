@@ -230,6 +230,10 @@ export class OrdersService {
       );
     }
 
+    if (!isEmpty(params?.order_number)) {
+      query.where('order.order_number', params.order_number);
+    }
+
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
