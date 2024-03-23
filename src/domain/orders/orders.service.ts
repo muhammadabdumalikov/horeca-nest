@@ -159,7 +159,7 @@ export class OrdersService {
         'order.order_number',
         'order.created_at',
         'order.status',
-        'paid.status',
+        'order.paid',
         'order.location',
         knex.raw('count("order".id) over() as total'),
         knex.raw(`case
