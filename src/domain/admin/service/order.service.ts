@@ -175,7 +175,8 @@ export class AdminOrderService {
           when total_sum = paid then 'Tolangan'
           else null
           end as paid_status
-        `)])
+        `)
+      ])
       .from(this.adminOrderRepo._tableName)
       .orderBy('created_at', 'desc');
 
@@ -436,6 +437,13 @@ export class AdminOrderService {
               'price_for_item', item.price
             )
           ) as order_items
+        `),
+        knex.raw(`case
+          when "o".total_sum > "o".paid and "o".paid > 0 then 'Qisman tolangan'
+          when "o".paid = 0 then 'Tolanmagan'
+          when "o".total_sum >= "o".paid then 'Tolangan'
+          else null
+          end as paid_status
         `)
       ])
       .from('orders as o')
