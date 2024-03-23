@@ -75,9 +75,9 @@ export class OrdersService {
 
         await this.productRepo.updateByIdWithTransaction(trx, item.product_id, { product_count: product.product_count - item.quantity });
 
-        let priceForItem = !isEmpty(product.discount_price) ? product.discount_price : product.count_price;
+        let priceForItem = product.discount_price > 0 ? product.discount_price : product.count_price;        
 
-        if (item.quantity >= product.count_in_block && !isEmpty(product.block_price) && +product.block_price < priceForItem) {
+        if (item.quantity >= product.count_in_block && product.block_price > 0 && +product.block_price < priceForItem) {
           priceForItem = +product.block_price;
         }
 
