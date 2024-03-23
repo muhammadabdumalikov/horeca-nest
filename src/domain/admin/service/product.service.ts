@@ -136,6 +136,7 @@ export class AdminProductService {
       count_in_block: +params?.count_in_block,
       product_count: +params?.product_count,
       measure: params?.measure,
+      updated_at: new Date(),
     });
   }
 
