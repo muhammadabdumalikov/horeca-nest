@@ -42,13 +42,15 @@ export class OrdersService {
         }
       }
 
+      delete currentUser.role;
+
       const [order] = await this.orderRepo.insertWithTransaction(trx, {
         id: this.orderRepo.generateRecordId(),
         user_id: currentUser.id,
         user_json: currentUser,
         status: OrderStatus.REGISTERED,
         quantity: params.items.length,
-        order_number: generateOrderCode(),
+        // order_number: generateOrderCode(),
         comment: params?.comment,
         location: params.location,
         payment_type: params.payment_type,
