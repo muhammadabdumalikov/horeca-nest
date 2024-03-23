@@ -210,13 +210,13 @@ export class AdminOrderService {
     if (!isEmpty(params?.paid_status)) {
       switch (params.paid_status) {
         case PaidStatusFilterEnum.FULLY_PAID:
-          query.where('paid >= total_sum');
+          query.whereRaw('paid >= total_sum');
           break;
         case PaidStatusFilterEnum.PARTIALLY_PAID:
-          query.where('total_sum > paid and paid > 0');
+          query.whereRaw('total_sum > paid and paid > 0');
           break;
         case PaidStatusFilterEnum.NOT_PAID:
-          query.where('paid <= 0');
+          query.whereRaw('paid <= 0');
           break;
         default:
           break;
@@ -280,13 +280,13 @@ export class AdminOrderService {
     if (!isEmpty(params?.paid_status)) {
       switch (params.paid_status) {
         case PaidStatusFilterEnum.FULLY_PAID:
-          query.where('paid >= total_sum');
+          query.whereRaw('paid >= total_sum');
           break;
         case PaidStatusFilterEnum.PARTIALLY_PAID:
-          query.where('total_sum > paid and paid > 0');
+          query.whereRaw('total_sum > paid and paid > 0');
           break;
         case PaidStatusFilterEnum.NOT_PAID:
-          query.where('paid <= 0');
+          query.whereRaw('paid <= 0');
           break;
         default:
           break;
@@ -374,29 +374,30 @@ export class AdminOrderService {
     if (!isEmpty(params?.paid_status)) {
       switch (params.paid_status) {
         case PaidStatusFilterEnum.FULLY_PAID:
-          query.where('o.paid >= o.total_sum');
+          query.whereRaw('o.paid >= o.total_sum');
           break;
         case PaidStatusFilterEnum.PARTIALLY_PAID:
-          query.where('o.total_sum > o.paid and o.paid > 0');
+          query.whereRaw('o.total_sum > o.paid and o.paid > 0');
           break;
-        case PaidStatusFilterEnum.NOT_PAID:
-          query.where('o.paid <= 0');
+        case PaidStatusFilterEnum.NOT_PAID:          
+          query.whereRaw('o.paid <= 0');
           break;
         default:
           break;
       }
     }
-
+    
     if (!isEmpty(params?.client_name)) {
       const name_latin = krillToLatin(params.client_name).replace(/'/g, "''");
       const name_krill = latinToKrill(params.client_name);
-      query = query.andWhere((builder) =>
+
+      query.andWhere((builder) =>
         builder
           .orWhereRaw(`"o".user_json ->> 'full_name' ilike %${name_latin}%`)
           .orWhereRaw(`"o".user_json ->> 'full_name' ilike %${name_krill}%`)
       );
     }
-
+    
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
