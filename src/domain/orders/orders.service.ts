@@ -203,13 +203,13 @@ export class OrdersService {
     if (!isEmpty(params?.paid_status)) {
       switch (params.paid_status) {
         case PaidStatusFilterEnum.FULLY_PAID:
-          query.whereRaw('order.paid >= order.total_sum');
+          query.whereRaw('"order".paid >= "order".total_sum');
           break;
         case PaidStatusFilterEnum.PARTIALLY_PAID:
-          query.whereRaw('order.total_sum > order.paid and order.paid > 0');
+          query.whereRaw('"order".total_sum > "order".paid and "order".paid > 0');
           break;
         case PaidStatusFilterEnum.NOT_PAID:
-          query.whereRaw('order.paid <= 0');
+          query.whereRaw('"order".paid <= 0');
           break;
         default:
           break;
