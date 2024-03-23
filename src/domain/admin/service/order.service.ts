@@ -155,7 +155,7 @@ export class AdminOrderService {
       }
 
       await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_id, {
-        paid: params.paid_price,
+        paid: order.paid + params.paid_price,
         updated_by: currentUser.id
       });
 
