@@ -154,8 +154,7 @@ export class AdminProductService {
         `),
         knex.raw(`
           jsonb_build_object(
-            'name_uz', category.name_uz,
-            'name_ru', category.name_ru
+            'name', category.name,
           ) as category 
         `),
         knex.raw(`
