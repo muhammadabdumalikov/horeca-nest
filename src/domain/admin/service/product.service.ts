@@ -148,13 +148,13 @@ export class AdminProductService {
         'p.*',
         knex.raw(`
           jsonb_build_object(
-            'name_uz', c.name_uz,
-            'name_ru', c.name_ru
+            'name', c.name
           ) as company
         `),
         knex.raw(`
           jsonb_build_object(
-            'name', category.name,
+            'name_uz', category.name_uz,
+            'name_ru', category.name_ru
           ) as category 
         `),
         knex.raw(`
