@@ -233,8 +233,11 @@ export class AdminOrderService {
           .orWhereRaw(`user_json ->> 'full_name' ilike '%${name_krill}%'`)
       );
     }
-    console.log(query.toQuery());
-    
+
+    if (!isEmpty(params?.order_number)) {
+      query.where('order_number', params.order_number);
+    }
+
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
