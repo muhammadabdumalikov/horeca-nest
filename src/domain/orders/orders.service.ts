@@ -227,8 +227,8 @@ export class OrdersService {
       const name_krill = latinToKrill(params.client_name);
       query = query.andWhere((builder) =>
         builder
-          .orWhereRaw(`"order".user_json ->> 'full_name' ilike %${name_latin}%`)
-          .orWhereRaw(`"order".user_json ->> 'full_name' ilike %${name_krill}%`)
+          .orWhereRaw(`"order".user_json ->> 'full_name' ilike '%${name_latin}%'`)
+          .orWhereRaw(`"order".user_json ->> 'full_name' ilike '%${name_krill}%'`)
       );
     }
 

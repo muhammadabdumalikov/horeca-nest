@@ -229,11 +229,12 @@ export class AdminOrderService {
       const name_krill = latinToKrill(params.client_name);
       query = query.andWhere((builder) =>
         builder
-          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_latin}%`)
-          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_krill}%`)
+          .orWhereRaw(`user_json ->> 'full_name' ilike '%${name_latin}%'`)
+          .orWhereRaw(`user_json ->> 'full_name' ilike '%${name_krill}%'`)
       );
     }
-
+    console.log(query.toQuery());
+    
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };
@@ -299,8 +300,8 @@ export class AdminOrderService {
       const name_krill = latinToKrill(params.client_name);
       query = query.andWhere((builder) =>
         builder
-          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_latin}%`)
-          .orWhereRaw(`user_json ->> 'full_name' ilike %${name_krill}%`)
+          .orWhereRaw(`user_json ->> 'full_name' ilike '%${name_latin}%'`)
+          .orWhereRaw(`user_json ->> 'full_name' ilike '%${name_krill}%'`)
       );
     }
 
@@ -398,8 +399,8 @@ export class AdminOrderService {
 
       query.andWhere((builder) =>
         builder
-          .orWhereRaw(`"o".user_json ->> 'full_name' ilike %${name_latin}%`)
-          .orWhereRaw(`"o".user_json ->> 'full_name' ilike %${name_krill}%`)
+          .orWhereRaw(`"o".user_json ->> 'full_name' ilike '%${name_latin}%'`)
+          .orWhereRaw(`"o".user_json ->> 'full_name' ilike '%${name_krill}%'`)
       );
     }
 
