@@ -131,8 +131,10 @@ export class AdminOrderService {
   }
 
   async setPayment(params: SetPaymentDto, currentUser: ICurrentUser) {
+    let { payment_type_id = null } = params;
     return this.adminOrderRepo.knex.transaction(async (trx) => {
       const order = await this.adminOrderRepo.selectById(params.order_id);
+      payment_type_id = payment_type_id ? payment_type_id : order.payment_type;
 
       if (params.paid_price > order.total_sum || (order.paid + params.paid_price) > order.total_sum) {
         throw new PaymentPriceExceed();
@@ -141,7 +143,7 @@ export class AdminOrderService {
       const paymentType = await trx
         .select(['id', 'name_ru', 'name_uz'])
         .from('payment_types')
-        .where('id', params.payment_type_id)
+        .where('id', payment_type_id)
         .where('is_deleted', false)
         .first();
       
@@ -157,7 +159,7 @@ export class AdminOrderService {
           receiver_id: currentUser.id,
           order_id: order.id,
           type: OrderPaymentHistoryTypes.DEBT,
-          payment_type_id: params.payment_type_id,
+          payment_type_id: payment_type_id,
           payment_type_json: paymentType,
           value: params.paid_price
         });
@@ -174,7 +176,7 @@ export class AdminOrderService {
         receiver_id: currentUser.id,
         order_id: order.id,
         type: OrderPaymentHistoryTypes.PAYMENT,
-        payment_type_id: params.payment_type_id,
+        payment_type_id: payment_type_id,
         payment_type_json: paymentType,
         value: params.paid_price
       });

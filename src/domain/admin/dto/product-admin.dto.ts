@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEnum, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ProductStatusEnum } from '../enum/product.enum';
 import { OrderStatus } from 'src/domain/orders/dto/order.enum';
 import { Type } from 'class-transformer';
@@ -83,7 +83,8 @@ export class SetPaymentDto {
   @IsNumber()
   paid_price: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  payment_type_id: string;
+  payment_type_id?: string;
 }
