@@ -5,7 +5,7 @@ import { ICurrentUser } from 'src/shared/interface/list.interface';
 import { OrderListByUsersDto, OrderListDto, SortType } from 'src/domain/orders/dto/order.dto';
 import { OrderPaymentHistoryTypes, OrderStatus, PaidStatusFilterEnum, PaymentTypesEnum } from 'src/domain/orders/dto/order.enum';
 import { AdminProductRepo } from '../repo/product.repo';
-import { OrderAlreadyDeliveredException, PaymentPriceExceed, ProductNotFoundException } from 'src/errors/permission.error';
+import { OrderAlreadyDeliveredException, PaymentPriceExceed, PaymentTypeNotAllowed, ProductNotFoundException } from 'src/errors/permission.error';
 import { isEmpty } from 'lodash';
 import { AdminOrderItemsRepo } from '../repo/order-item.repo';
 import { AdminOrderPaymentHistoryRepo } from '../repo/order-payment-history.repo';
@@ -138,14 +138,27 @@ export class AdminOrderService {
         throw new PaymentPriceExceed();
       }
 
+      const paymentType = await trx
+        .select(['id', 'name_ru', 'name_uz'])
+        .from('payment_types')
+        .where('id', params.payment_type_id)
+        .where('is_deleted', false)
+        .first();
+      
+      if (isEmpty(paymentType)) {
+        throw new PaymentTypeNotAllowed();
+      }
+
       if (order.payment_type === PaymentTypesEnum.DEBT) {
         await this.adminOrderPaymentHistoryRepo.insertWithTransaction(trx, {
           id: this.adminOrderPaymentHistoryRepo.generateRecordId(),
           user_id: order.user_id,
-          // user_json: currentUser,
+          user_json: order.user_json,
           receiver_id: currentUser.id,
           order_id: order.id,
-          type: OrderPaymentHistoryTypes.PAYMENT,
+          type: OrderPaymentHistoryTypes.DEBT,
+          payment_type_id: params.payment_type_id,
+          payment_type_json: paymentType,
           value: params.paid_price
         });
 
@@ -153,6 +166,18 @@ export class AdminOrderService {
           balance: trx.raw(`balance + ${params.paid_price}`)
         });
       }
+
+      await this.adminOrderPaymentHistoryRepo.insertWithTransaction(trx, {
+        id: this.adminOrderPaymentHistoryRepo.generateRecordId(),
+        user_id: order.user_id,
+        user_json: order.user_json,
+        receiver_id: currentUser.id,
+        order_id: order.id,
+        type: OrderPaymentHistoryTypes.PAYMENT,
+        payment_type_id: params.payment_type_id,
+        payment_type_json: paymentType,
+        value: params.paid_price
+      });
 
       await this.adminOrderRepo.updateByIdWithTransaction(trx, params.order_id, {
         paid: order.paid + params.paid_price,
@@ -388,14 +413,14 @@ export class AdminOrderService {
         case PaidStatusFilterEnum.PARTIALLY_PAID:
           query.whereRaw('o.total_sum > o.paid and o.paid > 0');
           break;
-        case PaidStatusFilterEnum.NOT_PAID:          
+        case PaidStatusFilterEnum.NOT_PAID:
           query.whereRaw('o.paid <= 0');
           break;
         default:
           break;
       }
     }
-    
+
     if (!isEmpty(params?.client_name)) {
       const name_latin = krillToLatin(params.client_name).replace(/'/g, "''");
       const name_krill = latinToKrill(params.client_name);
@@ -410,7 +435,7 @@ export class AdminOrderService {
     if (!isEmpty(params?.order_number)) {
       query.where('o.order_number', params.order_number);
     }
-    
+
     const data = await query;
 
     return { data: data, total_count: data[0] ? +data[0].total : 0 };

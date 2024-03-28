@@ -212,6 +212,8 @@ create table order_payment_history(
 	user_json jsonb,
 	type smallint not null,
 	value double precision not null,
+	payment_type_id varchar(24) references payment_types(id) not null,
+	payment_type_json jsonb not null,
 	is_deleted boolean default false,
 	created_at timestamptz default current_timestamp,
 	updated_at timestamptz

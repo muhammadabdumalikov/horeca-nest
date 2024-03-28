@@ -82,4 +82,8 @@ export class SetPaymentDto {
   @ApiProperty()
   @IsNumber()
   paid_price: number;
+
+  @ApiProperty()
+  @IsString()
+  payment_type_id: string;
 }
