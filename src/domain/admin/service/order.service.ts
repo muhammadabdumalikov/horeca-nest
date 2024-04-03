@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AdminOrdersRepo } from '../repo/order.repo';
 import { OrderUpdateDto, SetDeliverDto, SetDeliverMultipleDto, SetOrderStatusDto, SetOrderStatusMultipleDto, SetPaymentDto } from '../dto/product-admin.dto';
 import { ICurrentUser } from 'src/shared/interface/list.interface';
-import { OrderListByUsersDto, OrderListDto, SortType } from 'src/domain/orders/dto/order.dto';
+import { OrderListByUsersDto, OrderListDto, OrderPaymentHistoryListDto, SortType } from 'src/domain/orders/dto/order.dto';
 import { OrderPaymentHistoryTypes, OrderStatus, PaidStatusFilterEnum, PaymentTypesEnum } from 'src/domain/orders/dto/order.enum';
 import { AdminProductRepo } from '../repo/product.repo';
 import { OrderAlreadyDeliveredException, PaymentPriceExceed, PaymentTypeNotAllowed, ProductNotFoundException } from 'src/errors/permission.error';
@@ -263,6 +263,60 @@ export class AdminOrderService {
 
     if (!isEmpty(params?.order_number)) {
       query.where('order_number', params.order_number);
+    }
+
+    const data = await query;
+
+    return { data: data, total_count: data[0] ? +data[0].total : 0 };
+  }
+
+  async orderPaymentHistoryList(params: OrderPaymentHistoryListDto) {
+    const knex = this.adminOrderRepo.knex;
+    const { created_at_order = 'asc' } = params;
+    let query = knex
+      .select([
+        'history.*',
+        knex.raw('count(history.id) over() as total'),
+      ])
+      .from('order_payment_history as history');
+
+    if (params?.is_deleted === 'true') {
+      query.where('history.is_deleted', true);
+    }
+
+    if (params?.is_deleted === 'false') {
+      query.where('history.is_deleted', false);
+    }
+
+    if (params?.payment_type_id) {
+      query.where('history.payment_type_id', params.payment_type_id)
+    }
+
+    if (params?.user_id) {
+      query.where('history.user_id', params.user_id)
+    }
+
+    if (params.limit) {
+      query.limit(Number(params.limit));
+    }
+
+    if (params.offset) {
+      query.offset(Number(params.offset));
+    }
+
+    if (created_at_order === 'asc') {
+      query.orderBy('history.created_at', 'asc')
+    }
+
+    if (created_at_order === 'desc') {
+      query.orderBy('history.created_at', 'desc')
+    }
+
+    if (!isEmpty(params?.order_number)) {
+      query.join('orders as order', function () {
+        this.on('order.id', 'history.order_id')
+      })
+      query.where('order.order_number', params.order_number);
     }
 
     const data = await query;

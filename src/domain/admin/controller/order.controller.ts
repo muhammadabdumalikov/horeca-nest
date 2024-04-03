@@ -12,7 +12,7 @@ import { OrderUpdateDto, SetDeliverDto, SetDeliverMultipleDto, SetOrderStatusDto
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin.guard';
 import { AdminOrderService } from '../service/order.service';
-import { OrderListByUsersDto, OrderListDto } from 'src/domain/orders/dto/order.dto';
+import { OrderListByUsersDto, OrderListDto, OrderPaymentHistoryListDto } from 'src/domain/orders/dto/order.dto';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
 import { ICurrentUser } from 'src/shared/interface/list.interface';
 import { DeliveryGuard } from 'src/guard/delivery.guard';
@@ -66,6 +66,15 @@ export class AdminOrderController {
     @Query() params: OrderListDto,
   ) {
     return this.adminOrderService.orderList(params);
+  }
+
+  @ApiBearerAuth('authorization')
+  @UseGuards(AdminGuard)
+  @Get('payment-history-list')
+  async orderPaymentHistory(
+    @Query() params: OrderPaymentHistoryListDto,
+  ) {
+    return this.adminOrderService.orderPaymentHistoryList(params);
   }
 
   @ApiBearerAuth('authorization')

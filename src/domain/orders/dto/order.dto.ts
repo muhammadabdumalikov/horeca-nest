@@ -110,3 +110,25 @@ export class OrderListByUsersDto extends OrderListDto {
   @IsString()
   user_id?: string;
 }
+
+export class OrderPaymentHistoryListDto extends ListPageDto{
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  is_deleted?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  order_number?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  user_id?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  payment_type_id?: string;
+}
